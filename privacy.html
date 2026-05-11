@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Privacy &mdash; Run2Beat</title>
+    <meta name="description" content="Run2Beat's privacy policy. Your music files and BPM data stay on your device — nothing ever leaves your iPhone." />
+    <meta name="theme-color" content="#0a0d0a" />
+
+    <link rel="icon" type="image/png" href="assets/app-icon.png" />
+    <link rel="apple-touch-icon" href="assets/app-icon.png" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+    <div class="grain"></div>
+    <div class="ambient ambient--green"></div>
+    <div class="ambient ambient--mint"></div>
+
+    <header class="nav">
+        <a href="index.html" class="nav__brand">
+            <img src="assets/app-icon.png" alt="" class="nav__icon" />
+            <span class="nav__name">Run2Beat</span>
+        </a>
+        <nav class="nav__links">
+            <a href="index.html">Home</a>
+            <a href="https://testflight.apple.com/join/XxW6dN7Q" class="nav__cta js-testflight" target="_blank" rel="noopener">Get the app</a>
+        </nav>
+    </header>
+
+    <main class="legal">
+        <section class="legal__hero">
+            <p class="eyebrow eyebrow--center">Privacy policy</p>
+            <h1 class="legal__title">Your music<br />never leaves<br />your phone.</h1>
+            <p class="legal__lede">
+                Run2Beat is designed around a simple promise: the music files you provide and the data the app derives from them stay on your device. This page explains exactly what that means.
+            </p>
+            <p class="legal__updated">Last updated: 26 April 2026</p>
+        </section>
+
+        <section class="legal__body">
+
+            <h2>The short version</h2>
+            <p>
+                Run2Beat does not collect, transmit or sell personal information. The app has no accounts, no advertising, no analytics SDKs and no third-party tracking. Your music files, your BPM analysis results, your playlists and your settings are stored locally on your iPhone (and, optionally, mirrored to your Apple Watch when you sync a playlist to it).
+            </p>
+
+            <h2>What the app stores on your device</h2>
+            <ul>
+                <li><strong>Imported audio files.</strong> The music files you import (MP3, AAC and other common formats) are stored inside Run2Beat&rsquo;s sandbox on your iPhone. They are never uploaded to a server or shared with us.</li>
+                <li><strong>BPM, loudness and metadata.</strong> When the app analyses a track, the resulting BPM, LUFS loudness and any metadata it derives are stored alongside the file on your device.</li>
+                <li><strong>Playlists, equalizer presets and settings.</strong> Stored locally in the app&rsquo;s preferences.</li>
+            </ul>
+
+            <h2>What leaves your device</h2>
+            <p>
+                In normal use, nothing about your music library leaves your iPhone. There are three optional features where Run2Beat does talk to other services, and each one is initiated by you:
+            </p>
+            <ul>
+                <li>
+                    <strong>Shazam tagging.</strong> When you ask Run2Beat to identify a track with missing title or cover art, the app sends an audio fingerprint of that track to Apple&rsquo;s Shazam service in order to receive the correct metadata. The fingerprint is generated locally and cannot be used to reconstruct the original audio. Your use of Shazam is also covered by <a href="https://www.apple.com/legal/privacy/" target="_blank" rel="noopener">Apple&rsquo;s privacy policy</a>.
+                </li>
+                <li>
+                    <strong>Apple Watch sync.</strong> When you sync a BPM list or standard playlist to your Apple Watch, the corresponding audio files and metadata are transferred from your iPhone to your paired Apple Watch over the local Apple-managed connection. The data does not pass through any Run2Beat server.
+                </li>
+                <li>
+                    <strong>AirDrop sharing.</strong> When you share a playlist via AirDrop, the audio files and metadata are transferred directly from your device to the recipient&rsquo;s device using Apple&rsquo;s AirDrop transport. We do not receive a copy.
+                </li>
+            </ul>
+
+            <h2>TestFlight and crash reporting</h2>
+            <p>
+                While Run2Beat is distributed through Apple&rsquo;s TestFlight programme, Apple may collect diagnostics, crash logs and usage statistics from your device on our behalf, as described in <a href="https://www.apple.com/legal/internet-services/itunes/" target="_blank" rel="noopener">Apple&rsquo;s TestFlight terms</a>. We use these reports solely to fix bugs and improve stability. We do not receive personal information through TestFlight, and we cannot identify individual testers.
+            </p>
+
+            <h2>Permissions the app may ask for</h2>
+            <ul>
+                <li><strong>Files</strong>: required to import audio from iCloud Drive, the on-device file system, or an external drive.</li>
+                <li><strong>Microphone</strong>: required by Apple&rsquo;s Shazam framework when you trigger an identification.</li>
+                <li><strong>Bluetooth / Media playback</strong>: required for headphone and Apple Watch playback.</li>
+            </ul>
+            <p>
+                Run2Beat does not request access to your contacts, your photo library, your location, your health data, or any other personal data on your device.
+            </p>
+
+            <h2>Children</h2>
+            <p>
+                Run2Beat is not directed at children under 13 and does not knowingly collect any information from them.
+            </p>
+
+            <h2>Changes to this policy</h2>
+            <p>
+                If we update this policy, the &ldquo;Last updated&rdquo; date at the top will change. Material changes will be noted in the TestFlight release notes and, once the app reaches the App Store, in the App Store version history.
+            </p>
+
+            <h2>Contact</h2>
+            <p>
+                If you have a question about how Run2Beat handles your data, get in touch by email and we&rsquo;ll be happy to answer.
+            </p>
+            <p>
+                <a href="mailto:hello@run2beat.com" class="legal__contact">hello@run2beat.com</a>
+            </p>
+
+        </section>
+
+        <footer class="footer">
+            <p><a href="index.html">&larr; Back to Run2Beat</a></p>
+            <p class="footer__sub">© 2026 Run2Beat. All rights reserved.</p>
+        </footer>
+    </main>
+
+    <!-- TestFlight dialog -->
+    <dialog class="tf-dialog" id="testflight-dialog" aria-labelledby="tf-dialog-title">
+        <button class="tf-dialog__close" type="button" aria-label="Close" data-tf-close>
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+        <div class="tf-dialog__inner">
+            <p class="eyebrow eyebrow--center">TestFlight beta</p>
+            <h3 class="tf-dialog__title" id="tf-dialog-title">Open this on your iPhone.</h3>
+            <p class="tf-dialog__text">
+                Run2Beat is currently in TestFlight beta and runs on iPhone and Apple Watch. Scan the QR code with your iPhone&rsquo;s camera, or open the link below in iOS Safari.
+            </p>
+            <div class="tf-dialog__qr">
+                <img src="assets/testflight-qr.svg" alt="QR code to join the Run2Beat TestFlight beta" />
+            </div>
+            <div class="tf-dialog__url-row">
+                <code class="tf-dialog__url" id="tf-dialog-url">https://testflight.apple.com/join/XxW6dN7Q</code>
+                <button class="tf-dialog__copy" type="button" data-tf-copy aria-label="Copy link">
+                    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M9 3h9a2 2 0 0 1 2 2v9M15 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>
+                    <span data-tf-copy-label>Copy</span>
+                </button>
+            </div>
+            <p class="tf-dialog__hint">You&rsquo;ll also need the free TestFlight app from the App Store.</p>
+        </div>
+    </dialog>
+
+    <script src="script.js" defer></script>
+</body>
+</html>
