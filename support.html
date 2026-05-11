@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Support &mdash; Run2Beat</title>
+    <meta name="description" content="Support for Run2Beat. Help with TestFlight, importing music, BPM analysis, Apple Watch sync and more." />
+    <meta name="theme-color" content="#0a0d0a" />
+
+    <link rel="icon" type="image/png" href="assets/app-icon.png" />
+    <link rel="apple-touch-icon" href="assets/app-icon.png" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+    <div class="grain"></div>
+    <div class="ambient ambient--green"></div>
+    <div class="ambient ambient--mint"></div>
+
+    <header class="nav">
+        <a href="index.html" class="nav__brand">
+            <img src="assets/app-icon.png" alt="" class="nav__icon" />
+            <span class="nav__name">Run2Beat</span>
+        </a>
+        <nav class="nav__links">
+            <a href="index.html">Home</a>
+            <a href="privacy.html">Privacy</a>
+            <a href="terms.html">Terms</a>
+            <a href="https://testflight.apple.com/join/XxW6dN7Q" class="nav__cta js-testflight" target="_blank" rel="noopener">Get the app</a>
+        </nav>
+    </header>
+
+    <main class="legal">
+        <section class="legal__hero">
+            <p class="eyebrow eyebrow--center">Support</p>
+            <h1 class="legal__title">Help, tips<br />&amp; a real<br />human reply.</h1>
+            <p class="legal__lede">
+                Run2Beat is a small, independent project. Whatever you need &mdash; a bug report, a question about BPM analysis, or a feature idea &mdash; just send an email and a real person will get back to you.
+            </p>
+            <p class="legal__updated">Last updated: April 2026</p>
+        </section>
+
+        <section class="legal__body">
+
+            <div class="support__contact-card">
+                <p class="support__contact-label">Get in touch</p>
+                <a href="mailto:hello@run2beat.com" class="support__contact-email">hello@run2beat.com</a>
+                <p class="support__contact-hint">
+                    Please include your iPhone and watchOS version, the app build number (Settings &rarr; About), and a short description of what happened. Screenshots help.
+                </p>
+            </div>
+
+            <h2>TestFlight &amp; installation</h2>
+            <p>
+                <strong>How do I install the beta?</strong><br />
+                Open the invitation link on your iPhone in Safari, install Apple&rsquo;s free TestFlight app from the App Store if you don&rsquo;t already have it, then tap &ldquo;Accept&rdquo; followed by &ldquo;Install&rdquo;. Updates arrive automatically through TestFlight.
+            </p>
+            <p>
+                <strong>The link doesn&rsquo;t work on my Mac or Android device.</strong><br />
+                TestFlight is iOS/iPadOS only. Open
+                <a href="https://testflight.apple.com/join/XxW6dN7Q" class="js-testflight" target="_blank" rel="noopener">the invitation</a>
+                on your iPhone, or scan the QR code on the home page with the iPhone camera.
+            </p>
+            <p>
+                <strong>The build expired or stopped opening.</strong><br />
+                Each TestFlight build is valid for up to 90 days. Open TestFlight and tap &ldquo;Update&rdquo;, or reinstall the latest build. If that doesn&rsquo;t work, email and we&rsquo;ll re-send the invite.
+            </p>
+
+            <h2>Importing music</h2>
+            <p>
+                <strong>What file formats are supported?</strong><br />
+                MP3, M4A/AAC, WAV, AIFF and FLAC. DRM-protected files (such as tracks from streaming services) cannot be imported &mdash; Run2Beat works with music you own as files.
+            </p>
+            <p>
+                <strong>How do I get files into Run2Beat?</strong><br />
+                Use AirDrop from a Mac, the iOS Files app (drag and drop from iCloud Drive, Dropbox, OneDrive&hellip;) or the in-app import flow. Files are copied into Run2Beat&rsquo;s private sandbox &mdash; the originals stay where they are.
+            </p>
+            <p>
+                <strong>Some tracks show up without a title or artwork.</strong><br />
+                Run2Beat reads the metadata embedded in the file. If the file has no tags, you can use the built-in Shazam tagging to identify the track and fill in the details.
+            </p>
+
+            <h2>BPM analysis</h2>
+            <p>
+                <strong>How is BPM measured?</strong><br />
+                Locally on your iPhone. Run2Beat analyses the audio waveform itself &mdash; no internet lookup, no servers. The first analysis of a large library may take a few minutes; after that, results are cached.
+            </p>
+            <p>
+                <strong>One of my tracks got the wrong BPM.</strong><br />
+                It happens, especially with half-time or double-time tracks. Open the track, tap &ldquo;Re-analyse&rdquo;, or enter the correct BPM manually. Your override is remembered.
+            </p>
+
+            <h2>Apple Watch sync</h2>
+            <p>
+                <strong>How do I get music onto my Apple Watch?</strong><br />
+                Open a BPM list, choose &ldquo;Sync to Watch&rdquo;, and put the watch on its charger near your iPhone. Transfer happens over Apple&rsquo;s WatchConnectivity framework and can take a while for larger lists.
+            </p>
+            <p>
+                <strong>The watch shows &ldquo;syncing&rdquo; but nothing arrives.</strong><br />
+                Make sure the watch is charging, the iPhone is unlocked, and both devices are on the same Wi-Fi. Toggling Bluetooth on the iPhone often unblocks a stuck transfer.
+            </p>
+
+            <h2>Sound &amp; playback</h2>
+            <p>
+                <strong>Volume normalisation, EQ and crossfade</strong><br />
+                These are all controlled from Settings inside the app. Volume normalisation evens out loudness between tracks; the 5-band EQ and crossfade are applied during playback and don&rsquo;t modify your files.
+            </p>
+            <p>
+                <strong>Playback through AirPods, car or speakers</strong><br />
+                Run2Beat plays through any output iOS routes audio to. If a Bluetooth device sounds wrong, try forgetting and re-pairing it in iOS Settings.
+            </p>
+
+            <h2>Privacy &amp; data</h2>
+            <p>
+                Run2Beat keeps everything &mdash; music files, BPM data, playlists, settings &mdash; on your device. We don&rsquo;t run analytics or tracking. See the full
+                <a href="privacy.html">Privacy Policy</a>
+                for details.
+            </p>
+
+            <h2>Feature requests &amp; bug reports</h2>
+            <p>
+                Send them to
+                <a href="mailto:hello@run2beat.com">hello@run2beat.com</a>.
+                For bugs, please describe what you did, what happened, and what you expected to happen. TestFlight also has a built-in &ldquo;Send Beta Feedback&rdquo; button that includes a screenshot and diagnostic info automatically.
+            </p>
+
+        </section>
+
+        <footer class="footer">
+            <p class="footer__copyright">© 2026 Anders Westin</p>
+            <p>Email: <a href="mailto:hello@run2beat.com">hello@run2beat.com</a></p>
+            <p class="footer__sub">All rights reserved.</p>
+            <p class="footer__links">
+                <a href="privacy.html">Privacy Policy</a>
+                <span class="footer__sep">&middot;</span>
+                <a href="terms.html">Terms of Use</a>
+                <span class="footer__sep">&middot;</span>
+                <a href="support.html">Support</a>
+            </p>
+        </footer>
+    </main>
+
+    <!-- TestFlight dialog -->
+    <dialog class="tf-dialog" id="testflight-dialog" aria-labelledby="tf-dialog-title">
+        <button class="tf-dialog__close" type="button" aria-label="Close" data-tf-close>
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+        <div class="tf-dialog__inner">
+            <p class="eyebrow eyebrow--center">TestFlight beta</p>
+            <h3 class="tf-dialog__title" id="tf-dialog-title">Open this on your iPhone.</h3>
+            <p class="tf-dialog__text">
+                Run2Beat is currently in TestFlight beta and runs on iPhone and Apple Watch. Scan the QR code with your iPhone&rsquo;s camera, or open the link below in iOS Safari.
+            </p>
+            <div class="tf-dialog__qr">
+                <img src="assets/testflight-qr.svg" alt="QR code to join the Run2Beat TestFlight beta" />
+            </div>
+            <div class="tf-dialog__url-row">
+                <code class="tf-dialog__url" id="tf-dialog-url">https://testflight.apple.com/join/XxW6dN7Q</code>
+                <button class="tf-dialog__copy" type="button" data-tf-copy aria-label="Copy link">
+                    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M9 3h9a2 2 0 0 1 2 2v9M15 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>
+                    <span data-tf-copy-label>Copy</span>
+                </button>
+            </div>
+            <p class="tf-dialog__hint">You&rsquo;ll also need the free TestFlight app from the App Store.</p>
+        </div>
+    </dialog>
+
+    <script src="script.js" defer></script>
+</body>
+</html>
