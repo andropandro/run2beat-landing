@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="sv">
+<html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Run2Beat &mdash; Smart BPM-löpning</title>
-    <meta name="description" content="Run2Beat synkar din lokala musik till din löpkadens. Smart BPM-analys, Shazam-taggning, volymutjämning, EQ, Apple Watch och AirDrop. 100 % gratis." />
+    <title>Run2Beat &mdash; Your music. Your workout. In sync.</title>
+    <meta name="description" content="Run2Beat is the joy of working out to the music library you've built up yourself — at exactly the right pace. Local BPM analysis, Shazam tagging, volume normalisation, EQ, Apple Watch and AirDrop. Free, ad-free, offline." />
     <meta name="theme-color" content="#0a0d0a" />
 
     <!-- Open Graph -->
-    <meta property="og:title" content="Run2Beat &mdash; Smart BPM-löpning" />
-    <meta property="og:description" content="Låt musiken sätta tempot. Synka din egen musik till varje steg." />
+    <meta property="og:title" content="Run2Beat &mdash; Your music. Your workout. In sync." />
+    <meta property="og:description" content="Import your own audio files, let the app analyze each track's BPM, and build playlists that match the tempo of your run, ride or powerwalk." />
     <meta property="og:image" content="assets/app-icon.png" />
     <meta property="og:type" content="website" />
 
@@ -31,10 +31,11 @@
             <span class="nav__name">Run2Beat</span>
         </a>
         <nav class="nav__links">
-            <a href="#funktioner">Funktioner</a>
-            <a href="#teknik">Teknik</a>
-            <a href="#design">Design</a>
-            <a href="#hamta" class="nav__cta">Hämta appen</a>
+            <a href="#library">Library</a>
+            <a href="#tempo">Tempo</a>
+            <a href="#playlists">Playlists</a>
+            <a href="#sound">Sound</a>
+            <a href="#get" class="nav__cta">Get the app</a>
         </nav>
     </header>
 
@@ -43,23 +44,23 @@
         <!-- HERO -->
         <section class="hero">
             <div class="hero__inner">
-                <img src="assets/app-icon.png" alt="Run2Beats app-ikon" class="hero__icon" />
-                <p class="eyebrow">Run2Beat-appen</p>
+                <img src="assets/app-icon.png" alt="Run2Beat app icon" class="hero__icon" />
+                <p class="eyebrow">Run2Beat</p>
                 <h1 class="hero__title">
-                    Smart
-                    <span class="hero__title-line">BPM</span>
-                    <span class="hero__title-line hero__title-line--glow">Löpning</span>
+                    <span class="hero__title-line">Your music.</span>
+                    <span class="hero__title-line">Your workout.</span>
+                    <span class="hero__title-line hero__title-line--glow">In sync.</span>
                 </h1>
                 <p class="hero__lede">
-                    Löpningen har alltid begränsats av en sak: rätt musik vid rätt ögonblick. Vi har tagit hand om det åt dig.
+                    Run2Beat is the joy of working out to the music library you&rsquo;ve built up yourself &mdash; at exactly the right pace. Import your own audio files, let the app analyze each track&rsquo;s BPM, and build playlists that match the tempo of your run, ride or powerwalk.
                     <br /><br />
-                    Run2Beat är en AI-driven BPM-motor för din iPhone som synkar din egen musik till varje steg.
+                    Or just build a standard playlist and listen because you want to.
                 </p>
-                <a href="#hamta" class="btn btn--primary">
-                    <span>Hämta från TestFlight</span>
-                    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+                <a href="#get" class="btn btn--primary">
+                    <span>Get it on TestFlight</span>
+                    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M5 12h14M13 5l7 7-7 7"/></svg>
                 </a>
-                <p class="hero__sub">100 % gratis · Reklamfritt · Helt offline</p>
+                <p class="hero__sub">Free &middot; Ad-free &middot; Works fully offline</p>
             </div>
             <div class="hero__pulse" aria-hidden="true">
                 <span></span><span></span><span></span><span></span><span></span>
@@ -68,253 +69,245 @@
             </div>
         </section>
 
-        <!-- FEATURES INTRO -->
-        <section class="section section--label" id="funktioner">
-            <p class="section__label">Funktioner</p>
+        <!-- SECTION: BUILD YOUR LIBRARY -->
+        <section class="section section--label" id="library">
+            <p class="section__label">Build your library</p>
         </section>
 
-        <!-- FEATURE 1: BPM ANALYSIS -->
         <section class="feature">
             <div class="feature__visual">
-                <div class="bpm-card">
-                    <div class="bpm-card__row">
-                        <div class="bpm-card__cover" data-color="a"></div>
-                        <div class="bpm-card__meta">
-                            <span class="bpm-card__title">Heat of the Moment</span>
-                            <span class="bpm-card__artist">Asia</span>
-                        </div>
-                        <div class="bpm-card__bpm"><strong>168</strong><small>BPM</small></div>
-                    </div>
-                    <div class="bpm-card__row">
-                        <div class="bpm-card__cover" data-color="b"></div>
-                        <div class="bpm-card__meta">
-                            <span class="bpm-card__title">Eye of the Tiger</span>
-                            <span class="bpm-card__artist">Survivor</span>
-                        </div>
-                        <div class="bpm-card__bpm"><strong>109</strong><small>BPM</small></div>
-                    </div>
-                    <div class="bpm-card__row bpm-card__row--active">
-                        <div class="bpm-card__cover" data-color="c"></div>
-                        <div class="bpm-card__meta">
-                            <span class="bpm-card__title">Don&rsquo;t Stop Me Now</span>
-                            <span class="bpm-card__artist">Queen</span>
-                        </div>
-                        <div class="bpm-card__bpm"><strong>156</strong><small>BPM</small></div>
-                    </div>
-                    <div class="bpm-card__row">
-                        <div class="bpm-card__cover" data-color="d"></div>
-                        <div class="bpm-card__meta">
-                            <span class="bpm-card__title">Born to Run</span>
-                            <span class="bpm-card__artist">Bruce Springsteen</span>
-                        </div>
-                        <div class="bpm-card__bpm"><strong>148</strong><small>BPM</small></div>
+                <div class="phone-frame" data-screenshot="library">
+                    <img src="assets/screenshots/library.png" alt="" onerror="this.style.display='none'" />
+                    <div class="phone-frame__placeholder">
+                        <div class="phone-frame__dot"></div>
+                        <strong>Library</strong>
+                        <span>Screenshot placeholder</span>
+                        <small>library.png</small>
                     </div>
                 </div>
             </div>
             <div class="feature__copy">
-                <h2 class="feature__title">Varje steg<br />på beatet.</h2>
+                <h2 class="feature__title">Bring your<br />own music.</h2>
                 <p class="feature__text">
-                    Så fort du laddar in din musik räknar Run2Beat ut tempot för varje låt &mdash; lokalt på din telefon. Skapa dynamiska BPM-listor och låt rätt takt driva dig framåt när du springer, cyklar eller går powerwalk.
+                    Import your own audio files (MP3, AAC and other common formats) from iCloud, your phone, or an external drive. Run2Beat recognises every file so the same track is never imported twice &mdash; only unique files end up in your Library.
+                </p>
+                <p class="feature__text">
+                    Missing a title or cover art? Run2Beat can identify tracks via Shazam and fetch the right metadata automatically.
                 </p>
             </div>
         </section>
 
-        <!-- FEATURE 2: YOUR MUSIC -->
+        <!-- SECTION: KNOW THE TEMPO -->
+        <section class="section section--label" id="tempo">
+            <p class="section__label">Know the tempo</p>
+        </section>
+
         <section class="feature feature--reverse">
             <div class="feature__visual">
-                <div class="library-card">
-                    <div class="library-card__header">
-                        <span class="library-card__dot"></span>
-                        <span class="library-card__dot"></span>
-                        <span class="library-card__dot"></span>
-                        <span class="library-card__title">Importera musik</span>
-                    </div>
-                    <div class="library-card__source"><span>📁</span> Lokalt på iPhone</div>
-                    <div class="library-card__source"><span>☁️</span> iCloud Drive</div>
-                    <div class="library-card__source"><span>💾</span> Extern hårddisk</div>
-                    <div class="library-card__progress">
-                        <div class="library-card__bar"><span></span></div>
-                        <span class="library-card__count">432 / 510 låtar</span>
-                    </div>
-                    <div class="library-card__tag">Shazam identifierade 78 låtar utan omslag</div>
-                </div>
-            </div>
-            <div class="feature__copy">
-                <h2 class="feature__title">Din musik.<br />Dina regler.</h2>
-                <p class="feature__text">
-                    Run2Beat är helt oberoende av streamingtjänster. Importera från iCloud, lokalt eller från en extern hårddisk. Saknas omslag eller titel? Appen identifierar låten automatiskt via Shazam och hämtar rätt information. Dubbletter sorteras bort &mdash; alltid.
-                </p>
-            </div>
-        </section>
-
-        <!-- FEATURE 3: SMART AUDIO -->
-        <section class="feature">
-            <div class="feature__visual">
-                <div class="audio-card">
-                    <div class="audio-card__label">Volymutjämning · LUFS</div>
-                    <div class="audio-card__bars">
-                        <span style="--h: 35%"></span>
-                        <span style="--h: 62%"></span>
-                        <span style="--h: 48%"></span>
-                        <span style="--h: 78%"></span>
-                        <span style="--h: 55%"></span>
-                        <span style="--h: 88%"></span>
-                        <span style="--h: 42%"></span>
-                        <span style="--h: 70%"></span>
-                        <span style="--h: 60%"></span>
-                        <span style="--h: 82%"></span>
-                        <span style="--h: 50%"></span>
-                        <span style="--h: 74%"></span>
-                    </div>
-                    <div class="audio-card__line"></div>
-                    <div class="audio-card__footer">
-                        <div><strong>&minus;14 LUFS</strong><small>Måltyngd</small></div>
-                        <div><strong>HE-AAC</strong><small>Smart konvertering</small></div>
-                        <div><strong>0 dB</strong><small>Inget klipp</small></div>
+                <div class="phone-frame" data-screenshot="bpm-analysis">
+                    <img src="assets/screenshots/bpm-analysis.png" alt="" onerror="this.style.display='none'" />
+                    <div class="phone-frame__placeholder">
+                        <div class="phone-frame__dot"></div>
+                        <strong>BPM analysis</strong>
+                        <span>Screenshot placeholder</span>
+                        <small>bpm-analysis.png</small>
                     </div>
                 </div>
             </div>
             <div class="feature__copy">
-                <h2 class="feature__title">Slipp justera<br />volymen.</h2>
+                <h2 class="feature__title">Every track,<br />its true tempo.</h2>
                 <p class="feature__text">
-                    Run2Beat beräknar ljudstyrkan (LUFS) på din musik och ser till att gamla inspelningar och moderna mixar spelas upp lika starkt &mdash; helt utan att ljudet klipper. Vid import kan filerna automatiskt konverteras till HE-AAC: samma briljanta kvalitet, hälften så mycket plats.
+                    Run2Beat calculates the tempo (BPM) of every track directly on your phone &mdash; no cloud uploads, no analysis queue. Tracks with an uncertain tempo are clearly flagged so you can review and correct them before your next session.
+                </p>
+                <p class="feature__text feature__text--muted">
+                    Always in control of the beat.
                 </p>
             </div>
         </section>
 
-        <!-- FEATURE 4: WATCH & AIRDROP -->
-        <section class="feature feature--reverse">
-            <div class="feature__visual">
-                <div class="watch-card">
-                    <div class="watch-card__device">
-                        <div class="watch-card__screen">
-                            <span class="watch-card__bpm">156</span>
-                            <span class="watch-card__bpm-label">BPM</span>
-                            <div class="watch-card__progress"></div>
-                            <span class="watch-card__track">Don&rsquo;t Stop Me Now</span>
-                        </div>
-                    </div>
-                    <div class="watch-card__share">
-                        <span class="watch-card__share-icon">⤴</span>
-                        <span>AirDrop &mdash; hela spellistan</span>
-                    </div>
-                </div>
-            </div>
-            <div class="feature__copy">
-                <h2 class="feature__title">Lämna mobilen<br />hemma.</h2>
-                <p class="feature__text">
-                    Synka dina BPM-listor och vanliga spellistor direkt till din Apple Watch för en krångelfri tränings-pump utan telefonen. Hittade du den perfekta listan? Skicka hela paketet &mdash; musikfiler, omslag och metadata &mdash; via AirDrop till din träningskompis.
-                </p>
-            </div>
+        <!-- SECTION: TWO WAYS TO PLAY -->
+        <section class="section section--label" id="playlists">
+            <p class="section__label">Two ways to play</p>
         </section>
 
-        <!-- SMART BADGES -->
         <section class="section section--center">
-            <h2 class="section__title">Smart genom<br />hela passet.</h2>
+            <h2 class="section__title">BPM lists &amp; standard playlists.</h2>
             <p class="section__lede">
-                Run2Beat är fullpackad med teknologi som gör det enkla &mdash; löpning med musik i takt &mdash; till en upplevelse i världsklass.
+                Run2Beat treats both kinds of playlists as first-class citizens &mdash; because a workout and an evening walk aren&rsquo;t the same thing.
             </p>
-            <div class="badges">
-                <div class="badge"><span class="badge__icon">⚡</span><span>Lokal BPM-analys</span></div>
-                <div class="badge"><span class="badge__icon">🔊</span><span>Volymutjämning</span></div>
-                <div class="badge"><span class="badge__icon">🎚️</span><span>Inbyggd Equalizer</span></div>
-                <div class="badge"><span class="badge__icon">🎵</span><span>Shazam-taggning</span></div>
-                <div class="badge"><span class="badge__icon">⌚</span><span>Apple Watch-app</span></div>
-                <div class="badge"><span class="badge__icon">📤</span><span>AirDrop-delning</span></div>
-                <div class="badge"><span class="badge__icon">🔁</span><span>Sömlös Crossfade</span></div>
-                <div class="badge"><span class="badge__icon">💾</span><span>HE-AAC-konvertering</span></div>
-            </div>
         </section>
 
-        <!-- DESIGN PHILOSOPHY -->
-        <section class="section section--dark" id="design">
-            <div class="philosophy">
-                <h2 class="section__title">Designad<br />för löpare.</h2>
-                <p class="philosophy__text">
-                    Run2Beat är minutiöst designad. Ett mörkt gränssnitt som är skonsamt mot ögonen när du springer i gryningen. Stora, vänliga kontroller som funkar med en hand &mdash; och med svettiga fingrar.
-                    <br /><br />
-                    Varje detalj &mdash; från BPM-flaggorna till crossfade-glidet &mdash; är byggd för att försvinna när du börjar springa. Bara du, takten och nästa kilometer.
+        <section class="feature">
+            <div class="feature__visual">
+                <div class="phone-frame" data-screenshot="bpm-lists">
+                    <img src="assets/screenshots/bpm-lists.png" alt="" onerror="this.style.display='none'" />
+                    <div class="phone-frame__placeholder">
+                        <div class="phone-frame__dot"></div>
+                        <strong>BPM lists</strong>
+                        <span>Screenshot placeholder</span>
+                        <small>bpm-lists.png</small>
+                    </div>
+                </div>
+            </div>
+            <div class="feature__copy">
+                <p class="kicker">For workouts</p>
+                <h2 class="feature__title">BPM lists.</h2>
+                <p class="feature__text">
+                    Build dynamic playlists where each track gets a target tempo. Run2Beat doesn&rsquo;t continuously fine-tune playback during the workout &mdash; the tempo is set per track. When you sync a BPM list to your Apple Watch, your own music files are BPM-adjusted up front, without distorting vocals.
                 </p>
             </div>
         </section>
 
-        <!-- TECH SHOWCASE -->
-        <section class="section section--label section--tech-anchor" id="teknik">
-            <p class="section__label">Teknik</p>
+        <section class="feature feature--reverse">
+            <div class="feature__visual">
+                <div class="phone-frame" data-screenshot="standard-playlists">
+                    <img src="assets/screenshots/standard-playlists.png" alt="" onerror="this.style.display='none'" />
+                    <div class="phone-frame__placeholder">
+                        <div class="phone-frame__dot"></div>
+                        <strong>Standard playlists</strong>
+                        <span>Screenshot placeholder</span>
+                        <small>standard-playlists.png</small>
+                    </div>
+                </div>
+            </div>
+            <div class="feature__copy">
+                <p class="kicker">For everyday listening</p>
+                <h2 class="feature__title">Standard playlists.</h2>
+                <p class="feature__text">
+                    Want to listen without BPM constraints? Build classic playlists from any of your imported music &mdash; for the commute, the dog walk, the kitchen, or just because.
+                </p>
+                <p class="feature__text feature__text--muted">
+                    Same library. Same audio quality. No tempo required.
+                </p>
+            </div>
+        </section>
+
+        <!-- SECTION: SOUND QUALITY -->
+        <section class="section section--label" id="sound">
+            <p class="section__label">Sound quality</p>
         </section>
 
         <section class="section">
-            <h2 class="section__title section__title--left">Under huven.</h2>
+            <h2 class="section__title section__title--left">Make it sound<br />the way you want.</h2>
             <p class="section__lede section__lede--left">
-                Run2Beat är inte bara en löpapp &mdash; det är ett tekniskt skyltfönster. Här är några av teknologierna som driver appen:
+                Three small touches that quietly disappear once you press play.
             </p>
-            <div class="tech-grid">
-                <div class="tech-grid__item">
-                    <div class="tech-grid__icon">🧠</div>
-                    <div class="tech-grid__name">Lokal BPM-analys</div>
-                    <div class="tech-grid__desc">Tempot beräknas direkt på din enhet &mdash; aldrig i molnet.</div>
+            <div class="trio">
+                <div class="trio__card">
+                    <div class="trio__icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="24" height="24"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" d="M3 12h2l2-6 3 14 3-12 2 8 2-4h4"/></svg>
+                    </div>
+                    <h3 class="trio__title">Volume normalisation</h3>
+                    <p class="trio__text">
+                        Stop reaching for the volume control. Run2Beat measures the loudness of your music so older recordings and modern mixes play at the same level &mdash; on iPhone and Apple Watch.
+                    </p>
                 </div>
-                <div class="tech-grid__item">
-                    <div class="tech-grid__icon">🎵</div>
-                    <div class="tech-grid__name">Shazam-igenkänning</div>
-                    <div class="tech-grid__desc">Identifierar låtar utan omslag och fyller i metadata.</div>
+                <div class="trio__card">
+                    <div class="trio__icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="24" height="24"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" d="M4 6h6M14 6h6M4 12h2M10 12h10M4 18h12M20 18h0M8 3v6M16 9v6M14 15v6"/></svg>
+                    </div>
+                    <h3 class="trio__title">Equalizer</h3>
+                    <p class="trio__text">
+                        Sculpt the sound with the built-in equalizer. Save presets for different headphones and sync them to your Apple Watch.
+                    </p>
                 </div>
-                <div class="tech-grid__item">
-                    <div class="tech-grid__icon">📊</div>
-                    <div class="tech-grid__name">LUFS-utjämning</div>
-                    <div class="tech-grid__desc">Studio-standard för att hålla volymen konsekvent.</div>
+                <div class="trio__card">
+                    <div class="trio__icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="24" height="24"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M3 12c2 0 2-4 4-4s2 4 4 4 2-4 4-4 2 4 4 4 2-4 2-4"/></svg>
+                    </div>
+                    <h3 class="trio__title">Crossfade</h3>
+                    <p class="trio__text">
+                        Built-in crossfade keeps the music flowing without awkward gaps between tracks &mdash; both on iPhone and Apple Watch.
+                    </p>
                 </div>
-                <div class="tech-grid__item">
-                    <div class="tech-grid__icon">💾</div>
-                    <div class="tech-grid__name">HE-AAC-pipeline</div>
-                    <div class="tech-grid__desc">Halverar filstorleken utan att tappa kvalitet.</div>
+            </div>
+        </section>
+
+        <!-- SECTION: TAKE IT ANYWHERE -->
+        <section class="section section--label">
+            <p class="section__label">Take it anywhere</p>
+        </section>
+
+        <section class="feature">
+            <div class="feature__visual">
+                <div class="phone-frame phone-frame--watch" data-screenshot="watch">
+                    <img src="assets/screenshots/watch.png" alt="" onerror="this.style.display='none'" />
+                    <div class="phone-frame__placeholder">
+                        <div class="phone-frame__dot"></div>
+                        <strong>Apple Watch</strong>
+                        <span>Screenshot placeholder</span>
+                        <small>watch.png</small>
+                    </div>
                 </div>
-                <div class="tech-grid__item">
-                    <div class="tech-grid__icon">⌚</div>
-                    <div class="tech-grid__name">watchOS-synk</div>
-                    <div class="tech-grid__desc">BPM-listor, EQ och spellistor direkt på handleden.</div>
+            </div>
+            <div class="feature__copy">
+                <h2 class="feature__title">Leave the<br />phone home.</h2>
+                <p class="feature__text">
+                    Sync BPM lists and standard playlists directly to your Apple Watch &mdash; full standalone playback during your workout. Crossfade, EQ presets and volume normalisation all come along for the ride.
+                </p>
+            </div>
+        </section>
+
+        <section class="feature feature--reverse">
+            <div class="feature__visual">
+                <div class="phone-frame" data-screenshot="airdrop">
+                    <img src="assets/screenshots/airdrop.png" alt="" onerror="this.style.display='none'" />
+                    <div class="phone-frame__placeholder">
+                        <div class="phone-frame__dot"></div>
+                        <strong>AirDrop sharing</strong>
+                        <span>Screenshot placeholder</span>
+                        <small>airdrop.png</small>
+                    </div>
                 </div>
-                <div class="tech-grid__item">
-                    <div class="tech-grid__icon">🎚️</div>
-                    <div class="tech-grid__name">Parametrisk EQ</div>
-                    <div class="tech-grid__desc">Skräddarsy ljudprofiler per hörlur &mdash; även på klockan.</div>
-                </div>
-                <div class="tech-grid__item">
-                    <div class="tech-grid__icon">🔁</div>
-                    <div class="tech-grid__name">Smart Crossfade</div>
-                    <div class="tech-grid__desc">Sömlösa övergångar utan tysta avbrott.</div>
-                </div>
-                <div class="tech-grid__item">
-                    <div class="tech-grid__icon">📤</div>
-                    <div class="tech-grid__name">AirDrop-paket</div>
-                    <div class="tech-grid__desc">Dela hela spellistor med filer och metadata.</div>
-                </div>
-                <div class="tech-grid__item">
-                    <div class="tech-grid__icon">🔒</div>
-                    <div class="tech-grid__name">100 % offline</div>
-                    <div class="tech-grid__desc">Din musik och data lämnar aldrig din enhet.</div>
-                </div>
+            </div>
+            <div class="feature__copy">
+                <h2 class="feature__title">Share the<br />whole playlist.</h2>
+                <p class="feature__text">
+                    Found the perfect workout flow? Send a whole playlist &mdash; pre-analyzed audio and Shazam metadata included &mdash; to a friend via AirDrop. They get the music, the order, and the tempo. Ready to play.
+                </p>
+            </div>
+        </section>
+
+        <!-- WHAT'S INSIDE: feature badges -->
+        <section class="section section--center">
+            <h2 class="section__title">Everything that matters.<br />Nothing that doesn&rsquo;t.</h2>
+            <p class="section__lede">
+                A short tour of what&rsquo;s actually inside Run2Beat.
+            </p>
+            <div class="badges">
+                <div class="badge"><span class="badge__icon">📥</span><span>Local file import</span></div>
+                <div class="badge"><span class="badge__icon">🔍</span><span>Local BPM analysis</span></div>
+                <div class="badge"><span class="badge__icon">🎵</span><span>Shazam tagging</span></div>
+                <div class="badge"><span class="badge__icon">🎯</span><span>BPM playlists</span></div>
+                <div class="badge"><span class="badge__icon">📃</span><span>Standard playlists</span></div>
+                <div class="badge"><span class="badge__icon">🎚️</span><span>Equalizer with presets</span></div>
+                <div class="badge"><span class="badge__icon">🔊</span><span>Volume normalisation</span></div>
+                <div class="badge"><span class="badge__icon">🔁</span><span>Crossfade</span></div>
+                <div class="badge"><span class="badge__icon">⌚</span><span>Apple Watch standalone</span></div>
+                <div class="badge"><span class="badge__icon">📤</span><span>AirDrop sharing</span></div>
             </div>
         </section>
 
         <!-- FINAL CTA -->
-        <section class="cta" id="hamta">
+        <section class="cta" id="get">
             <img src="assets/app-icon.png" alt="" class="cta__icon" />
-            <p class="eyebrow eyebrow--center">Hämta Run2Beat nu</p>
+            <p class="eyebrow eyebrow--center">Get Run2Beat</p>
             <h2 class="cta__title">
-                Låt musiken<br />sätta tempot.
+                Free. Forever.<br />Offline.
             </h2>
-            <p class="cta__sub">Just nu i öppen beta via TestFlight &mdash; helt gratis.</p>
+            <p class="cta__sub">
+                Run2Beat is free, ad-free and works fully offline. Your music files and BPM data stay on your device &mdash; nothing ever leaves your iPhone. No subscription. No account.
+            </p>
             <a href="#" class="btn btn--primary btn--lg">
-                <span>Öppna i TestFlight</span>
-                <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+                <span>Open in TestFlight</span>
+                <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M5 12h14M13 5l7 7-7 7"/></svg>
             </a>
-            <p class="cta__tag">#Run2Beat</p>
+            <p class="cta__tag">You bring the music. We bring the tempo.</p>
         </section>
 
         <footer class="footer">
-            <p>Run2Beat &mdash; Din musik, din takt.</p>
-            <p class="footer__sub">© 2026 Run2Beat. Alla rättigheter förbehållna.</p>
+            <p>Run2Beat &mdash; Your music. Your workout. In sync.</p>
+            <p class="footer__sub">© 2026 Run2Beat. All rights reserved.</p>
         </footer>
     </main>
 
