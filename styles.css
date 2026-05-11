@@ -210,13 +210,16 @@ a { color: inherit; text-decoration: none; }
 .hero__title {
     font-size: clamp(56px, 11vw, 144px);
     font-weight: 800;
-    line-height: 0.94;
+    line-height: 1.0;
     letter-spacing: -0.04em;
     margin: 0 0 32px;
 }
 
 .hero__title-line {
     display: block;
+    /* Room for descenders (the "y" in "sync") so the tail isn't
+       clipped by the next element. */
+    padding-bottom: 0.06em;
 }
 
 .hero__title-line--glow {
@@ -226,6 +229,8 @@ a { color: inherit; text-decoration: none; }
     color: transparent;
     text-shadow: 0 0 60px rgba(142, 224, 106, 0.35);
     filter: drop-shadow(0 8px 24px rgba(142, 224, 106, 0.25));
+    /* drop-shadow extends beyond the glyph box; give it room. */
+    padding-bottom: 0.14em;
 }
 
 .hero__lede {
