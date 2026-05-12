@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BPM analysis &mdash; Run2Beat</title>
+    <meta name="description" content="How Run2Beat measures the tempo of every track — on-device Core ML beat tracker, classical DSP fallback, confidence reporting and manual override." />
+    <meta name="theme-color" content="#0a0d0a" />
+
+    <link rel="icon" type="image/png" href="assets/app-icon.png" />
+    <link rel="apple-touch-icon" href="assets/app-icon.png" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+    <div class="grain"></div>
+    <div class="ambient ambient--green"></div>
+    <div class="ambient ambient--mint"></div>
+
+    <header class="nav">
+        <a href="index.html" class="nav__brand">
+            <img src="assets/app-icon.png" alt="" class="nav__icon" />
+            <span class="nav__name">Run2Beat</span>
+        </a>
+        <nav class="nav__links">
+            <a href="index.html">Home</a>
+            <a href="privacy.html">Privacy</a>
+            <a href="support.html">Support</a>
+            <a href="https://testflight.apple.com/join/XxW6dN7Q" class="nav__cta js-testflight" target="_blank" rel="noopener">Get the app</a>
+        </nav>
+    </header>
+
+    <main class="legal">
+        <section class="legal__hero">
+            <p class="eyebrow eyebrow--center">Deep dive</p>
+            <h1 class="legal__title">Every track,<br />its true<br />tempo.</h1>
+            <p class="legal__lede">
+                Run2Beat measures the tempo (BPM) of every imported track entirely on your device &mdash; no cloud upload, no analysis queue. This page is the long version of what happens between &ldquo;file picked&rdquo; and a BPM appearing next to a track in your library.
+            </p>
+        </section>
+
+        <section class="legal__body">
+
+            <h2>What you need to know</h2>
+            <p>
+                Run2Beat automatically detects BPM when you import music. If a track&rsquo;s tempo ends up obviously wrong you can correct it manually from the Library or a playlist, or trigger a full library re-analysis from Settings.
+            </p>
+            <p>
+                Beat tracking on real music is genuinely hard &mdash; slow jazz ballads, polyrhythmic remixes and sparse singer-songwriter tracks can occasionally land at half, double or triple the true tempo. The app is honest about that: every track gets a <em>confidence</em> reading, and the ones the detector wasn&rsquo;t sure about are flagged in the library for you to review.
+            </p>
+
+            <h2>How the detection works</h2>
+            <p>
+                Run2Beat uses a <strong>learned beat-tracker (Core ML)</strong> as the primary detection path. The model is BeatNet (Heydari et al., ISMIR 2021), bundled with the app at roughly 1.5&nbsp;MB and converted to Core ML so inference runs locally on iPhone&rsquo;s CPU and GPU. No data leaves your device.
+            </p>
+            <p>
+                When the learned model is unavailable, or when its own confidence is too low, a <strong>classical DSP pipeline</strong> kicks in as a fallback. That fallback computes a spectral-flux onset envelope band-limited to 80&nbsp;Hz&ndash;5&nbsp;kHz, autocorrelates it with a subharmonic penalty so a real fundamental dominates its half-tempo cousin, and aggregates the result across overlapping 12-second windows so the chosen tempo is the one most windows actually agree on.
+            </p>
+            <p>
+                Every track that needed the DSP fallback is automatically marked as low-confidence in the UI &mdash; even when the fallback happened to land on the right number. The reasoning: the DSP&rsquo;s own confidence isn&rsquo;t a reliable predictor of when it&rsquo;s right, so we treat &ldquo;the model didn&rsquo;t commit&rdquo; as a hard &ldquo;please review&rdquo; signal.
+            </p>
+
+            <h2>Confidence and the low-confidence badge</h2>
+            <p>
+                Every analysed track stores a 0&ndash;1 confidence value alongside its BPM. The number is the fraction of the tempogram&rsquo;s analysis windows that agreed with the winning tempo cluster. In practice:
+            </p>
+            <ul>
+                <li>Clear pop or electronic with a single dominant kick: typically 0.65&ndash;0.95.</li>
+                <li>Mixed-feel pop where half-time and main-time both score well: 0.35&ndash;0.55.</li>
+                <li>Slow jazz with dense triplet subdivisions, where the algorithm&rsquo;s choice is essentially a coin flip between octaves: 0.20&ndash;0.40.</li>
+            </ul>
+            <p>
+                Run2Beat draws the line at <strong>0.42</strong>. Below that, the track gets an orange &ldquo;low-confidence&rdquo; badge in the library so you know the analyser wasn&rsquo;t sure. The default <em>Exclude low-confidence tracks</em> setting also keeps those tracks out of BPM-list shuffles, so a wrong BPM never quietly sneaks into your workout.
+            </p>
+
+            <h2>What gets re-analysed, what stays put</h2>
+            <p>
+                Run2Beat never silently overwrites a tempo you set yourself. As soon as you commit a value through the manual BPM editor &mdash; whether you typed it in or used Tap to Tempo &mdash; the track is marked as manual.
+            </p>
+            <p>
+                The library-wide &ldquo;Re-analyse all BPM&rdquo; button in Settings has two distinct buttons:
+            </p>
+            <ul>
+                <li><strong>Re-analyse all</strong> (default) &mdash; processes every track that isn&rsquo;t manual.</li>
+                <li><strong>Re-analyse all (overwrite manual)</strong> &mdash; explicit, destructive variant, only available behind a confirmation dialog. The only way to overwrite a value you committed yourself.</li>
+            </ul>
+            <p>
+                The principle: the algorithm is never allowed to overwrite a user-committed value as a side effect of any action other than your own explicit choice.
+            </p>
+
+            <h2>Tap to Tempo</h2>
+            <p>
+                If a track is wrong and you know the right tempo by feel, the manual editor has a Tap to Tempo pad. Each tap pulses the pad and gives a haptic kick; after four steady taps Run2Beat computes a trimmed mean of the inter-tap intervals and offers the result. Press Save and the value is committed exactly the same way as a typed-in number.
+            </p>
+            <p>
+                Standard DJ-tool behaviour: the trimmed mean discards a single mis-tap, and a pause longer than 2.5 seconds resets the sequence so you can simply start over.
+            </p>
+
+            <h2>BPM-list integrity after re-analysis</h2>
+            <p>
+                BPM-lists with manual track selection are kept in sync automatically. After every per-track or library-wide re-analysis, Run2Beat walks every manual BPM-list and removes any pinned track whose new tempo no longer fits the list&rsquo;s recipe &mdash; so a &ldquo;175 BPM playlist&rdquo; can never silently contain tracks at 163 BPM.
+            </p>
+            <p>
+                Smart-auto BPM-lists don&rsquo;t need cleanup: their membership is recomputed live from each track&rsquo;s current BPM, so a re-analysis instantly reshapes them.
+            </p>
+
+            <h2>Performance and battery</h2>
+            <p>
+                Per-track analysis is fast &mdash; a couple of seconds on modern iPhones. A library-wide re-analysis still takes time on a big library, simply because there&rsquo;s a lot to analyse. The run keeps going with the screen locked or the app in the background, kept alive by silent audio playback combined with the app&rsquo;s audio background mode. iOS suspends Apple&rsquo;s Neural Engine workloads when the app leaves the foreground, so Run2Beat deliberately pins inference to CPU and GPU only &mdash; that&rsquo;s how a multi-track re-analysis can keep running on the lock screen without getting stuck.
+            </p>
+
+            <h2>Known limits</h2>
+            <p>
+                The honest list:
+            </p>
+            <ul>
+                <li>Slow jazz ballads with dense triplet ride cymbals (e.g. <em>Misty</em> at 53&nbsp;BPM) often land in the 110&ndash;160 band because the triplet subdivision is genuinely louder than the quarter-note pulse.</li>
+                <li>Mid-tempo songs whose snare carries the half-note (some cumbia, some singer-songwriter material) can land at half tempo even when the model is confident.</li>
+                <li>Tracks with real tempo changes (a ballad that doubles up into swing, a ritardando ending) are reported as the tempo that dominates a 90&ndash;120-second analysis window. Run2Beat doesn&rsquo;t segment tempo.</li>
+                <li>DRM-protected files (Apple Music store downloads, Spotify offline cache) cannot be analysed because they can&rsquo;t be decoded. Run2Beat works with music you own as files.</li>
+            </ul>
+            <p>
+                In every one of those cases the manual editor with Tap to Tempo is the remedy &mdash; and the track will keep its corrected value through every future re-analysis you trigger.
+            </p>
+
+            <a href="index.html" class="learn-more">
+                <span class="learn-more__arrow" style="transform: scaleX(-1);">&rarr;</span>
+                Back to the overview
+            </a>
+
+        </section>
+
+        <footer class="footer">
+            <p class="footer__copyright">© 2026 Anders Westin</p>
+            <p>Email: <a href="mailto:hello@run2beat.com">hello@run2beat.com</a></p>
+            <p class="footer__sub">All rights reserved.</p>
+            <p class="footer__links">
+                <a href="privacy.html">Privacy Policy</a>
+                <span class="footer__sep">&middot;</span>
+                <a href="terms.html">Terms of Use</a>
+                <span class="footer__sep">&middot;</span>
+                <a href="support.html">Support</a>
+            </p>
+        </footer>
+    </main>
+
+    <!-- TestFlight dialog -->
+    <dialog class="tf-dialog" id="testflight-dialog" aria-labelledby="tf-dialog-title">
+        <button class="tf-dialog__close" type="button" aria-label="Close" data-tf-close>
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+        <div class="tf-dialog__inner">
+            <p class="eyebrow eyebrow--center">TestFlight beta</p>
+            <h3 class="tf-dialog__title" id="tf-dialog-title">Open this on your iPhone.</h3>
+            <p class="tf-dialog__text">
+                Run2Beat is currently in TestFlight beta and runs on iPhone and Apple Watch. Scan the QR code with your iPhone&rsquo;s camera, or open the link below in iOS Safari.
+            </p>
+            <div class="tf-dialog__qr">
+                <img src="assets/testflight-qr.svg" alt="QR code to join the Run2Beat TestFlight beta" />
+            </div>
+            <div class="tf-dialog__url-row">
+                <code class="tf-dialog__url" id="tf-dialog-url">https://testflight.apple.com/join/XxW6dN7Q</code>
+                <button class="tf-dialog__copy" type="button" data-tf-copy aria-label="Copy link">
+                    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M9 3h9a2 2 0 0 1 2 2v9M15 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>
+                    <span data-tf-copy-label>Copy</span>
+                </button>
+            </div>
+            <p class="tf-dialog__hint">You&rsquo;ll also need the free TestFlight app from the App Store.</p>
+        </div>
+    </dialog>
+
+    <script src="script.js" defer></script>
+</body>
+</html>

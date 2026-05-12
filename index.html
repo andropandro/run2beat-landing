@@ -117,11 +117,15 @@
             <div class="feature__copy">
                 <h2 class="feature__title">Every track,<br />its true tempo.</h2>
                 <p class="feature__text">
-                    Run2Beat calculates the tempo (BPM) of every track directly on your phone &mdash; no cloud uploads, no analysis queue. Tracks with an uncertain tempo are clearly flagged so you can review and correct them before your next session.
+                    Run2Beat uses a learned beat-tracker (Core ML, running entirely on your device) to find the tempo of every imported track. A classical DSP pipeline acts as a fallback when the model is uncertain &mdash; and any track that needed the fallback is automatically flagged as low-confidence so you can review and correct it before your next session.
                 </p>
                 <p class="feature__text feature__text--muted">
                     Always in control of the beat.
                 </p>
+                <a href="bpm-analysis.html" class="learn-more">
+                    How BPM analysis works
+                    <span class="learn-more__arrow">&rarr;</span>
+                </a>
             </div>
         </section>
 
@@ -153,7 +157,18 @@
                 <p class="kicker">For workouts</p>
                 <h2 class="feature__title">BPM lists.</h2>
                 <p class="feature__text">
-                    Build dynamic playlists where each track gets a target tempo. Run2Beat doesn&rsquo;t continuously fine-tune playback during the workout &mdash; the tempo is set per track. When you sync a BPM list to your Apple Watch, your own music files are BPM-adjusted up front, without distorting vocals.
+                    A BPM list is a saved recipe. You decide a target step cadence, how much music the list should hold and where the songs come from &mdash; Library or one or more standard playlists. Run2Beat then picks matching tracks at random and plays them back tempo-matched to your stride in real time.
+                </p>
+                <p class="feature__text">
+                    Three knobs shape the result:
+                </p>
+                <ul class="feature__list">
+                    <li><strong>Target BPM</strong> &mdash; your step cadence. Many runners aim for 170&ndash;180; a brisk power-walk often lands around 130.</li>
+                    <li><strong>Max pitching</strong> &mdash; how far Run2Beat may digitally shift a song&rsquo;s tempo to meet your target. Under 5&nbsp;% is usually unnoticeable; higher values qualify more songs from your library at the cost of making vocals sound less natural.</li>
+                    <li><strong>Multipliers</strong> &mdash; decide how your feet land on the beat. <em>1/1</em> matches songs close to the target. <em>2/1</em> matches songs at roughly half (two steps per beat). <em>1/2</em> matches songs at roughly double (one step every two beats). Songs always play near their natural tempo &mdash; only the beat you step on changes.</li>
+                </ul>
+                <p class="feature__text feature__text--muted">
+                    When you sync a BPM list to your Apple Watch, your music files are BPM-adjusted up front. No live processing on the watch, no distorted vocals.
                 </p>
             </div>
         </section>
@@ -199,8 +214,12 @@
                     </div>
                     <h3 class="trio__title">Volume normalisation</h3>
                     <p class="trio__text">
-                        Stop reaching for the volume control. Run2Beat measures the loudness of your music so older recordings and modern mixes play at the same level &mdash; on iPhone and Apple Watch.
+                        Stop reaching for the volume control. Run2Beat measures every track&rsquo;s loudness in LUFS &mdash; the same standard Apple Music and Spotify use &mdash; and adjusts playback so old recordings and modern masters sound equally loud, with built-in clipping protection.
                     </p>
+                    <a href="volume-normalisation.html" class="learn-more">
+                        Learn more
+                        <span class="learn-more__arrow">&rarr;</span>
+                    </a>
                 </div>
                 <div class="trio__card">
                     <div class="trio__icon" aria-hidden="true">
@@ -241,10 +260,17 @@
                 </div>
             </div>
             <div class="feature__copy">
-                <h2 class="feature__title">Leave the<br />phone home.</h2>
+                <h2 class="feature__title">Leave the<br />phone at home.</h2>
                 <p class="feature__text">
-                    Sync BPM lists and standard playlists directly to your Apple Watch &mdash; full standalone playback during your workout. Crossfade, EQ presets and volume normalisation all come along for the ride.
+                    Sync BPM lists and standard playlists to your Apple Watch and run with just AirPods &mdash; full standalone playback, no iPhone required. Transfer happens over Bluetooth from the iPhone&rsquo;s Sync screen; iPhone and Watch must both be active when you start, but afterwards both screens can be off. Only changes are re-transferred, so the more you sync the faster it gets.
                 </p>
+                <p class="feature__text feature__text--muted">
+                    Crossfade, EQ presets and volume normalisation all come along for the ride.
+                </p>
+                <a href="apple-watch-sync.html" class="learn-more">
+                    How sync works
+                    <span class="learn-more__arrow">&rarr;</span>
+                </a>
             </div>
         </section>
 
@@ -308,7 +334,7 @@
                     </span>
                     <div class="badge__text">
                         <span class="badge__label">BPM playlists</span>
-                        <p class="badge__desc">Group songs by tempo to nail a 160 BPM run or a 120 BPM warm-up walk.</p>
+                        <p class="badge__desc">Pick a target step cadence, a max-pitch tolerance and a 1/1, 2/1 or 1/2 multiplier &mdash; Run2Beat tempo-matches each song to your stride without distorting vocals.</p>
                     </div>
                 </div>
                 <div class="badge">
@@ -326,7 +352,7 @@
                     </span>
                     <div class="badge__text">
                         <span class="badge__label">Equalizer with presets</span>
-                        <p class="badge__desc">Five-band EQ with ready-made presets. Shape the sound without leaving playback.</p>
+                        <p class="badge__desc">Ten sliders from 32&nbsp;Hz to 16&nbsp;kHz, &plusmn;12&nbsp;dB. Save a preset per pair of headphones; presets also sync to Apple Watch.</p>
                     </div>
                 </div>
                 <div class="badge">
@@ -361,8 +387,8 @@
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13a8 8 0 0 1 16 0"/><path d="M7 16a5 5 0 0 1 10 0"/><path d="M9 19l3 3 3-3"/><path d="M12 22V13"/></svg>
                     </span>
                     <div class="badge__text">
-                        <span class="badge__label">AirDrop sharing</span>
-                        <p class="badge__desc">Send tracks from a Mac or another iPhone straight into Run2Beat&rsquo;s library.</p>
+                        <span class="badge__label">AirDrop a playlist</span>
+                        <p class="badge__desc">Send a whole playlist &mdash; audio files, BPM, artwork and play order &mdash; to another Run2Beat user. They import it as a fresh playlist on their iPhone.</p>
                     </div>
                 </div>
             </div>

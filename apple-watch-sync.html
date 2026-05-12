@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Apple Watch sync &mdash; Run2Beat</title>
+    <meta name="description" content="How Run2Beat syncs BPM lists and playlists from iPhone to Apple Watch — manual sync, what gets transferred, what to expect, and tips for fast and reliable transfers." />
+    <meta name="theme-color" content="#0a0d0a" />
+
+    <link rel="icon" type="image/png" href="assets/app-icon.png" />
+    <link rel="apple-touch-icon" href="assets/app-icon.png" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+    <div class="grain"></div>
+    <div class="ambient ambient--green"></div>
+    <div class="ambient ambient--mint"></div>
+
+    <header class="nav">
+        <a href="index.html" class="nav__brand">
+            <img src="assets/app-icon.png" alt="" class="nav__icon" />
+            <span class="nav__name">Run2Beat</span>
+        </a>
+        <nav class="nav__links">
+            <a href="index.html">Home</a>
+            <a href="privacy.html">Privacy</a>
+            <a href="support.html">Support</a>
+            <a href="https://testflight.apple.com/join/XxW6dN7Q" class="nav__cta js-testflight" target="_blank" rel="noopener">Get the app</a>
+        </nav>
+    </header>
+
+    <main class="legal">
+        <section class="legal__hero">
+            <p class="eyebrow eyebrow--center">Deep dive</p>
+            <h1 class="legal__title">Sync,<br />then run<br />untethered.</h1>
+            <p class="legal__lede">
+                Run2Beat syncs BPM lists and standard playlists from your iPhone to your paired Apple Watch so you can leave the phone at home and run with just AirPods. This page is the long version of what that sync does, what it doesn&rsquo;t do, and how to make it fast and reliable.
+            </p>
+        </section>
+
+        <section class="legal__body">
+
+            <h2>The model: iPhone configures, Watch plays</h2>
+            <p>
+                The iPhone is Run2Beat&rsquo;s configuration and processing hub: it stores your library, computes BPM, measures loudness, builds BPM lists and pre-renders any tempo-shifted variants. The Apple Watch is a playback runtime &mdash; it stores the synced files and plays them back, nothing more.
+            </p>
+            <p>
+                Everything you see on the Watch is the result of an explicit sync from the iPhone&rsquo;s Sync screen.
+            </p>
+
+            <h2>Manual and visible</h2>
+            <p>
+                There is no hidden background sync. You start it yourself from the iPhone&rsquo;s Sync screen, where the app shows you exactly what&rsquo;s new, updated or deleted before you commit. While the sync runs the iPhone shows a live overlay with progress; the Watch screen shows nothing during the transfer &mdash; that&rsquo;s normal.
+            </p>
+            <p>
+                The two devices need to be active at the moment you start a sync. After that, both screens can be off &mdash; the transfer keeps running over Bluetooth in the background.
+            </p>
+
+            <h2>What gets transferred</h2>
+            <p>
+                For every track in a BPM list or standard playlist Run2Beat sends:
+            </p>
+            <ul>
+                <li>The <strong>audio file</strong>, transcoded to HE-AAC for compactness on the watch.</li>
+                <li><strong>Title, artist and artwork</strong> embedded in the file&rsquo;s metadata as a fall-back so the playlist is reconstructable even if the structured payload arrives late.</li>
+                <li><strong>BPM and loudness data</strong> (LUFS, true peak) so the Watch player applies the same gain math as the iPhone &mdash; the same track sounds equally loud on both devices.</li>
+                <li>For BPM lists: <strong>pre-rendered tempo variants</strong>. The iPhone applies the recipe&rsquo;s rate change with pitch preservation up front, so the Watch never has to do that work itself.</li>
+                <li>The <strong>play order</strong> and the list metadata.</li>
+            </ul>
+            <p>
+                Equalizer presets sync separately via the Watch app&rsquo;s shared settings channel. On the Watch you pick a preset directly from the Home view to change sound profile without your phone.
+            </p>
+
+            <h2>Speed and time expectations</h2>
+            <p>
+                Files are sent over Bluetooth. That&rsquo;s a Bluetooth-shaped pipe &mdash; a normal-length playlist routinely takes several minutes to transfer for the first time. Subsequent syncs are much faster because Run2Beat only transfers what&rsquo;s actually new or changed; lists and tracks that are already on the Watch are skipped.
+            </p>
+            <p>
+                Practical tips for fast and reliable syncs:
+            </p>
+            <ul>
+                <li><strong>Keep iPhone and Watch close together.</strong> Bluetooth degrades quickly with distance and obstacles.</li>
+                <li><strong>Wear the watch or leave it charging.</strong> Both devices need to be awake at the moment sync starts. After that they can both go to sleep.</li>
+                <li><strong>iPhone keeps syncing in the background.</strong> Lock the screen, switch to another app &mdash; the transfer continues. The overlay updates the next time you return to Run2Beat.</li>
+                <li><strong>Removing a playlist from the Watch is the only fast step.</strong> Sending a list to the Watch always takes time; planning around that &mdash; e.g. syncing tonight for tomorrow morning&rsquo;s run &mdash; goes a long way.</li>
+            </ul>
+
+            <h2>Cancel any time, resume later</h2>
+            <p>
+                The Sync screen has a visible Cancel control while a transfer is in flight. Cancelling is safe &mdash; the next sync simply picks up what&rsquo;s still missing. The pending-change indicator on the Sync screen tells you exactly what hasn&rsquo;t made it across yet.
+            </p>
+
+            <h2>Standalone playback on the Watch</h2>
+            <p>
+                Once a list is synced, the Watch can play it back without the phone. You pair your AirPods directly to the Watch, open Run2Beat on the wrist, pick a BPM list or playlist and press play.
+            </p>
+            <p>
+                The Watch player honours the same volume normalisation, the same EQ preset and the same crossfade behaviour as the iPhone &mdash; the audio decisions are baked into the synced files and metadata, so the sound is identical regardless of which device you&rsquo;re listening from.
+            </p>
+
+            <h2>If something doesn&rsquo;t arrive</h2>
+            <p>
+                The Sync screen surfaces an item-level pending list and explicit error messages. Common situations:
+            </p>
+            <ul>
+                <li><strong>&ldquo;Watch not reachable&rdquo;.</strong> The Watch app isn&rsquo;t open in the background or the devices are out of Bluetooth range. Open the Run2Beat app on the Watch once to bring the connection back up; sync will then start normally.</li>
+                <li><strong>Partial sync.</strong> If iOS suspends the transfer (e.g. you ran out of battery, the Watch left range for a long time) the next sync resumes from where it stopped. Nothing is lost; nothing has to be re-synced manually.</li>
+                <li><strong>&ldquo;On Watch&rdquo; badge.</strong> After a successful sync each list shows a green &ldquo;On Watch&rdquo; indicator confirming the Watch holds the latest version.</li>
+            </ul>
+
+            <h2>Storage on the Watch</h2>
+            <p>
+                Audio files transfer to the Watch&rsquo;s app sandbox as HE-AAC. A typical 4-minute song occupies roughly 2&nbsp;MB at 64&nbsp;kbps HE-AAC &mdash; about half the size of a comparable-quality MP3 or AAC-LC file. That means a multi-hour BPM list still fits comfortably alongside other Apple Watch content on a modern watch.
+            </p>
+
+            <h2>Privacy reminder</h2>
+            <p>
+                Audio files are transferred directly from your iPhone to your paired Apple Watch using Apple&rsquo;s WatchConnectivity framework. No data passes through Run2Beat&rsquo;s servers because Run2Beat doesn&rsquo;t run any.
+            </p>
+
+            <a href="index.html" class="learn-more">
+                <span class="learn-more__arrow" style="transform: scaleX(-1);">&rarr;</span>
+                Back to the overview
+            </a>
+
+        </section>
+
+        <footer class="footer">
+            <p class="footer__copyright">© 2026 Anders Westin</p>
+            <p>Email: <a href="mailto:hello@run2beat.com">hello@run2beat.com</a></p>
+            <p class="footer__sub">All rights reserved.</p>
+            <p class="footer__links">
+                <a href="privacy.html">Privacy Policy</a>
+                <span class="footer__sep">&middot;</span>
+                <a href="terms.html">Terms of Use</a>
+                <span class="footer__sep">&middot;</span>
+                <a href="support.html">Support</a>
+            </p>
+        </footer>
+    </main>
+
+    <dialog class="tf-dialog" id="testflight-dialog" aria-labelledby="tf-dialog-title">
+        <button class="tf-dialog__close" type="button" aria-label="Close" data-tf-close>
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+        <div class="tf-dialog__inner">
+            <p class="eyebrow eyebrow--center">TestFlight beta</p>
+            <h3 class="tf-dialog__title" id="tf-dialog-title">Open this on your iPhone.</h3>
+            <p class="tf-dialog__text">
+                Run2Beat is currently in TestFlight beta and runs on iPhone and Apple Watch. Scan the QR code with your iPhone&rsquo;s camera, or open the link below in iOS Safari.
+            </p>
+            <div class="tf-dialog__qr">
+                <img src="assets/testflight-qr.svg" alt="QR code to join the Run2Beat TestFlight beta" />
+            </div>
+            <div class="tf-dialog__url-row">
+                <code class="tf-dialog__url" id="tf-dialog-url">https://testflight.apple.com/join/XxW6dN7Q</code>
+                <button class="tf-dialog__copy" type="button" data-tf-copy aria-label="Copy link">
+                    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M9 3h9a2 2 0 0 1 2 2v9M15 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>
+                    <span data-tf-copy-label>Copy</span>
+                </button>
+            </div>
+            <p class="tf-dialog__hint">You&rsquo;ll also need the free TestFlight app from the App Store.</p>
+        </div>
+    </dialog>
+
+    <script src="script.js" defer></script>
+</body>
+</html>

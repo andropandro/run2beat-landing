@@ -75,7 +75,14 @@
             </p>
             <p>
                 <strong>How do I get files into Run2Beat?</strong><br />
-                Use AirDrop from a Mac, the iOS Files app (drag and drop from iCloud Drive, Dropbox, OneDrive&hellip;) or the in-app import flow. Files are copied into Run2Beat&rsquo;s private sandbox &mdash; the originals stay where they are.
+                There are exactly two paths:
+            </p>
+            <ul>
+                <li><strong>The in-app Import view.</strong> Pick one or more audio files (MP3, M4A or WAV) or pick a folder &mdash; Run2Beat scans subfolders too and can optionally create one playlist per folder. iCloud Drive files are downloaded automatically before the import starts. Files are copied into Run2Beat&rsquo;s private sandbox; the originals stay where they are.</li>
+                <li><strong>AirDrop of a Run2Beat playlist from another user.</strong> A friend who also runs Run2Beat can &ldquo;Send via AirDrop&rdquo; from a playlist on their iPhone. You receive a <code>.r2bplaylist</code> package containing the audio files, BPM values, artwork and play order, and the app imports it as a fresh playlist.</li>
+            </ul>
+            <p>
+                There&rsquo;s no other way in. Run2Beat is a local-files app and does not pull from streaming services or generic share-sheet sources.
             </p>
             <p>
                 <strong>Some tracks show up without a title or artwork.</strong><br />
@@ -95,17 +102,23 @@
             <h2>Apple Watch sync</h2>
             <p>
                 <strong>How do I get music onto my Apple Watch?</strong><br />
-                Open a BPM list, choose &ldquo;Sync to Watch&rdquo;, and put the watch on its charger near your iPhone. Transfer happens over Apple&rsquo;s WatchConnectivity framework and can take a while for larger lists.
+                Open the Sync screen on iPhone, review the pending changes and start the sync. Keep iPhone and Watch close together &mdash; files are sent over Bluetooth. Both devices need to be active at the moment you start; after that, both screens can be off. The Watch screen does <em>not</em> need to be on for the transfer to continue, and you do <em>not</em> need to put the Watch on its charger &mdash; that&rsquo;s an Apple Music-only requirement that doesn&rsquo;t apply to Run2Beat. A normal-length playlist routinely takes several minutes the first time; subsequent syncs are much faster because only changes are re-transferred.
             </p>
             <p>
-                <strong>The watch shows &ldquo;syncing&rdquo; but nothing arrives.</strong><br />
-                Make sure the watch is charging, the iPhone is unlocked, and both devices are on the same Wi-Fi. Toggling Bluetooth on the iPhone often unblocks a stuck transfer.
+                <strong>The Watch shows nothing during sync &mdash; is that normal?</strong><br />
+                Yes. The Watch screen stays unchanged while a transfer is in flight; the progress overlay lives on the iPhone, not on the Watch. As long as the iPhone shows the sync overlay (or you can see pending items on the Sync screen) the transfer is running. After a successful sync, each list gets a green &ldquo;On Watch&rdquo; indicator confirming the Watch has the latest version. If iOS suspends the transfer (out-of-range, drained battery) the next sync simply picks up where it left off &mdash; nothing has to be re-sent manually.
+            </p>
+            <p>
+                See <a href="apple-watch-sync.html">the Apple Watch sync deep dive</a> for the full picture.
             </p>
 
             <h2>Sound &amp; playback</h2>
             <p>
                 <strong>Volume normalisation, EQ and crossfade</strong><br />
-                These are all controlled from Settings inside the app. Volume normalisation evens out loudness between tracks; the 5-band EQ and crossfade are applied during playback and don&rsquo;t modify your files.
+                These are all controlled from Settings inside the app and applied during playback &mdash; they never modify your audio files. Volume normalisation measures every track&rsquo;s loudness in LUFS (ITU-R BS.1770 / EBU R 128, the same standard Apple Music and Spotify use) and gently raises or lowers it to a reference level you pick (&minus;14 LUFS by default), with built-in clipping protection. The equalizer has <strong>ten</strong> sliders spanning 32&nbsp;Hz to 16&nbsp;kHz at &plusmn;12&nbsp;dB; save a preset per pair of headphones and switch between them in a tap. Saved presets sync to Apple Watch automatically.
+            </p>
+            <p>
+                See the deep dives for <a href="volume-normalisation.html">volume normalisation</a> and <a href="bpm-analysis.html">BPM analysis</a> for more.
             </p>
             <p>
                 <strong>Playback through AirPods, car or speakers</strong><br />

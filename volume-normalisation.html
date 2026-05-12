@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Volume normalisation &mdash; Run2Beat</title>
+    <meta name="description" content="How Run2Beat measures every track's loudness in LUFS and adjusts playback so old recordings and modern masters sound equally loud — on iPhone and Apple Watch." />
+    <meta name="theme-color" content="#0a0d0a" />
+
+    <link rel="icon" type="image/png" href="assets/app-icon.png" />
+    <link rel="apple-touch-icon" href="assets/app-icon.png" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+    <div class="grain"></div>
+    <div class="ambient ambient--green"></div>
+    <div class="ambient ambient--mint"></div>
+
+    <header class="nav">
+        <a href="index.html" class="nav__brand">
+            <img src="assets/app-icon.png" alt="" class="nav__icon" />
+            <span class="nav__name">Run2Beat</span>
+        </a>
+        <nav class="nav__links">
+            <a href="index.html">Home</a>
+            <a href="privacy.html">Privacy</a>
+            <a href="support.html">Support</a>
+            <a href="https://testflight.apple.com/join/XxW6dN7Q" class="nav__cta js-testflight" target="_blank" rel="noopener">Get the app</a>
+        </nav>
+    </header>
+
+    <main class="legal">
+        <section class="legal__hero">
+            <p class="eyebrow eyebrow--center">Deep dive</p>
+            <h1 class="legal__title">Even loud.<br />Even quiet.<br />Just right.</h1>
+            <p class="legal__lede">
+                Modern releases are mixed at very different loudness levels &mdash; a 2024 pop master sits roughly twice as loud as a 2002 jazz ballad. Run2Beat measures every track on import and adjusts playback so you never have to reach for the volume control between songs.
+            </p>
+        </section>
+
+        <section class="legal__body">
+
+            <h2>The problem</h2>
+            <p>
+                For two decades the music industry mastered records louder and louder. A modern pop release typically lands at <strong>&minus;7 to &minus;9 LUFS integrated</strong>; a jazz album from 2002 sits at <strong>&minus;18 to &minus;22 LUFS</strong>. Perceptually, that&rsquo;s roughly a factor of two in loudness &mdash; the difference between &ldquo;in the room&rdquo; and &ldquo;background music&rdquo;.
+            </p>
+            <p>
+                The phone&rsquo;s volume slider can&rsquo;t fix that. It&rsquo;s the input to whatever your headphones do; it doesn&rsquo;t touch the mastering decisions baked into each file. Per-track normalisation is the only solution that actually flattens the perceived-loudness curve.
+            </p>
+
+            <h2>Three different things people call &ldquo;volume&rdquo;</h2>
+            <ul>
+                <li><strong>Sample peak</strong> &mdash; the highest single sample value in the file. Useful for clipping protection, but barely correlates with what you hear.</li>
+                <li><strong>True peak (dBTP)</strong> &mdash; inter-sample peak after the digital-to-analogue reconstruction filter. EBU&nbsp;R&nbsp;128 says this should stay below &minus;1&nbsp;dBTP so the audio never clips on the way out.</li>
+                <li><strong>Integrated loudness (LUFS)</strong> &mdash; the hearing-weighted mean level over the whole track, gated to ignore long silences. This is what perceived &ldquo;loudness&rdquo; actually is, and it&rsquo;s what Apple Music, Spotify, YouTube and broadcasters use.</li>
+            </ul>
+
+            <h2>Standard, reference and target</h2>
+            <p>
+                Run2Beat follows the same loudness model as the major streaming services: <strong>ITU-R BS.1770 / EBU R 128</strong>. The reference level you can choose in Settings is one of three commonly used targets:
+            </p>
+            <ul>
+                <li><strong>&minus;14 LUFS</strong> (default) &mdash; matches Apple Music, Spotify Normal and YouTube. The right choice for most listeners.</li>
+                <li><strong>&minus;16 LUFS</strong> &mdash; quieter, more headroom on dynamic recordings.</li>
+                <li><strong>&minus;11 LUFS</strong> &mdash; louder, like Spotify&rsquo;s &ldquo;Loud&rdquo; setting; leaves less headroom on aggressive masters.</li>
+            </ul>
+
+            <h2>How a track gets its loudness number</h2>
+            <p>
+                When you import a file, Run2Beat decodes the audio at its native sample rate and runs the broadcast-standard BS.1770 loudness algorithm directly on your device. The result &mdash; integrated LUFS plus the file&rsquo;s true-peak value in dBTP &mdash; is stored on the track in your library. It never has to be measured again.
+            </p>
+            <p>
+                Embedded ReplayGain 2.0 and iTunes Sound Check tags are read first when present; the heavy analysis pass only runs if the file isn&rsquo;t already telling us its loudness.
+            </p>
+
+            <h2>How the gain is applied at playback</h2>
+            <p>
+                On every track change Run2Beat computes the gain it needs to land the track on your chosen reference:
+            </p>
+            <p style="font-family: ui-monospace, SFMono-Regular, Menlo, monospace; padding: 14px 18px; background: rgba(255,255,255,0.04); border-radius: 12px; font-size: 14px; line-height: 1.6;">
+                gainDB&nbsp;=&nbsp;referenceLUFS&nbsp;&minus;&nbsp;measuredLUFS<br />
+                gainDB&nbsp;=&nbsp;min(gainDB,&nbsp;&minus;1.0&nbsp;&minus;&nbsp;measuredTruePeakDBTP)
+            </p>
+            <p>
+                The first line raises quiet tracks and lowers loud ones. The second is the <strong>true-peak ceiling</strong>: a quiet track is never amplified so much that its inter-sample peaks would clip after the D/A reconstruction. The clamp guarantees inaudible digital protection on every track, every time.
+            </p>
+            <p>
+                The gain is a sample-accurate scalar applied during the existing audio-mixer pass &mdash; effectively zero extra CPU, no extra latency.
+            </p>
+
+            <h2>Same numbers, same loudness on Apple Watch</h2>
+            <p>
+                When a BPM list or playlist syncs to your Apple Watch, the per-track LUFS and true-peak values travel along with the audio. The Watch player applies the same gain formula as the iPhone, so switching from headphones on the phone to AirPods paired to the watch doesn&rsquo;t need a volume bump.
+            </p>
+
+            <h2>Re-measuring the library</h2>
+            <p>
+                If you change reference level, want to re-measure after an algorithm update, or simply want every legacy track that pre-dates the loudness feature to have a value, Settings has a <strong>&ldquo;Re-measure all loudness&rdquo;</strong> button. Some honest expectations for that run:
+            </p>
+            <ul>
+                <li><strong>Takes time.</strong> Each track needs a couple of seconds of analysis. Across several hundred tracks, the full run easily exceeds an hour.</li>
+                <li><strong>Battery-heavy.</strong> The phone decodes every file and runs the same DSP pipeline that broadcasters use. Battery drops noticeably faster than during normal playback for as long as the run is in progress. Connecting a charger is recommended.</li>
+                <li><strong>Keeps running in the background.</strong> The run continues with the screen locked or the app in the background, the same way the BPM re-analysis does &mdash; silent audio combined with the app&rsquo;s audio background mode. Run2Beat takes a short pause between every track to stay inside iOS&rsquo;s background limits, which keeps the run alive at the cost of roughly doubling its wall-clock duration.</li>
+                <li><strong>Replaces existing values.</strong> The result simply overwrites the previous one. Recently imported tracks go in too.</li>
+            </ul>
+            <p>
+                Rule of thumb: a library of around a thousand tracks takes well over an hour and uses roughly as much battery as a couple of hours of music playback. Plan accordingly.
+            </p>
+
+            <h2>Where loudness fits with the rest</h2>
+            <p>
+                Volume normalisation is independent of the equalizer and crossfade &mdash; it&rsquo;s applied in a separate mixer stage so EQ presets and crossfade behave exactly the same with normalisation on or off. Tracks imported before the feature shipped have no measured loudness and simply play at their native level until you trigger the re-measure.
+            </p>
+
+            <a href="index.html" class="learn-more">
+                <span class="learn-more__arrow" style="transform: scaleX(-1);">&rarr;</span>
+                Back to the overview
+            </a>
+
+        </section>
+
+        <footer class="footer">
+            <p class="footer__copyright">© 2026 Anders Westin</p>
+            <p>Email: <a href="mailto:hello@run2beat.com">hello@run2beat.com</a></p>
+            <p class="footer__sub">All rights reserved.</p>
+            <p class="footer__links">
+                <a href="privacy.html">Privacy Policy</a>
+                <span class="footer__sep">&middot;</span>
+                <a href="terms.html">Terms of Use</a>
+                <span class="footer__sep">&middot;</span>
+                <a href="support.html">Support</a>
+            </p>
+        </footer>
+    </main>
+
+    <dialog class="tf-dialog" id="testflight-dialog" aria-labelledby="tf-dialog-title">
+        <button class="tf-dialog__close" type="button" aria-label="Close" data-tf-close>
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+        <div class="tf-dialog__inner">
+            <p class="eyebrow eyebrow--center">TestFlight beta</p>
+            <h3 class="tf-dialog__title" id="tf-dialog-title">Open this on your iPhone.</h3>
+            <p class="tf-dialog__text">
+                Run2Beat is currently in TestFlight beta and runs on iPhone and Apple Watch. Scan the QR code with your iPhone&rsquo;s camera, or open the link below in iOS Safari.
+            </p>
+            <div class="tf-dialog__qr">
+                <img src="assets/testflight-qr.svg" alt="QR code to join the Run2Beat TestFlight beta" />
+            </div>
+            <div class="tf-dialog__url-row">
+                <code class="tf-dialog__url" id="tf-dialog-url">https://testflight.apple.com/join/XxW6dN7Q</code>
+                <button class="tf-dialog__copy" type="button" data-tf-copy aria-label="Copy link">
+                    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M9 3h9a2 2 0 0 1 2 2v9M15 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>
+                    <span data-tf-copy-label>Copy</span>
+                </button>
+            </div>
+            <p class="tf-dialog__hint">You&rsquo;ll also need the free TestFlight app from the App Store.</p>
+        </div>
+    </dialog>
+
+    <script src="script.js" defer></script>
+</body>
+</html>
