@@ -14,7 +14,8 @@ frame uses `object-fit: cover`.
 | `bpm-analysis.jpg`        | Know the tempo           | A track with the "uncertain tempo" flag, or the BPM analysis info-sheet.            |
 | `bpm-lists.jpg`           | Two ways to play / BPM   | A BPM list with per-track target tempos and the dynamic playlist UI.                |
 | `standard-playlists.jpg`  | Two ways to play / Std   | A regular playlist screen with imported music, no BPM column emphasised.            |
-| `watch.jpg`               | Take it anywhere / Watch | Apple Watch playback screen (Watch simulator screenshot is fine).                   |
+| `watch.jpg`               | Take it anywhere / Watch | Apple Watch playback screen (left of the pair).                                     |
+| `watch-2.jpg`             | Take it anywhere / Watch | Second Apple Watch screen shown side by side with `watch.jpg`.                      |
 | `airdrop.jpg`             | Take it anywhere / Share | iOS share sheet with AirDrop highlighted, or the in-app share confirmation.        |
 
 ## Tips for great-looking screenshots

@@ -631,6 +631,18 @@ a { color: inherit; text-decoration: none; }
 .phone-frame--watch::before { top: 32%; height: 12%; left: auto; right: -2px; background: linear-gradient(-90deg, #2a2c2a, transparent); }
 .phone-frame--watch::after  { display: none; }
 
+/* Two watch frames side by side. Inherits the same clamp() width on
+   each child frame, so the pair scales together with the viewport.
+   The gap is tight on purpose - the watches read as a paired before/
+   after story rather than two unrelated screenshots. */
+.watch-pair {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(10px, 1.4vw, 22px);
+    flex-wrap: nowrap;
+}
+
 /* ---------- TRIO CARDS (sound quality) ---------- */
 
 .trio {
