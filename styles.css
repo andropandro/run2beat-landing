@@ -633,13 +633,17 @@ a { color: inherit; text-decoration: none; }
 
 /* Two watch frames side by side. Inherits the same clamp() width on
    each child frame, so the pair scales together with the viewport.
-   The gap is tight on purpose - the watches read as a paired before/
-   after story rather than two unrelated screenshots. */
+   flex-direction is set explicitly because the surrounding `.feature`
+   grid lays children out in a column on narrow viewports, and we
+   want the two watches to stay shoulder-to-shoulder regardless. The
+   gap is generous on purpose so the two screens read as a related
+   pair without crowding each other. */
 .watch-pair {
     display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
-    gap: clamp(10px, 1.4vw, 22px);
+    gap: clamp(20px, 3vw, 48px);
     flex-wrap: nowrap;
 }
 
