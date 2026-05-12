@@ -190,7 +190,12 @@ a { color: inherit; text-decoration: none; }
 .hero__inner {
     position: relative;
     z-index: 2;
-    max-width: 880px;
+    /* Wide enough that "Your workout." stays on a single line at the
+       desktop sizes the hero title can hit (up to ~112 px at the
+       11vw clamp middle). The lede paragraph is constrained
+       separately to ~620 px via .hero__lede, so widening here does
+       not blow out reading width. */
+    max-width: 1100px;
 }
 
 .hero__icon {
@@ -234,6 +239,18 @@ a { color: inherit; text-decoration: none; }
     /* Room for descenders (the "y" in "sync") so the tail isn't
        clipped by the next element. */
     padding-bottom: 0.06em;
+}
+
+/* Keep each title line on a single line above narrow phone widths.
+   "Your workout." is the longest line and was wrapping at desktop
+   sizes (11vw at the ~1024 px viewport produces ~112 px text and
+   the line clears 870 px wide). Below ~560 px viewport we let the
+   default wrap behaviour take over so the title never overflows
+   the screen on small phones. */
+@media (min-width: 560px) {
+    .hero__title-line {
+        white-space: nowrap;
+    }
 }
 
 .hero__title-line--glow {
