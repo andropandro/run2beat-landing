@@ -412,6 +412,16 @@ a { color: inherit; text-decoration: none; }
 
 .section__lede--left { text-align: left; margin-left: 0; }
 
+/* Secondary follow-up paragraph inside a centered section. Tightens
+   the gap to the preceding lede and softens the tone so it reads as
+   an aside rather than a second equal-weight line. */
+.section__lede--muted {
+    color: var(--text-dim);
+    font-style: italic;
+    font-size: clamp(14px, 1.4vw, 16px);
+    margin-top: -32px;
+}
+
 /* ---------- FEATURE BLOCKS ---------- */
 
 .feature {
@@ -663,75 +673,6 @@ a { color: inherit; text-decoration: none; }
     gap: clamp(20px, 3vw, 48px);
     flex-wrap: nowrap;
 }
-
-/* ---------- ICON TILE (conceptual visual; used where there is no
-   real screenshot to show, e.g. the CarPlay row. A tile of the same
-   visual weight as the phone-frame so the alternating two-column
-   layout still feels balanced, but with a single iconic SVG instead
-   of a faked UI. ---------- */
-
-.icon-tile {
-    position: relative;
-    width: clamp(240px, 26vw, 320px);
-    aspect-ratio: 1 / 1.05;
-    background: linear-gradient(160deg, #1d1f1d, #0c0e0c);
-    border-radius: 32px;
-    padding: 10px;
-    box-shadow:
-        0 40px 100px rgba(0, 0, 0, 0.55),
-        0 10px 30px rgba(0, 0, 0, 0.4),
-        inset 0 1px 0 rgba(255, 255, 255, 0.08),
-        0 0 0 1px rgba(255, 255, 255, 0.04);
-}
-
-.icon-tile__inner {
-    width: 100%;
-    height: 100%;
-    border-radius: 24px;
-    background:
-        radial-gradient(ellipse at top, rgba(var(--accent-rgb), 0.22), transparent 65%),
-        linear-gradient(180deg, #0a0d0a, #050605);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 28px;
-    padding: 32px;
-    text-align: center;
-}
-
-.icon-tile__icon {
-    width: 110px;
-    height: 110px;
-    color: var(--brand-bright);
-    filter: drop-shadow(0 0 28px rgba(var(--accent-bright-rgb), 0.35));
-}
-
-.icon-tile__icon svg {
-    width: 100%;
-    height: 100%;
-}
-
-.icon-tile__caption {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.icon-tile__sub {
-    font-size: 11px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-}
-
-.icon-tile__label {
-    font-size: 18px;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    color: var(--text);
-}
-
 
 /* ---------- TRIO CARDS (sound quality) ---------- */
 
