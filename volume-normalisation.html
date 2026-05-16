@@ -70,7 +70,7 @@
 
             <h2>How a track gets its loudness number</h2>
             <p>
-                When you import a file, Run2Beat decodes the audio at its native sample rate and runs the broadcast-standard BS.1770 loudness algorithm directly on your device. The result &mdash; integrated LUFS plus the file&rsquo;s true-peak value in dBTP &mdash; is stored on the track in your library. It never has to be measured again.
+                When you import a file, Run2Beat decodes the audio at its native sample rate and runs the broadcast-standard BS.1770 loudness algorithm directly on your device. The result &mdash; integrated LUFS plus the file&rsquo;s true-peak value in dBTP &mdash; is stored on the track in your library. It never has to be measured again. The work happens once during import and is part of the few-seconds-per-song cost mentioned on the <a href="index.html#library">home page</a>; everything you read below about wall-clock time and battery applies to the standalone <em>&ldquo;Re-measure all loudness&rdquo;</em> button in Settings, not to import.
             </p>
             <p>
                 Embedded ReplayGain 2.0 and iTunes Sound Check tags are read first when present; the heavy analysis pass only runs if the file isn&rsquo;t already telling us its loudness.
