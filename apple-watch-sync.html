@@ -76,7 +76,10 @@
 
             <h2>Speed and time expectations</h2>
             <p>
-                Files are sent over Bluetooth. That&rsquo;s a Bluetooth-shaped pipe &mdash; a normal-length playlist routinely takes several minutes to transfer for the first time. Subsequent syncs are much faster because Run2Beat only transfers what&rsquo;s actually new or changed; lists and tracks that are already on the Watch are skipped.
+                Files are sent over Bluetooth. That&rsquo;s a Bluetooth-shaped pipe - a normal-length playlist routinely takes several minutes to transfer for the first time. Subsequent syncs are much faster because Run2Beat only transfers what&rsquo;s actually new or changed; lists and tracks that are already on the Watch are skipped.
+            </p>
+            <p>
+                If you re-open the Sync screen without having changed anything, the next sync completes almost immediately - the iPhone verifies the Watch is already in the desired state and skips the transfer machinery entirely.
             </p>
             <p>
                 Practical tips for fast and reliable syncs:
@@ -84,8 +87,8 @@
             <ul>
                 <li><strong>Keep iPhone and Watch close together.</strong> Bluetooth degrades quickly with distance and obstacles.</li>
                 <li><strong>Wear the watch or leave it charging.</strong> Both devices need to be awake at the moment sync starts. After that they can both go to sleep.</li>
-                <li><strong>iPhone keeps syncing in the background.</strong> Lock the screen, switch to another app &mdash; the transfer continues. The overlay updates the next time you return to Run2Beat.</li>
-                <li><strong>Removing a playlist from the Watch is the only fast step.</strong> Sending a list to the Watch always takes time; planning around that &mdash; e.g. syncing tonight for tomorrow morning&rsquo;s run &mdash; goes a long way.</li>
+                <li><strong>iPhone keeps syncing in the background.</strong> Lock the screen, switch to another app - the transfer continues. The overlay updates the next time you return to Run2Beat.</li>
+                <li><strong>Plan ahead for first-time syncs of large lists.</strong> Sending new tracks to the Watch always takes time; syncing tonight for tomorrow morning&rsquo;s run goes a long way. Re-running the sync later with no changes is effectively instant.</li>
             </ul>
 
             <h2>Cancel any time, resume later</h2>
@@ -107,8 +110,8 @@
             </p>
             <ul>
                 <li><strong>&ldquo;Watch not reachable&rdquo;.</strong> The Watch app isn&rsquo;t open in the background or the devices are out of Bluetooth range. Open the Run2Beat app on the Watch once to bring the connection back up; sync will then start normally.</li>
-                <li><strong>Partial sync.</strong> If iOS suspends the transfer (e.g. you ran out of battery, the Watch left range for a long time) the next sync resumes from where it stopped. Nothing is lost; nothing has to be re-synced manually.</li>
-                <li><strong>&ldquo;On Watch&rdquo; badge.</strong> After a successful sync each list shows a green &ldquo;On Watch&rdquo; indicator confirming the Watch holds the latest version.</li>
+                <li><strong>A list is never half-synced.</strong> If a transfer is interrupted - low battery, the Watch leaves range for a long time, you cancel mid-sync - Run2Beat verifies on a per-list basis that both the list&rsquo;s metadata and every audio file actually landed on the Watch. Lists that don&rsquo;t pass that check within the sync window are removed from the Watch and queued for a fresh transfer on the next sync. You never end up with a list that looks playable on the Watch but is missing some of its files.</li>
+                <li><strong>&ldquo;On Watch&rdquo; badge.</strong> After a successful sync each list shows a green &ldquo;On Watch&rdquo; indicator confirming the Watch holds both the list&rsquo;s metadata and every one of its audio files.</li>
             </ul>
 
             <h2>Storage on the Watch</h2>
