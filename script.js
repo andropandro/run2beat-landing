@@ -86,23 +86,39 @@
 
     const dialog = document.getElementById("appstore-dialog");
     const appLinks = document.querySelectorAll(".js-appstore");
+    const qrLinks = document.querySelectorAll(".js-qr");
 
-    if (dialog && appLinks.length && !isIOS()) {
-        // Non-iOS visitor: intercept App Store links and show the QR dialog
-        // so they can scan it and install on their iPhone.
-        appLinks.forEach((link) => {
+    if (dialog) {
+        const openDialog = (fallbackHref) => {
+            if (typeof dialog.showModal === "function") {
+                dialog.showModal();
+            } else if (fallbackHref) {
+                // Old browsers without <dialog> support: fall back to the link.
+                window.open(fallbackHref, "_blank", "noopener");
+            }
+        };
+
+        // Non-iOS visitors: intercept App Store links and show the QR dialog
+        // so they can scan it and install on their iPhone. On iOS the links
+        // open the App Store directly.
+        if (appLinks.length && !isIOS()) {
+            appLinks.forEach((link) => {
+                link.addEventListener("click", (e) => {
+                    // Allow opening in a new tab if the user really wants it.
+                    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) {
+                        return;
+                    }
+                    e.preventDefault();
+                    openDialog(link.href);
+                });
+            });
+        }
+
+        // Explicit "Show QR code" triggers always open the dialog.
+        qrLinks.forEach((link) => {
             link.addEventListener("click", (e) => {
-                // Allow opening in a new tab if the user really wants the URL.
-                if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) {
-                    return;
-                }
                 e.preventDefault();
-                if (typeof dialog.showModal === "function") {
-                    dialog.showModal();
-                } else {
-                    // Old browsers without <dialog> support: fall back to the link.
-                    window.open(link.href, "_blank", "noopener");
-                }
+                openDialog();
             });
         });
 
