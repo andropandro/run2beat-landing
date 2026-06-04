@@ -74,7 +74,7 @@
         { passive: true }
     );
 
-    // ---------- TestFlight: iOS deep-link, QR dialog otherwise ----------
+    // ---------- App Store: iOS opens the store, QR dialog otherwise ----------
     function isIOS() {
         const ua = navigator.userAgent || "";
         // Classic iPhone / iPad / iPod
@@ -84,12 +84,13 @@
         return false;
     }
 
-    const dialog = document.getElementById("testflight-dialog");
-    const tfLinks = document.querySelectorAll(".js-testflight");
+    const dialog = document.getElementById("appstore-dialog");
+    const appLinks = document.querySelectorAll(".js-appstore");
 
-    if (dialog && tfLinks.length && !isIOS()) {
-        // Non-iOS visitor: intercept TestFlight links and show the QR dialog.
-        tfLinks.forEach((link) => {
+    if (dialog && appLinks.length && !isIOS()) {
+        // Non-iOS visitor: intercept App Store links and show the QR dialog
+        // so they can scan it and install on their iPhone.
+        appLinks.forEach((link) => {
             link.addEventListener("click", (e) => {
                 // Allow opening in a new tab if the user really wants the URL.
                 if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) {
@@ -118,7 +119,7 @@
         // Copy link button
         const copyBtn = dialog.querySelector("[data-tf-copy]");
         const copyLabel = dialog.querySelector("[data-tf-copy-label]");
-        const urlText = dialog.querySelector("#tf-dialog-url");
+        const urlText = dialog.querySelector("#appstore-dialog-url");
         if (copyBtn && copyLabel && urlText) {
             copyBtn.addEventListener("click", async () => {
                 const url = urlText.textContent.trim();

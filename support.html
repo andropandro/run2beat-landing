@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Support &mdash; Run2Beat</title>
-    <meta name="description" content="Support for Run2Beat. Help with TestFlight, importing music, BPM analysis, Apple Watch sync and more." />
+    <meta name="description" content="Support for Run2Beat. Help with installation, importing music, BPM analysis, Apple Watch sync and more." />
     <meta name="theme-color" content="#0a0d0a" />
 
     <link rel="icon" type="image/png" href="assets/app-icon.png" />
@@ -28,7 +28,7 @@
             <a href="index.html">Home</a>
             <a href="privacy.html">Privacy</a>
             <a href="terms.html">Terms</a>
-            <a href="https://testflight.apple.com/join/XxW6dN7Q" class="nav__cta js-testflight" target="_blank" rel="noopener">Get the app</a>
+            <a href="https://apps.apple.com/app/id6763856621" class="nav__cta js-appstore" target="_blank" rel="noopener">Get the app</a>
         </nav>
     </header>
 
@@ -52,20 +52,20 @@
                 </p>
             </div>
 
-            <h2>TestFlight &amp; installation</h2>
+            <h2>Installation &amp; updates</h2>
             <p>
-                <strong>How do I install the beta?</strong><br />
-                Open the invitation link on your iPhone in Safari, install Apple&rsquo;s free TestFlight app from the App Store if you don&rsquo;t already have it, then tap &ldquo;Accept&rdquo; followed by &ldquo;Install&rdquo;. Updates arrive automatically through TestFlight.
+                <strong>How do I install Run2Beat?</strong><br />
+                Open the App Store on your iPhone and search for &ldquo;Run2Beat&rdquo;, or open
+                <a href="https://apps.apple.com/app/id6763856621" class="js-appstore" target="_blank" rel="noopener">the App Store page</a>
+                and tap &ldquo;Get&rdquo;. The Apple Watch app is installed from the Watch app on your iPhone once Run2Beat is on your phone.
             </p>
             <p>
-                <strong>The link doesn&rsquo;t work on my Mac or Android device.</strong><br />
-                TestFlight is iOS/iPadOS only. Open
-                <a href="https://testflight.apple.com/join/XxW6dN7Q" class="js-testflight" target="_blank" rel="noopener">the invitation</a>
-                on your iPhone, or scan the QR code on the home page with the iPhone camera.
+                <strong>The link opens a web page on my Mac or Android device.</strong><br />
+                Run2Beat is an iPhone and Apple Watch app. Open the App Store link on your iPhone, or scan the QR code on the home page with the iPhone camera.
             </p>
             <p>
-                <strong>The build expired or stopped opening.</strong><br />
-                Each TestFlight build is valid for up to 90 days. Open TestFlight and tap &ldquo;Update&rdquo;, or reinstall the latest build. If that doesn&rsquo;t work, email and we&rsquo;ll re-send the invite.
+                <strong>How do I get updates?</strong><br />
+                Updates arrive automatically through the App Store. To check manually, open the App Store, tap your profile picture, and pull down to refresh.
             </p>
 
             <h2>Importing music</h2>
@@ -136,7 +136,7 @@
             <p>
                 Send them to
                 <a href="mailto:hello@run2beat.com">hello@run2beat.com</a>.
-                For bugs, please describe what you did, what happened, and what you expected to happen. TestFlight also has a built-in &ldquo;Send Beta Feedback&rdquo; button that includes a screenshot and diagnostic info automatically.
+                For bugs, please describe what you did, what happened, and what you expected to happen. A screenshot and your iPhone and watchOS version help us reproduce the issue quickly.
             </p>
 
         </section>
@@ -155,28 +155,28 @@
         </footer>
     </main>
 
-    <!-- TestFlight dialog -->
-    <dialog class="tf-dialog" id="testflight-dialog" aria-labelledby="tf-dialog-title">
+    <!-- App Store dialog -->
+    <dialog class="tf-dialog" id="appstore-dialog" aria-labelledby="appstore-dialog-title">
         <button class="tf-dialog__close" type="button" aria-label="Close" data-tf-close>
             <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" d="M6 6l12 12M18 6L6 18"/></svg>
         </button>
         <div class="tf-dialog__inner">
-            <p class="eyebrow eyebrow--center">TestFlight beta</p>
-            <h3 class="tf-dialog__title" id="tf-dialog-title">Open this on your iPhone.</h3>
+            <p class="eyebrow eyebrow--center">On the App Store</p>
+            <h3 class="tf-dialog__title" id="appstore-dialog-title">Get Run2Beat on your iPhone.</h3>
             <p class="tf-dialog__text">
-                Run2Beat is currently in TestFlight beta and runs on iPhone and Apple Watch. Scan the QR code with your iPhone&rsquo;s camera, or open the link below in iOS Safari.
+                Run2Beat runs on iPhone and Apple Watch. Scan the QR code with your iPhone&rsquo;s camera, or open the App Store link below.
             </p>
             <div class="tf-dialog__qr">
-                <img src="assets/testflight-qr.svg" alt="QR code to join the Run2Beat TestFlight beta" />
+                <img src="assets/app-store-qr.svg" alt="QR code to download Run2Beat on the App Store" />
             </div>
             <div class="tf-dialog__url-row">
-                <code class="tf-dialog__url" id="tf-dialog-url">https://testflight.apple.com/join/XxW6dN7Q</code>
+                <code class="tf-dialog__url" id="appstore-dialog-url">https://apps.apple.com/app/id6763856621</code>
                 <button class="tf-dialog__copy" type="button" data-tf-copy aria-label="Copy link">
                     <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M9 3h9a2 2 0 0 1 2 2v9M15 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>
                     <span data-tf-copy-label>Copy</span>
                 </button>
             </div>
-            <p class="tf-dialog__hint">You&rsquo;ll also need the free TestFlight app from the App Store.</p>
+            <p class="tf-dialog__hint">Free on the App Store. No account, no ads.</p>
         </div>
     </dialog>
 
