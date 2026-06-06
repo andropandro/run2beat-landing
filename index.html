@@ -15,7 +15,7 @@
 
     <link rel="icon" type="image/png" href="assets/app-icon.png" />
     <link rel="apple-touch-icon" href="assets/app-icon.png" />
-    <link rel="stylesheet" href="styles.css?v=6" />
+    <link rel="stylesheet" href="styles.css?v=7" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -302,6 +302,26 @@
             <p class="section__lede">
                 Run2Beat shows up in Apple CarPlay with three driving-safe tabs &mdash; BPM lists, Playlists and Equalizer. Tap a BPM list to shuffle it, tap any playlist to start playback, or switch EQ preset at the next red light. The favourite button on the Now Playing screen stays in sync with the iPhone and the Watch.
             </p>
+            <div class="carplay-bar" aria-hidden="true">
+                <div class="carplay-bar__tab is-active">
+                    <span class="carplay-bar__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h4l3 8 4-16 3 8h4"/></svg>
+                    </span>
+                    <span class="carplay-bar__label">BPM lists</span>
+                </div>
+                <div class="carplay-bar__tab">
+                    <span class="carplay-bar__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><circle cx="3.5" cy="6" r="1.1" fill="currentColor" stroke="none"/><circle cx="3.5" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="3.5" cy="18" r="1.1" fill="currentColor" stroke="none"/></svg>
+                    </span>
+                    <span class="carplay-bar__label">Playlists</span>
+                </div>
+                <div class="carplay-bar__tab">
+                    <span class="carplay-bar__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21v-6M5 11V3M12 21v-9M12 8V3M19 21v-4M19 13V3"/><path d="M2.5 13h5M9.5 6h5M16.5 15h5"/></svg>
+                    </span>
+                    <span class="carplay-bar__label">Equalizer</span>
+                </div>
+            </div>
             <p class="section__lede section__lede--muted">
                 Setup, presets and EQ stay on the iPhone &mdash; the car just plays.
             </p>

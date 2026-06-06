@@ -450,6 +450,64 @@ a { color: inherit; text-decoration: none; }
     margin-top: -40px;
 }
 
+/* CarPlay tab-bar flourish — a stylised nod to the app's three real
+   CarPlay tabs (not a screenshot). */
+.carplay-bar {
+    display: inline-flex;
+    gap: 8px;
+    max-width: 100%;
+    margin: 44px auto 0;
+    padding: 10px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015));
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    box-shadow:
+        0 24px 60px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.carplay-bar__tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: clamp(88px, 26vw, 112px);
+    padding: 16px 10px;
+    border-radius: 16px;
+    color: var(--text-dim);
+    transition: color 0.25s var(--ease), background 0.25s var(--ease), transform 0.25s var(--ease);
+}
+
+.carplay-bar__tab:hover {
+    color: var(--brand-bright);
+    background: rgba(var(--accent-rgb), 0.07);
+    transform: translateY(-2px);
+}
+
+.carplay-bar__tab.is-active {
+    color: var(--brand-bright);
+    background: rgba(var(--accent-rgb), 0.14);
+    box-shadow: inset 0 0 0 1px rgba(var(--accent-bright-rgb), 0.35);
+}
+
+.carplay-bar__icon svg {
+    width: 26px;
+    height: 26px;
+    display: block;
+}
+
+.carplay-bar__label {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+
+.carplay-bar + .section__lede--muted {
+    margin-top: 26px;
+}
+
 /* ---------- FEATURE BLOCKS ---------- */
 
 .feature {
