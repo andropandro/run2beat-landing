@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BPM lists &mdash; Run2Beat</title>
+    <meta name="description" content="How BPM lists work in Run2Beat — the recipe, target cadence, multipliers, pitch tolerance, real-time tempo matching, random selection and Apple Watch rendering." />
+    <meta name="theme-color" content="#0a0d0a" />
+
+    <link rel="icon" type="image/png" href="assets/app-icon.png" />
+    <link rel="apple-touch-icon" href="assets/app-icon.png" />
+    <link rel="stylesheet" href="styles.css?v=6" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+    <div class="grain"></div>
+    <div class="ambient ambient--green"></div>
+    <div class="ambient ambient--mint"></div>
+
+    <header class="nav">
+        <a href="index.html" class="nav__brand">
+            <img src="assets/app-icon.png" alt="" class="nav__icon" />
+            <span class="nav__name">Run2Beat</span>
+        </a>
+        <nav class="nav__links">
+            <a href="index.html">Home</a>
+            <a href="privacy.html">Privacy</a>
+            <a href="support.html">Support</a>
+            <a href="https://apps.apple.com/app/id6763856621" class="nav__cta js-appstore" target="_blank" rel="noopener">Get the app</a>
+        </nav>
+    </header>
+
+    <main class="legal">
+        <section class="legal__hero">
+            <p class="eyebrow eyebrow--center">Deep dive</p>
+            <h1 class="legal__title">One recipe.<br />Every step<br />in time.</h1>
+            <p class="legal__lede">
+                BPM lists are the heart of Run2Beat. A BPM list isn&rsquo;t a fixed playlist &mdash; it&rsquo;s a saved <em>recipe</em> that decides your target step cadence, how much music you want and where the songs come from. Run2Beat finds the matching tracks, shuffles a selection, and plays them back tempo-matched to your stride in real time. This page is the long version of everything that recipe can do.
+            </p>
+        </section>
+
+        <section class="legal__body">
+
+            <h2>What a BPM list actually is</h2>
+            <p>
+                Think of a normal playlist as a fixed list of songs. A BPM list is the opposite: a set of rules. You describe the kind of music you want &mdash; &ldquo;running at 175 steps per minute, drawn from my whole library, about 30 minutes of it&rdquo; &mdash; and Run2Beat assembles a matching set for you. Change the rules and the list reshapes itself.
+            </p>
+            <p>
+                A recipe bundles six things together: an <strong>activity</strong>, a <strong>target BPM</strong>, a <strong>pitch tolerance</strong>, your <strong>multiplier</strong> settings, <strong>how much music</strong> you want, and <strong>where the songs come from</strong>. Together they decide which tracks Run2Beat picks &mdash; and how they sound while you move.
+            </p>
+
+            <h2>1. Activity &mdash; a sensible starting point</h2>
+            <p>
+                Every recipe starts with an activity, and each one pre-loads a recommended cadence so you&rsquo;re never staring at a blank slider:
+            </p>
+            <ul>
+                <li><strong>Walk</strong> &mdash; around 110&nbsp;BPM.</li>
+                <li><strong>Powerwalk</strong> &mdash; around 135&nbsp;BPM.</li>
+                <li><strong>Running</strong> &mdash; around 175&nbsp;BPM.</li>
+                <li><strong>Cycling</strong> &mdash; around 90&nbsp;BPM.</li>
+            </ul>
+            <p>
+                Picking an activity sets the matching icon and a sensible target tempo. From there every value is yours to fine-tune &mdash; the activity is just a head start, not a lock.
+            </p>
+
+            <h2>2. Target BPM &mdash; your step cadence</h2>
+            <p>
+                This is the single most important number in the recipe: the rhythm your feet should follow, in steps per minute. Many runners settle somewhere in the 170&ndash;180 range; a brisk power-walk often lands around 130. You can dial anything from 60 to 220&nbsp;BPM.
+            </p>
+            <p>
+                Everything else in the recipe exists to serve this number &mdash; to find music that can land on it, and to nudge tracks onto it cleanly during playback.
+            </p>
+
+            <h2>3. Max pitching &mdash; how far a song may bend</h2>
+            <p>
+                Very few songs sit at <em>exactly</em> your target tempo. Max pitching is the tolerance that decides how much Run2Beat is allowed to digitally speed up or slow down a track so its beat lines up with your cadence. It runs from 0&nbsp;% up to 15&nbsp;%, and the default is a conservative <strong>&plusmn;5&nbsp;%</strong>.
+            </p>
+            <p>
+                The trade-off is simple and worth understanding:
+            </p>
+            <ul>
+                <li><strong>Small tolerance (under 5&nbsp;%)</strong> &mdash; the tempo shift is usually imperceptible, vocals stay completely natural, but fewer songs in your library qualify.</li>
+                <li><strong>Larger tolerance</strong> &mdash; many more songs become usable, because a track only has to get <em>within</em> that percentage of your target. The cost is that bigger shifts start to make voices and instruments sound slightly unnatural.</li>
+            </ul>
+            <p>
+                Run2Beat shifts tempo without dropping the pitch into a chipmunk register &mdash; but physics still applies, so the wider you open the tolerance, the more a careful ear will notice.
+            </p>
+
+            <h2>4. Multipliers &mdash; how your feet land on the beat</h2>
+            <p>
+                Multipliers are the cleverest part of the recipe, and the one most worth understanding. They decide the <em>relationship</em> between your steps and the song&rsquo;s beat, which is what lets a single cadence pull in music across a huge range of tempos. There are three, and you can switch on any combination:
+            </p>
+
+            <h3>1/1 &mdash; Normal time (one step on every beat)</h3>
+            <p>
+                The classic, total-sync cadence. One footfall per beat, your movement and the music&rsquo;s pulse in complete harmony. With 1/1 enabled, Run2Beat looks for songs whose natural tempo already sits close to your target (within your pitch tolerance). Target 175 &rarr; it looks for songs around 175&nbsp;BPM.
+            </p>
+
+            <h3>2/1 &mdash; Double time (two steps on every beat)</h3>
+            <p>
+                Here you take two steps for every single beat of the music. That means Run2Beat can use songs at roughly <strong>half</strong> your target tempo &mdash; perfect for heavy, slower grooves (think hip-hop or reggaeton) that suddenly give you tremendous drive. Target 160 &rarr; you can run to beat-heavy songs at around 80&nbsp;BPM.
+            </p>
+
+            <h3>1/2 &mdash; Half time (one step every two beats)</h3>
+            <p>
+                The mirror image: one footfall for every two beats, so Run2Beat can use songs at roughly <strong>double</strong> your target tempo. This is how you run to extremely fast, intense music (drum &amp; bass, for example) while still moving in a powerful, controlled rhythm. Target 175 &rarr; songs pumping at around 350&nbsp;BPM become usable.
+            </p>
+
+            <p>
+                Throughout, one principle holds: <strong>songs always play near their natural tempo &mdash; only the beat you choose to step on changes.</strong> A 2/1 match isn&rsquo;t slowed to a crawl; it plays normally while you simply take two steps per beat.
+            </p>
+            <p>
+                The reason to enable more than one multiplier is reach. With 1/1, 2/1 and 1/2 all on, the algorithm can sweep your entire library and work out, song by song, exactly which relationship makes it fit your feet &mdash; whether it&rsquo;s naturally fast, slow, or right on the money. By default a new recipe runs with 1/1 and 2/1 enabled.
+            </p>
+
+            <h2>How matching works under the hood</h2>
+            <p>
+                For the curious, here is the exact rule Run2Beat applies to every candidate track. For each multiplier you&rsquo;ve enabled, it computes the song&rsquo;s <em>effective</em> tempo and compares it to your target:
+            </p>
+            <ul>
+                <li><strong>1/1</strong> compares the song&rsquo;s own BPM to your target.</li>
+                <li><strong>2/1</strong> compares <em>twice</em> the song&rsquo;s BPM to your target (so a 80&nbsp;BPM song reads as 160).</li>
+                <li><strong>1/2</strong> compares <em>half</em> the song&rsquo;s BPM to your target (so a 350&nbsp;BPM song reads as 175).</li>
+            </ul>
+            <p>
+                A song qualifies if at least one of those effective tempos lands within your max-pitching tolerance of the target. When several multipliers would all work, Run2Beat keeps the <em>closest</em> match &mdash; the one needing the smallest tempo shift &mdash; and remembers exactly how many percent it has to nudge that track during playback. That per-track pitch amount is stored so the iPhone and the Apple Watch reproduce identical playback.
+            </p>
+
+            <h2>5. How much music &mdash; play time or track count</h2>
+            <p>
+                A recipe also decides the size of the list, two ways:
+            </p>
+            <ul>
+                <li><strong>Play time</strong> &mdash; fill the list to a target duration, set in 15-minute increments (15&nbsp;min up to 3&nbsp;hours, default 30&nbsp;min). Run2Beat keeps adding shuffled tracks until the total reaches your target, so the result is <em>never shorter</em> than you asked for &mdash; it may run slightly over to avoid cutting a song.</li>
+                <li><strong>Track count</strong> &mdash; pick a fixed number of songs instead (5 up to 200, in steps of 5, default 20).</li>
+            </ul>
+            <p>
+                Switching between the two modes clears the current selection so the next shuffle is sized correctly for the mode you&rsquo;re now in.
+            </p>
+
+            <h2>6. Source &mdash; where the songs come from</h2>
+            <p>
+                By default a recipe draws from your whole <strong>Library</strong> &mdash; every imported track is a candidate. Alternatively you can narrow the pool to <strong>one or more of your playlists</strong>, which is handy when you want a BPM list built only from, say, your &ldquo;90s Indie&rdquo; or &ldquo;Metal&rdquo; collection.
+            </p>
+            <p>
+                A couple of sensible rules keep this tidy: choosing playlists automatically unchecks Library, and unchecking the last remaining playlist falls back to Library. If a source playlist later changes or is deleted, the list quietly reverts to the library and is flagged as changed so your Apple Watch knows to re-sync.
+            </p>
+
+            <h2>7. Shuffle &mdash; drawing the actual selection</h2>
+            <p>
+                Once the recipe knows which songs <em>could</em> match, you tap <strong>Shuffle</strong> to draw the ones that actually land in the list. Run2Beat randomly picks from the eligible pool until your play-time or track-count target is met. Don&rsquo;t love this draw? Shuffle again for a completely fresh random set &mdash; same recipe, different songs.
+            </p>
+            <p>
+                The selection is concrete and saved with the list, so playback is always the songs you last shuffled in. One thing worth remembering: after re-shuffling, <strong>save the list</strong> so the new selection is also what syncs to your Apple Watch.
+            </p>
+
+            <h2>Only trustworthy tempos get picked</h2>
+            <p>
+                A BPM list is only as good as the BPM data behind it, so Run2Beat is careful about what it&rsquo;s willing to shuffle in. By default, auto-detected tracks whose tempo the analyser wasn&rsquo;t confident about are <strong>excluded from the candidate pool</strong> before the shuffle even runs &mdash; a single wrong BPM can derail an entire run. The track-matching summary tells you plainly when this happens (&ldquo;<em>3 with uncertain BPM excluded</em>&rdquo;).
+            </p>
+            <p>
+                Tempos you&rsquo;ve set or corrected yourself are always trusted and always eligible &mdash; you&rsquo;ve explicitly vouched for them. (You can read the full story of how tempo is measured, and what &ldquo;low confidence&rdquo; means, on the <a href="bpm-analysis.html">BPM analysis</a> page.)
+            </p>
+
+            <h2>Playback &mdash; tempo-matched in real time</h2>
+            <p>
+                Press play on a BPM list and Run2Beat always shuffles. As each track comes up it&rsquo;s nudged onto your target cadence on the fly, by exactly the per-track amount the recipe worked out &mdash; so a 168&nbsp;BPM song and a 182&nbsp;BPM song both arrive at your feet at, say, 175. Voices and instruments keep sounding natural; it&rsquo;s the rhythm that locks to you, not the other way around.
+            </p>
+            <p>
+                The now-playing screen even pulses in time with the target tempo, so the whole app breathes at the pace of your run.
+            </p>
+
+            <h2>On your Apple Watch</h2>
+            <p>
+                BPM lists come with you when you leave the phone behind. The key difference is <em>when</em> the tempo work happens: instead of pitching tracks live on the watch, Run2Beat renders each song to its target tempo <strong>up front</strong> during sync and transfers the finished, BPM-adjusted audio. The result on-wrist is no live processing, no battery-hungry DSP, and no risk of distorted vocals &mdash; just the right tempo, already baked in. (More on that on the <a href="apple-watch-sync.html">Apple Watch sync</a> page.)
+            </p>
+
+            <h2>Keeping a list honest after re-analysis</h2>
+            <p>
+                Tempos can change &mdash; you might re-analyse a track or correct it by hand. When that happens, Run2Beat walks every BPM list and removes any pinned track whose new tempo no longer fits the recipe. A &ldquo;175&nbsp;BPM list&rdquo; can never silently end up holding a track that drifted to 163. The list always reflects what its recipe promises.
+            </p>
+
+            <h2>Managing your lists</h2>
+            <p>
+                You can create as many BPM lists as you like and give each one a name. Long-press a list to shuffle-play it instantly, duplicate it as a starting point for a variation, rename it, or delete it. Deleting a BPM list only removes the recipe &mdash; every track stays safely in your library.
+            </p>
+
+            <a href="index.html" class="learn-more">
+                <span class="learn-more__arrow" style="transform: scaleX(-1);">&rarr;</span>
+                Back to the overview
+            </a>
+
+        </section>
+
+        <footer class="footer">
+            <p class="footer__copyright">© 2026 Anders Westin</p>
+            <p>Email: <a href="mailto:hello@run2beat.com">hello@run2beat.com</a></p>
+            <p class="footer__sub">All rights reserved.</p>
+            <p class="footer__links">
+                <a href="privacy.html">Privacy Policy</a>
+                <span class="footer__sep">&middot;</span>
+                <a href="terms.html">Terms of Use</a>
+                <span class="footer__sep">&middot;</span>
+                <a href="support.html">Support</a>
+            </p>
+        </footer>
+    </main>
+
+    <!-- App Store dialog -->
+    <dialog class="tf-dialog" id="appstore-dialog" aria-labelledby="appstore-dialog-title">
+        <button class="tf-dialog__close" type="button" aria-label="Close" data-tf-close>
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+        <div class="tf-dialog__inner">
+            <p class="eyebrow eyebrow--center">On the App Store</p>
+            <h3 class="tf-dialog__title" id="appstore-dialog-title">Get Run2Beat on your iPhone.</h3>
+            <p class="tf-dialog__text">
+                Run2Beat runs on iPhone and Apple Watch. Scan the QR code with your iPhone&rsquo;s camera, or open the App Store link below.
+            </p>
+            <div class="tf-dialog__qr">
+                <img src="assets/app-store-qr.svg" alt="QR code to download Run2Beat on the App Store" />
+            </div>
+            <div class="tf-dialog__url-row">
+                <code class="tf-dialog__url" id="appstore-dialog-url">https://apps.apple.com/app/id6763856621</code>
+                <button class="tf-dialog__copy" type="button" data-tf-copy aria-label="Copy link">
+                    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M9 3h9a2 2 0 0 1 2 2v9M15 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>
+                    <span data-tf-copy-label>Copy</span>
+                </button>
+            </div>
+            <p class="tf-dialog__hint">Free on the App Store. No account, no ads.</p>
+        </div>
+    </dialog>
+
+    <script src="script.js?v=5" defer></script>
+</body>
+</html>
