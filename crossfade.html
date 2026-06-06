@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Crossfade &mdash; Run2Beat</title>
+    <meta name="description" content="How Run2Beat moves between tracks — instant gapless changes or a 2–8 second crossfade, applied only on automatic advances, and how it works the same on iPhone and Apple Watch." />
+    <meta name="theme-color" content="#0a0d0a" />
+
+    <link rel="icon" type="image/png" href="assets/app-icon.png" />
+    <link rel="apple-touch-icon" href="assets/app-icon.png" />
+    <link rel="stylesheet" href="styles.css?v=7" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+    <div class="grain"></div>
+    <div class="ambient ambient--green"></div>
+    <div class="ambient ambient--mint"></div>
+
+    <header class="nav">
+        <a href="index.html" class="nav__brand">
+            <img src="assets/app-icon.png" alt="" class="nav__icon" />
+            <span class="nav__name">Run2Beat</span>
+        </a>
+        <nav class="nav__links">
+            <a href="index.html">Home</a>
+            <a href="privacy.html">Privacy</a>
+            <a href="support.html">Support</a>
+            <a href="https://apps.apple.com/app/id6763856621" class="nav__cta js-appstore" target="_blank" rel="noopener">Get the app</a>
+        </nav>
+    </header>
+
+    <main class="legal">
+        <section class="legal__hero">
+            <p class="eyebrow eyebrow--center">Deep dive</p>
+            <h1 class="legal__title">One song<br />into the<br />next.</h1>
+            <p class="legal__lede">
+                Crossfade decides what happens in the gap between two tracks &mdash; an instant cut, or a smooth overlap that keeps the rhythm of your run going. This page is the long version of how Run2Beat moves from one song to the next.
+            </p>
+        </section>
+
+        <section class="legal__body">
+
+            <h2>Two ways to move between tracks</h2>
+            <p>
+                In <strong>Settings &rarr; Transitions</strong> you choose how Run2Beat advances when one track ends and the next begins:
+            </p>
+            <ul>
+                <li><strong>None.</strong> The next track starts the instant the current one ends &mdash; the traditional, gapless behaviour.</li>
+                <li><strong>Crossfade.</strong> The next track begins just before the current one finishes. The outgoing track fades down while the incoming one fades up, so the two overlap for a few seconds and the transition is seamless.</li>
+            </ul>
+
+            <h2>Setting the length</h2>
+            <p>
+                When crossfade is on, a slider sets how long the fade lasts &mdash; anywhere from <strong>2 to 8 seconds</strong>, with <strong>6 seconds</strong> as the default. The length controls both how long the fade takes and how much the two tracks overlap. A good starting point is 4&ndash;6 seconds: longer for softer, more DJ-like blends; shorter for tighter, snappier transitions.
+            </p>
+
+            <h2>Only on automatic changes</h2>
+            <p>
+                Crossfade is deliberately limited to the moments when <em>the app</em> moves to the next track on its own. Anything <em>you</em> do is treated as &ldquo;I want this now&rdquo; and starts instantly:
+            </p>
+            <ul>
+                <li>Skip forward or jump back &mdash; instant, no fade.</li>
+                <li>Tap a different track in a list &mdash; instant, no fade.</li>
+                <li>Pause &mdash; stops immediately and cancels any fade that was about to start.</li>
+            </ul>
+            <p>
+                If you reach the end of the queue there&rsquo;s nothing to fade into, so the last track simply ends.
+            </p>
+
+            <h2>Change it mid-run</h2>
+            <p>
+                You don&rsquo;t have to stop playback to change your mind. The setting is re-checked roughly <strong>15 seconds before each track ends</strong>, so if you toggle crossfade or drag the length slider during a song, the new choice takes effect at the very next automatic track change. Drag the slider while a fade is already running and the current fade keeps the length it started with &mdash; only the next one picks up the new value.
+            </p>
+
+            <h2>How the fade actually works</h2>
+            <p>
+                To overlap two tracks, Run2Beat spins up a <strong>second audio engine</strong> for the incoming song so it can start playing without disturbing the track that&rsquo;s still going. A timer then runs a smooth volume ramp about 30 times a second: the outgoing track&rsquo;s volume slides from full to silent while the incoming one rises from silent to full. When the ramp finishes, the incoming engine quietly takes over as the main one and the old track is torn down &mdash; all without a hiccup in playback.
+            </p>
+
+            <h2>On your Apple Watch</h2>
+            <p>
+                Crossfade works on the watch too, and follows exactly the same rules. There&rsquo;s an extra wrinkle under the hood: because watchOS has to run your equalizer curve over the incoming track before it can play, Run2Beat prepares that next track <em>early</em> &mdash; decoding and processing it while the current song is still at full volume &mdash; so the few seconds of prep happen <em>outside</em> the audible fade. The result is that you always hear the full overlap, never a clipped one. Run2Beat even learns how long that prep tends to take and schedules each fade accordingly.
+            </p>
+            <p>
+                The transition setting itself is owned by the iPhone. Your choice travels to the watch as part of the regular sync, so run a sync after changing it to be sure the watch is using the latest value.
+            </p>
+
+            <h2>The short version</h2>
+            <p>
+                Pick None for instant changes or Crossfade for a smooth overlap, set a length you like, and forget about it. Run2Beat fades only when it advances on its own, never gets in the way when you take control, and behaves the same on your wrist as in your pocket.
+            </p>
+
+            <a href="index.html" class="learn-more">
+                <span class="learn-more__arrow" style="transform: scaleX(-1);">&rarr;</span>
+                Back to the overview
+            </a>
+
+        </section>
+
+        <footer class="footer">
+            <p class="footer__copyright">© 2026 Anders Westin</p>
+            <p>Email: <a href="mailto:hello@run2beat.com">hello@run2beat.com</a></p>
+            <p class="footer__sub">All rights reserved.</p>
+            <p class="footer__links">
+                <a href="privacy.html">Privacy Policy</a>
+                <span class="footer__sep">&middot;</span>
+                <a href="terms.html">Terms of Use</a>
+                <span class="footer__sep">&middot;</span>
+                <a href="support.html">Support</a>
+            </p>
+        </footer>
+    </main>
+
+    <!-- App Store dialog -->
+    <dialog class="tf-dialog" id="appstore-dialog" aria-labelledby="appstore-dialog-title">
+        <button class="tf-dialog__close" type="button" aria-label="Close" data-tf-close>
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+        <div class="tf-dialog__inner">
+            <p class="eyebrow eyebrow--center">On the App Store</p>
+            <h3 class="tf-dialog__title" id="appstore-dialog-title">Get Run2Beat on your iPhone.</h3>
+            <p class="tf-dialog__text">
+                Run2Beat runs on iPhone and Apple Watch. Scan the QR code with your iPhone&rsquo;s camera, or open the App Store link below.
+            </p>
+            <div class="tf-dialog__qr">
+                <img src="assets/app-store-qr.svg" alt="QR code to download Run2Beat on the App Store" />
+            </div>
+            <div class="tf-dialog__url-row">
+                <code class="tf-dialog__url" id="appstore-dialog-url">https://apps.apple.com/app/id6763856621</code>
+                <button class="tf-dialog__copy" type="button" data-tf-copy aria-label="Copy link">
+                    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M9 3h9a2 2 0 0 1 2 2v9M15 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>
+                    <span data-tf-copy-label>Copy</span>
+                </button>
+            </div>
+            <p class="tf-dialog__hint">Free on the App Store. No account, no ads.</p>
+        </div>
+    </dialog>
+
+    <script src="script.js?v=5" defer></script>
+</body>
+</html>
