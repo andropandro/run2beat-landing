@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Importing music &mdash; Run2Beat</title>
+    <meta name="description" content="How music gets into Run2Beat — import individual files or whole folders from your device or iCloud Drive, skip duplicates automatically, and have every track analysed for BPM, loudness and metadata on import." />
+    <meta name="theme-color" content="#0a0d0a" />
+
+    <link rel="icon" type="image/png" href="assets/app-icon.png" />
+    <link rel="apple-touch-icon" href="assets/app-icon.png" />
+    <link rel="stylesheet" href="styles.css?v=8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+    <div class="grain"></div>
+    <div class="ambient ambient--green"></div>
+    <div class="ambient ambient--mint"></div>
+
+    <header class="nav">
+        <a href="index.html" class="nav__brand">
+            <img src="assets/app-icon.png" alt="" class="nav__icon" />
+            <span class="nav__name">Run2Beat</span>
+        </a>
+        <nav class="nav__links">
+            <a href="index.html">Home</a>
+            <a href="privacy.html">Privacy</a>
+            <a href="support.html">Support</a>
+            <a href="https://apps.apple.com/app/id6763856621" class="nav__cta js-appstore" target="_blank" rel="noopener">Get the app</a>
+        </nav>
+    </header>
+
+    <main class="legal">
+        <section class="legal__hero">
+            <p class="eyebrow eyebrow--center">Deep dive</p>
+            <h1 class="legal__title">Bring your<br />library<br />in.</h1>
+            <p class="legal__lede">
+                Run2Beat plays the audio files you already own &mdash; nothing is streamed and nothing is purchased through the app. This page is the long version of how music gets in, from picking files to the moment every track lands in your Library with a tempo, even loudness and the right cover art.
+            </p>
+        </section>
+
+        <section class="legal__body">
+
+            <h2>Where it all starts</h2>
+            <p>
+                Everything happens in the <strong>Import Music</strong> screen. You point Run2Beat at music on your device or in iCloud Drive, choose where the tracks should land, tap <strong>Start Import</strong>, and the app handles the rest &mdash; copying, analysing tempo and loudness, and filling in any missing track details automatically.
+            </p>
+
+            <figure class="legal__figure">
+                <div class="phone-frame" data-screenshot="import">
+                    <img src="assets/screenshots/import.jpg" alt="The Run2Beat Import Music screen, showing the Files and Folder sections and the Start Import button" onerror="this.style.display='none'" />
+                    <div class="phone-frame__placeholder">
+                        <div class="phone-frame__dot"></div>
+                        <strong>Import Music</strong>
+                        <span>Screenshot placeholder</span>
+                        <small>import.jpg</small>
+                    </div>
+                </div>
+                <figcaption>The Import Music screen: pick individual files or a whole folder, choose a destination, then Start Import.</figcaption>
+            </figure>
+
+            <h2>Two ways to import</h2>
+            <p>
+                There are two import modes, and they&rsquo;re mutually exclusive &mdash; you pick files <em>or</em> a folder, not both at once. To switch between them, clear the current selection with the X button.
+            </p>
+            <ul>
+                <li><strong>Files.</strong> Choose one or more individual audio tracks. Perfect for adding a handful of new songs.</li>
+                <li><strong>Folder.</strong> Import every supported file inside a folder in a single operation &mdash; ideal for a whole album or a large collection on an external drive.</li>
+            </ul>
+
+            <h2>Importing a folder</h2>
+            <p>
+                Folder import has two extra options that make bulk libraries painless:
+            </p>
+            <ul>
+                <li><strong>Import subfolders.</strong> Point Run2Beat at a root folder &mdash; for example an external drive &mdash; and it scans every immediate subfolder, treating each as its own import group. Files sitting loose in the root folder itself are ignored.</li>
+                <li><strong>Create playlist.</strong> Tracks always go into your Library; turn this on to <em>also</em> group them into a playlist named after the folder. With subfolders enabled, you can create one playlist per folder automatically.</li>
+            </ul>
+
+            <h2>From your device or iCloud Drive</h2>
+            <p>
+                Files can live locally on your iPhone, on an external drive, or in iCloud Drive. Anything stored in iCloud is downloaded automatically before the import begins, with a per-file progress readout so you can see how much is left to fetch.
+            </p>
+
+            <h2>Supported formats</h2>
+            <p>
+                Run2Beat imports <strong>MP3, M4A (AAC) and WAV</strong> files. That covers the vast majority of personal music libraries.
+            </p>
+
+            <h2>No duplicates, ever</h2>
+            <p>
+                Run2Beat recognises whether a file is already in your Library, so the same track is never imported twice &mdash; only genuinely new files are added. After an import you get a short summary telling you how many tracks were added and how many were skipped as duplicates.
+            </p>
+
+            <h2>What happens to every track</h2>
+            <p>
+                Importing isn&rsquo;t just copying. As each file comes in, Run2Beat does three things automatically &mdash; all on your device:
+            </p>
+            <ul>
+                <li><strong>BPM analysis.</strong> Every track&rsquo;s tempo is measured on-device, nothing leaves your phone. The BPM appears next to the track and powers sorting and BPM lists later. Tracks the detector was unsure about are clearly flagged so you stay in control of the beat.</li>
+                <li><strong>Loudness levelling.</strong> Each track&rsquo;s loudness (in LUFS) is measured so quiet and loud songs can be played back at a consistent level.</li>
+                <li><strong>Shazam metadata.</strong> If a track is missing its title, artist or cover art, Run2Beat can identify it via Shazam during import and fill in the right information. You can switch this on or off in Settings under Import.</li>
+            </ul>
+
+            <h2>Where tracks land</h2>
+            <p>
+                Tracks are <strong>always</strong> saved to your Library. You can additionally send them to a playlist &mdash; pick an existing one, or tap <em>New playlist&hellip;</em> to create one on the fly. When you choose to create playlists from folders, the destination is set for you automatically.
+            </p>
+
+            <h2>Save space with HE-AAC (optional)</h2>
+            <p>
+                If you want to fit more music on your iPhone, you can have imported files re-encoded to <strong>HE-AAC</strong> &mdash; a modern, efficient format. A typical 4-minute song lands around 2&nbsp;MB instead of roughly 4&nbsp;MB for a 128&nbsp;kbps MP3, about half the storage for quality most people can&rsquo;t tell apart at running volumes. It&rsquo;s off by default and lives in Settings under Import. (Apple Watch sync always uses HE-AAC to keep the watch&rsquo;s storage small, regardless of this setting.)
+            </p>
+
+            <h2>How long it takes &mdash; and walking away</h2>
+            <p>
+                Plan for roughly <strong>8 seconds per track with the screen locked</strong> &mdash; about 13 minutes for 100 tracks, 25&ndash;30 minutes for 200. With the screen on in the foreground it&rsquo;s nearly twice as fast. The small pauses between tracks are deliberate: they keep iOS from shutting the app down while it works in the background, so you can lock the phone, go do something else, and come back to a finished library. A large import uses about as much battery as playing music for the same time (on the order of 5&nbsp;% for 200 tracks) &mdash; for very large jobs, plug in first.
+            </p>
+            <p>
+                You can <strong>cancel at any time</strong>, and anything already imported is kept. Even in the rare case the import is interrupted, Run2Beat keeps a log of each session so you can cleanly remove a partial batch from Settings &mdash; you&rsquo;ll never have to hunt through your Library track by track.
+            </p>
+
+            <a href="index.html" class="learn-more">
+                <span class="learn-more__arrow" style="transform: scaleX(-1);">&rarr;</span>
+                Back to the overview
+            </a>
+
+        </section>
+
+        <footer class="footer">
+            <p class="footer__copyright">© 2026 Anders Westin</p>
+            <p>Email: <a href="mailto:hello@run2beat.com">hello@run2beat.com</a></p>
+            <p class="footer__sub">All rights reserved.</p>
+            <p class="footer__links">
+                <a href="privacy.html">Privacy Policy</a>
+                <span class="footer__sep">&middot;</span>
+                <a href="terms.html">Terms of Use</a>
+                <span class="footer__sep">&middot;</span>
+                <a href="support.html">Support</a>
+            </p>
+        </footer>
+    </main>
+
+    <!-- App Store dialog -->
+    <dialog class="tf-dialog" id="appstore-dialog" aria-labelledby="appstore-dialog-title">
+        <button class="tf-dialog__close" type="button" aria-label="Close" data-tf-close>
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+        <div class="tf-dialog__inner">
+            <p class="eyebrow eyebrow--center">On the App Store</p>
+            <h3 class="tf-dialog__title" id="appstore-dialog-title">Get Run2Beat on your iPhone.</h3>
+            <p class="tf-dialog__text">
+                Run2Beat runs on iPhone and Apple Watch. Scan the QR code with your iPhone&rsquo;s camera, or open the App Store link below.
+            </p>
+            <div class="tf-dialog__qr">
+                <img src="assets/app-store-qr.svg" alt="QR code to download Run2Beat on the App Store" />
+            </div>
+            <div class="tf-dialog__url-row">
+                <code class="tf-dialog__url" id="appstore-dialog-url">https://apps.apple.com/app/id6763856621</code>
+                <button class="tf-dialog__copy" type="button" data-tf-copy aria-label="Copy link">
+                    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M9 3h9a2 2 0 0 1 2 2v9M15 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>
+                    <span data-tf-copy-label>Copy</span>
+                </button>
+            </div>
+            <p class="tf-dialog__hint">Free on the App Store. No account, no ads.</p>
+        </div>
+    </dialog>
+
+    <script src="script.js?v=5" defer></script>
+</body>
+</html>
