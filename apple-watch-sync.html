@@ -56,7 +56,7 @@
                 There is no hidden background sync. You start it yourself from the iPhone&rsquo;s Sync screen, where the app shows you exactly what&rsquo;s new, updated or deleted before you commit. While the sync runs the iPhone shows a live overlay with progress; the Watch screen shows nothing during the transfer &mdash; that&rsquo;s normal.
             </p>
             <p>
-                The two devices need to be active at the moment you start a sync. After that, both screens can be off &mdash; the transfer keeps running over Bluetooth in the background.
+                The two devices need to be active at the moment you start a sync. After that, both screens can be off &mdash; the transfer keeps running over Bluetooth in the background. There is one caveat for very long first-time syncs on older watches, covered in <a href="#long-syncs">Long first-time syncs on older watches</a> below.
             </p>
 
             <h2>What gets transferred</h2>
@@ -89,6 +89,26 @@
                 <li><strong>Wear the watch or leave it charging.</strong> Both devices need to be awake at the moment sync starts. After that they can both go to sleep.</li>
                 <li><strong>iPhone keeps syncing in the background.</strong> Lock the screen, switch to another app - the transfer continues. The overlay updates the next time you return to Run2Beat.</li>
                 <li><strong>Plan ahead for first-time syncs of large lists.</strong> Sending new tracks to the Watch always takes time; syncing tonight for tomorrow morning&rsquo;s run goes a long way. Re-running the sync later with no changes is effectively instant.</li>
+            </ul>
+
+            <h2 id="long-syncs">Long first-time syncs on older watches</h2>
+            <p>
+                To receive data while its screen is off, the Watch keeps the Run2Beat app awake in short background windows &mdash; roughly ten minutes at a time. This is an Apple platform limit, not a Run2Beat setting, and for everyday syncs it is far more time than the transfer needs.
+            </p>
+            <p>
+                It can matter in one specific case: a <strong>big first-time sync of many tracks and lists</strong> that runs longer than a single window. The chance of hitting it is higher on <strong>older hardware</strong> (Apple Watch Series 6 and earlier, which both transfer and process more slowly), over <strong>weak or distant Bluetooth</strong>, or when the watch is <strong>warm and throttling</strong>. The same overnight sync that sails through on a recent watch can cross the window boundary on an older one.
+            </p>
+            <p>
+                The symptom is unmistakable and harmless: with the watch screen off the transfer appears to <strong>pause</strong>, and the iPhone overlay stops advancing. It does not fail and nothing is corrupted &mdash; the watch simply cannot reopen a background window on its own while the screen is off, because the system only allows the app to start a new window when it is in the foreground.
+            </p>
+            <p>
+                To carry a long sync to the finish line:
+            </p>
+            <ul>
+                <li><strong>Glance at the watch or raise your wrist every few minutes.</strong> Each time the app becomes active it opens a fresh window and the transfer resumes from exactly where it stopped.</li>
+                <li><strong>Or keep the watch screen on</strong> while the big first sync runs &mdash; for example on the charger, or simply by looking at it from time to time.</li>
+                <li><strong>Split a huge first sync into smaller rounds</strong> if you prefer: sync a couple of lists, let them finish, then sync the rest. Each smaller round fits comfortably inside one window.</li>
+                <li><strong>Remember it is a one-time cost.</strong> Once the tracks are on the watch, later syncs only move what changed and complete in seconds, so they never approach the window limit.</li>
             </ul>
 
             <h2>Cancel any time, resume later</h2>
