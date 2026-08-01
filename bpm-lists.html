@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BPM lists &mdash; Run2Beat</title>
-    <meta name="description" content="How BPM lists work in Run2Beat — the recipe, target cadence, multipliers, pitch tolerance, real-time tempo matching, random selection and Apple Watch rendering." />
+    <meta name="description" content="How BPM lists work in Run2Beat: the recipe, target cadence, multipliers, pitch tolerance, real-time tempo matching, warm-up, random selection and Apple Watch rendering." />
     <meta name="theme-color" content="#0a0d0a" />
 
     <link rel="icon" type="image/png" href="assets/app-icon.png" />
@@ -172,9 +172,20 @@
                 The now-playing screen even pulses in time with the target tempo, so the whole app breathes at the pace of your run.
             </p>
 
+            <h2>Warm-up &mdash; ease into your cadence</h2>
+            <p>
+                A run rarely starts at full pace, so a BPM list can begin with an optional <strong>warm-up</strong>: the first few songs play at a gentler tempo before the list ramps up to your target BPM. You set two things &mdash; <strong>how many</strong> songs warm you up, and the <strong>warm-up tempo</strong> itself. The only rule is that the warm-up tempo has to sit <em>below</em> your target; it doesn&rsquo;t need any particular gap, so a 175&nbsp;BPM list can warm up at 150, or just at 170 for the lightest of eases.
+            </p>
+            <p>
+                The warm-up always uses the <strong>same songs</strong> from the list, chosen automatically, so the start of a list feels familiar rather than random. You don&rsquo;t mark them yourself and they aren&rsquo;t flagged in the track list &mdash; you simply notice the slower opening. Swap one of those songs out and Run2Beat quietly promotes another to take its place, so the warm-up always holds the number of songs you asked for.
+            </p>
+            <p>
+                While a warm-up song plays, the now-playing screen shows a small warm-up icon and the <strong>actual warm-up tempo</strong> &mdash; not the list target &mdash; so the number you see is the cadence your feet should follow right now, and the pulse breathes at that slower pace. The moment the warm-up ends, the list steps up to your full target. It behaves identically on iPhone and Apple Watch.
+            </p>
+
             <h2>On your Apple Watch</h2>
             <p>
-                BPM lists come with you when you leave the phone behind. The key difference is <em>when</em> the tempo work happens: instead of pitching tracks live on the watch, Run2Beat renders each song to its target tempo <strong>up front</strong> during sync and transfers the finished, BPM-adjusted audio. The result on-wrist is no live processing, no battery-hungry DSP, and no risk of distorted vocals &mdash; just the right tempo, already baked in. (More on that on the <a href="apple-watch-sync.html">Apple Watch sync</a> page.)
+                BPM lists come with you when you leave the phone behind. The key difference is <em>when</em> the tempo work happens: instead of pitching tracks live on the watch, Run2Beat renders each song to its target tempo <strong>up front</strong> during sync and transfers the finished, BPM-adjusted audio. The result on-wrist is no live processing, no battery-hungry DSP, and no risk of distorted vocals &mdash; just the right tempo, already baked in. Warm-up songs are handled the same way &mdash; each is rendered at the lower warm-up tempo before it&rsquo;s transferred &mdash; so your watch eases in exactly like your phone. (More on that on the <a href="apple-watch-sync.html">Apple Watch sync</a> page.)
             </p>
 
             <h2>Keeping a list honest after re-analysis</h2>
