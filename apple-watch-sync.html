@@ -64,7 +64,7 @@
                 For every track in a BPM list or standard playlist Run2Beat sends:
             </p>
             <ul>
-                <li>The <strong>audio file</strong>, transcoded to HE-AAC for compactness on the watch.</li>
+                <li>The <strong>audio file</strong>, always transcoded to HE-AAC for compactness on the watch. If the track is already HE-AAC in your Library it stays at that efficient profile (64&nbsp;kbps); if it&rsquo;s still MP3, AAC or WAV on the phone, the watch copy is encoded a step higher (80&nbsp;kbps) so you keep more of the original quality.</li>
                 <li><strong>Title, artist and artwork</strong> embedded in the file&rsquo;s metadata as a fall-back so the playlist is reconstructable even if the structured payload arrives late.</li>
                 <li><strong>BPM and loudness data</strong> (LUFS, true peak) so the Watch player applies the same gain math as the iPhone &mdash; the same track sounds equally loud on both devices.</li>
                 <li>For BPM lists: <strong>pre-rendered tempo variants</strong>. The iPhone applies the recipe&rsquo;s rate change with pitch preservation up front, so the Watch never has to do that work itself.</li>
@@ -136,7 +136,7 @@
 
             <h2>Storage on the Watch</h2>
             <p>
-                Audio files transfer to the Watch&rsquo;s app sandbox as HE-AAC. A typical 4-minute song occupies roughly 2&nbsp;MB at 64&nbsp;kbps HE-AAC &mdash; about half the size of a comparable-quality MP3 or AAC-LC file. That means a multi-hour BPM list still fits comfortably alongside other Apple Watch content on a modern watch.
+                Audio files land in the Watch&rsquo;s app sandbox as HE-AAC. A typical 4-minute song is roughly <strong>2&nbsp;MB at 64&nbsp;kbps</strong> when the Library copy was already HE-AAC, or a little larger at <strong>80&nbsp;kbps</strong> when Run2Beat encodes from a higher-quality original on the phone &mdash; still about half the size of a comparable MP3 or AAC-LC file. Either way, a multi-hour BPM list fits comfortably alongside other Apple Watch content on a modern watch.
             </p>
 
             <h2>Privacy reminder</h2>
