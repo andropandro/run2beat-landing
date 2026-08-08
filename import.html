@@ -93,6 +93,17 @@
             <p>
                 Run2Beat recognises whether a file is already in your Library, so the same track is never imported twice &mdash; only genuinely new files are added. After an import you get a short summary telling you how many tracks were added and how many were skipped as duplicates.
             </p>
+            <p>
+                The check goes further than comparing raw file bytes. Two copies of the same song can end up as technically different files &mdash; one re-encoded to HE-AAC, one with slightly different tags &mdash; while still being the same recording to you. Run2Beat instead compares what you&rsquo;d actually recognise as the same track: title and artist, tempo (or length, when tempo isn&rsquo;t known yet), and the cover art, matched by appearance rather than requiring byte-for-byte identical artwork. That keeps two genuinely different recordings of the same title &mdash; a studio cut and a live version, say &mdash; from ever being merged by mistake.
+            </p>
+            <ul>
+                <li><strong>Best quality wins.</strong> If the incoming file turns out to be a better copy of a song you already have, Run2Beat upgrades the existing track in place instead of adding a second row &mdash; so it keeps every playlist and BPM list it already belonged to.</li>
+                <li><strong>Fast at any library size.</strong> Checking for duplicates never means scanning your whole library file by file. Run2Beat only compares against the small group of tracks that already share a title and artist, so the check stays instant whether your library has fifty tracks or fifty thousand.</li>
+                <li><strong>Also covers AirDrop.</strong> The same logic runs when you receive a playlist over AirDrop from another Run2Beat user, so tracks you already own are recognised there too, not just on import.</li>
+            </ul>
+            <p>
+                Already have duplicates from before &mdash; or from any other source? <strong>Settings &rarr; Library Duplicates</strong> runs a one-off sweep over your whole library, finds every group of matching tracks, keeps the best copy of each, and re-points any playlists or BPM lists at the survivor &mdash; all in the background, with progress shown on screen until it&rsquo;s done.
+            </p>
 
             <h2>What happens to every track</h2>
             <p>
