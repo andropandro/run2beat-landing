@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BPM lists &mdash; Run2Beat</title>
-    <meta name="description" content="How BPM lists work in Run2Beat: the recipe, target cadence, multipliers, pitch tolerance, real-time tempo matching, warm-up, random selection and Apple Watch rendering." />
+    <meta name="description" content="How BPM lists work in Run2Beat: the recipe, target cadence, multipliers, pitch tolerance, play time, warm-up, swap candidates, real-time tempo matching and Apple Watch rendering." />
     <meta name="theme-color" content="#0a0d0a" />
 
     <link rel="icon" type="image/png" href="assets/app-icon.png" />
@@ -75,7 +75,7 @@
 
             <h2>3. Max pitching &mdash; how far a song may bend</h2>
             <p>
-                Very few songs sit at <em>exactly</em> your target tempo. Max pitching is the tolerance that decides how much Run2Beat is allowed to digitally speed up or slow down a track so its beat lines up with your cadence. It runs from 0&nbsp;% up to 15&nbsp;%, and the default is a conservative <strong>&plusmn;5&nbsp;%</strong>.
+                Very few songs sit at <em>exactly</em> your target tempo. Max pitching is the tolerance that decides how much Run2Beat is allowed to digitally speed up or slow down a track so its beat lines up with your cadence. It runs from 0&nbsp;% up to 15&nbsp;%, and a new list starts at a practical <strong>&plusmn;10&nbsp;%</strong>.
             </p>
             <p>
                 The trade-off is simple and worth understanding:
@@ -128,16 +128,12 @@
                 A song qualifies if at least one of those effective tempos lands within your max-pitching tolerance of the target. When several multipliers would all work, Run2Beat keeps the <em>closest</em> match &mdash; the one needing the smallest tempo shift &mdash; and remembers exactly how many percent it has to nudge that track during playback. That per-track pitch amount is stored so the iPhone and the Apple Watch reproduce identical playback.
             </p>
 
-            <h2>5. How much music &mdash; play time or track count</h2>
+            <h2>5. How much music &mdash; play time</h2>
             <p>
-                A recipe also decides the size of the list, two ways:
+                A recipe also decides how long the list should run. You set a <strong>target play time</strong> in 15-minute increments (15&nbsp;min up to 3&nbsp;hours, default 30&nbsp;min). When you shuffle, Run2Beat keeps adding matching tracks until the total reaches that duration, so the result is <em>never shorter</em> than you asked for when enough matches exist &mdash; it may run slightly over to avoid cutting a song short.
             </p>
-            <ul>
-                <li><strong>Play time</strong> &mdash; fill the list to a target duration, set in 15-minute increments (15&nbsp;min up to 3&nbsp;hours, default 30&nbsp;min). Run2Beat keeps adding shuffled tracks until the total reaches your target, so the result is <em>never shorter</em> than you asked for &mdash; it may run slightly over to avoid cutting a song.</li>
-                <li><strong>Track count</strong> &mdash; pick a fixed number of songs instead (5 up to 200, in steps of 5, default 20).</li>
-            </ul>
             <p>
-                Switching between the two modes clears the current selection so the next shuffle is sized correctly for the mode you&rsquo;re now in.
+                There is no separate &ldquo;number of tracks&rdquo; mode: length is always driven by play time, which is what you actually care about on a run. Replace or remove songs later and Run2Beat tops the list back up so it still meets your target duration.
             </p>
 
             <h2>6. Source &mdash; where the songs come from</h2>
@@ -150,7 +146,7 @@
 
             <h2>7. Shuffle &mdash; drawing the actual selection</h2>
             <p>
-                Once the recipe knows which songs <em>could</em> match, you tap <strong>Shuffle</strong> to draw the ones that actually land in the list. Run2Beat randomly picks from the eligible pool until your play-time or track-count target is met. Don&rsquo;t love this draw? Shuffle again for a completely fresh random set &mdash; same recipe, different songs.
+                Once the recipe knows which songs <em>could</em> match, you tap <strong>Shuffle</strong> to draw the ones that actually land in the list. Run2Beat randomly picks from the eligible pool until your play-time target is met. Don&rsquo;t love this draw? Shuffle again for a completely fresh random set &mdash; same recipe, different songs.
             </p>
             <p>
                 The selection is concrete and saved with the list, so playback is always the songs you last shuffled in. One thing worth remembering: after re-shuffling, <strong>save the list</strong> so the new selection is also what syncs to your Apple Watch.
@@ -177,15 +173,28 @@
                 A run rarely starts at full pace, so a BPM list can begin with an optional <strong>warm-up</strong>: the first few songs play at a gentler tempo before the list ramps up to your target BPM. You set two things &mdash; <strong>how many</strong> songs warm you up, and the <strong>warm-up tempo</strong> itself. The only rule is that the warm-up tempo has to sit <em>below</em> your target; it doesn&rsquo;t need any particular gap, so a 175&nbsp;BPM list can warm up at 150, or just at 170 for the lightest of eases.
             </p>
             <p>
-                The warm-up always uses the <strong>same songs</strong> from the list, chosen automatically, so the start of a list feels familiar rather than random. You don&rsquo;t mark them yourself and they aren&rsquo;t flagged in the track list &mdash; you simply notice the slower opening. Swap one of those songs out and Run2Beat quietly promotes another to take its place, so the warm-up always holds the number of songs you asked for.
+                The warm-up always uses the <strong>same songs</strong> from the list, chosen automatically, so the start of a list feels familiar rather than random. You don&rsquo;t pick them by hand &mdash; Run2Beat marks them for you with a small warm-up icon on those rows in the detail view, and the list card shows the same icon when warm-up is on. Swap one of those songs out and another is promoted automatically, so the warm-up always holds the number of songs you asked for.
             </p>
             <p>
-                While a warm-up song plays, the now-playing screen shows a small warm-up icon and the <strong>actual warm-up tempo</strong> &mdash; not the list target &mdash; so the number you see is the cadence your feet should follow right now, and the pulse breathes at that slower pace. The moment the warm-up ends, the list steps up to your full target. It behaves identically on iPhone and Apple Watch.
+                While a warm-up song plays, the now-playing screen shows that warm-up icon and the <strong>actual warm-up tempo</strong> &mdash; not the list target &mdash; so the number you see is the cadence your feet should follow right now, and the pulse breathes at that slower pace. The moment the warm-up ends, the list steps up to your full target. It behaves identically on iPhone and Apple Watch, and warm-up settings travel with the list when you send it via AirDrop.
+            </p>
+
+            <h2>Swap candidates &mdash; songs you keep skipping</h2>
+            <p>
+                Not every match is a keeper at your target tempo. When you deliberately skip a track while a BPM list is playing &mdash; on <strong>iPhone or Apple Watch</strong> &mdash; Run2Beat flags it as a <strong>swap candidate</strong> for that list: a song you didn&rsquo;t enjoy at this cadence, and an obvious candidate to replace.
+            </p>
+            <p>
+                Flags show up in the BPM-list detail view (a small flag on the row, plus a thin accent border) and as a flag on the list card while any candidates remain. From there you can replace or delete those tracks, clear the flags from the list&rsquo;s menu or swipe actions, or clear them by saving the list after you&rsquo;ve decided what to keep. The flag is per list: the same song can be a swap candidate in one recipe and untouched in another. Natural end-of-track advances never count &mdash; only a deliberate next.
             </p>
 
             <h2>On your Apple Watch</h2>
             <p>
                 BPM lists come with you when you leave the phone behind. The key difference is <em>when</em> the tempo work happens: instead of pitching tracks live on the watch, Run2Beat renders each song to its target tempo <strong>up front</strong> during sync and transfers the finished, BPM-adjusted audio. The result on-wrist is no live processing, no battery-hungry DSP, and no risk of distorted vocals &mdash; just the right tempo, already baked in. Warm-up songs are handled the same way &mdash; each is rendered at the lower warm-up tempo before it&rsquo;s transferred &mdash; so your watch eases in exactly like your phone. (More on that on the <a href="apple-watch-sync.html">Apple Watch sync</a> page.)
+            </p>
+
+            <h2>Editing a saved list</h2>
+            <p>
+                Change the target BPM on a saved list and Run2Beat asks whether to reshuffle or keep your current songs. Keep them, and every track is re-timed to the new cadence; songs that would need more pitch than Max pitching normally allows stay in the list, shown in red with a warning, and still play at the new target on both iPhone and Apple Watch. Change Max pitching, multipliers or the source and the list updates in place &mdash; a fresh shuffle is how you draw a clean selection again. Nothing sticks until you tap <strong>Update BPM list</strong>.
             </p>
 
             <h2>Keeping a list honest after re-analysis</h2>
@@ -195,7 +204,7 @@
 
             <h2>Managing your lists</h2>
             <p>
-                You can create as many BPM lists as you like and give each one a name. Long-press a list to shuffle-play it instantly, duplicate it as a starting point for a variation, rename it, or delete it. Deleting a BPM list only removes the recipe &mdash; every track stays safely in your library.
+                You can create as many BPM lists as you like and give each one a name. Long-press a list to shuffle-play it instantly, duplicate it as a starting point for a variation, copy its songs into a regular playlist, rename it, send the full recipe (including warm-up) via AirDrop, or delete it. When a list has swap candidates, the same menu and swipe actions also let you clear those flags without opening the detail view. Deleting a BPM list only removes the recipe &mdash; every track stays safely in your library.
             </p>
 
             <a href="index.html" class="learn-more">
