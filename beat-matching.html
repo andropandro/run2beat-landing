@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Beat matching (BETA) &mdash; Run2Beat</title>
+    <meta name="description" content="How Run2Beat Beat matching (BETA) works on BPM-list Crossfade — groove-start seek, beat-zero phase align, soft-outro pull, prep gates, and Watch cue scaling." />
+    <meta name="theme-color" content="#0a0d0a" />
+
+    <link rel="icon" type="image/png" href="assets/app-icon.png" />
+    <link rel="apple-touch-icon" href="assets/app-icon.png" />
+    <link rel="stylesheet" href="styles.css?v=9" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+    <div class="grain"></div>
+    <div class="ambient ambient--green"></div>
+    <div class="ambient ambient--mint"></div>
+
+    <header class="nav">
+        <a href="index.html" class="nav__brand">
+            <img src="assets/app-icon.png" alt="" class="nav__icon" />
+            <span class="nav__name">Run2Beat</span>
+        </a>
+        <nav class="nav__links">
+            <a href="index.html">Home</a>
+            <a href="privacy.html">Privacy</a>
+            <a href="support.html">Support</a>
+            <a href="https://apps.apple.com/app/id6763856621" class="nav__cta js-appstore" target="_blank" rel="noopener">Get the app</a>
+        </nav>
+    </header>
+
+    <main class="legal">
+        <section class="legal__hero">
+            <p class="eyebrow eyebrow--center">Deep dive</p>
+            <h1 class="legal__title">Find<br />the groove.<br />Line up.</h1>
+            <p class="legal__lede">
+                Beat matching (BETA) is an optional assist on top of BPM-list Crossfade. It tries to enter the next song where the music locks in, wait a beat so phases meet, and leave a thin outro a little earlier when energy clearly dies. This page is the long technical version.
+            </p>
+        </section>
+
+        <section class="legal__body">
+
+            <h2>What it is trying to do</h2>
+            <p>
+                On a BPM list with Crossfade, song changes should feel closer to a DJ-style mix than a plain volume blend:
+            </p>
+            <ul>
+                <li><strong>A &mdash; After the quiet intro.</strong> Many tracks open with pads, breakdowns or spoken intros. Starting the fade at file&nbsp;0:00 blends into the wrong section. Prefer seeking to where the groove locks in.</li>
+                <li><strong>B &mdash; Beats find each other.</strong> Outgoing and incoming material at the same effective tempo should overlap on a shared beat phase, not mid-bar against each other.</li>
+                <li><strong>C &mdash; Leave before the thin outro.</strong> When the outgoing track clearly dies into a soft ending, pull the fade window forward so the next high-energy track does not wait behind silence &mdash; without chopping every song via an unconditional early cut.</li>
+            </ul>
+            <p>
+                Ordinary Crossfade (fixed six-second equal-power blend) stays available and unchanged when Beat matching is off. See the <a href="crossfade.html">Transitions deep dive</a> for the engine Beat matching layers on.
+            </p>
+
+            <h2>Hard product constraints</h2>
+            <ul>
+                <li><strong>BPM lists only</strong> &mdash; Library and standard playlists are out of scope (tempos vary; no single list BPM).</li>
+                <li><strong>Same effective tempo</strong> &mdash; a warm-up stepping into a higher target BPM does not force phase-align; matching applies between same-tempo steps.</li>
+                <li><strong>Crossfade only</strong> &mdash; Gapless has no overlap to align. Selecting Gapless clears the Beat matching toggle.</li>
+                <li><strong>Opt-in Beta</strong> &mdash; off by default; Settings toggle; syncs to Apple Watch.</li>
+                <li><strong>Soft-outro pull, no stacked early-cut</strong> &mdash; v1&rsquo;s unconditional early cut (~12 beats on every fade) is deliberately omitted; that combination felt like chopped Crossfade.</li>
+            </ul>
+
+            <h2>Why this is hard</h2>
+            <p>
+                Club DJ tools usually have a per-track beat grid, tempo sync and phase lock. Run2Beat already solves <strong>tempo</strong> for BPM lists by pitching tracks toward a shared target. What remains is <strong>where to enter the next file</strong> and <strong>phase at overlap</strong> &mdash; on-device, without a heavyweight DJ engine or hand-corrected grids.
+            </p>
+            <p>
+                Personal libraries are messy: long EDM builds, acoustic openings, half-time feel, spoken intros, ambient pads that never &ldquo;drop&rdquo;. Any automatic cue will be wrong some of the time. When cues are missing or weak, Run2Beat degrades to <strong>plain Crossfade</strong> rather than inventing a bad seek.
+            </p>
+
+            <h2>Three cues, not one feature</h2>
+            <ul>
+                <li><strong>A &mdash; Intro skip</strong> (arrangement / energy). Failure: next song starts in a quiet pad.</li>
+                <li><strong>B &mdash; Phase align</strong> (timing / beat period). Failure: feels like ordinary Crossfade, or a tiny delay without true lock.</li>
+                <li><strong>C &mdash; Soft-outro pull</strong> (arrangement / energy). Failure: thin outro plays at full level before the next high-energy track.</li>
+            </ul>
+            <p>
+                A and B are measured once and stored on the track. C is measured live when the song plays, because Watch time-stretched variants need the processed file and soft outros are not packaged for AirDrop.
+            </p>
+
+            <h2>Stored data model</h2>
+            <p>
+                Each library track can carry:
+            </p>
+            <ul>
+                <li><strong><code>grooveStartSeconds</code></strong> &mdash; A: seconds into the file for intro skip.</li>
+                <li><strong><code>beatZeroSeconds</code></strong> &mdash; B: phase anchor near the start.</li>
+                <li><strong><code>beatMatchDataVersion</code></strong> &mdash; heuristic schema stamp; bump it and prep re-fills stale cues.</li>
+            </ul>
+            <p>
+                <strong><code>nil</code></strong> means not analysed; <strong><code>0</code></strong> means analysed and the cue is at the file beginning (valid). The same three fields travel in AirDrop playlist / BPM-list packages and in the Watch sync catalog. Soft-outro pull is never stored.
+            </p>
+
+            <h2>How A and B are measured</h2>
+            <p>
+                Analysis scans only the <strong>opening window</strong> of the file (lookahead up to roughly 90&nbsp;s, capped by duration) &mdash; not a full-file decode.
+            </p>
+            <p>
+                <strong>Groove start (A)</strong> is an energy / RMS heuristic: compare an intro floor to a later peak, prefer a sustained high level, else a large jump, else a soft rise, then optionally snap toward the nearest beat of the list BPM hint. Already-loud openings, no rise, or unreadable files return <code>0</code> with a machine-readable reason for logs. It is not arrangement-aware; soft pads and spoken intros can still mis-cue.
+            </p>
+            <p>
+                <strong>Beat zero (B)</strong> is not a full beat grid today. The analyser takes RMS peaks in the first ~24&nbsp;s, uses period&nbsp;=&nbsp;60&nbsp;/&nbsp;BPM, scores candidate phase offsets in <code>[0, period)</code>, and stores the best phase. Without a usable BPM hint, beatZero falls back to <code>0</code>. Tempo detection elsewhere still uses BeatNet; its per-frame beat channel is not persisted as a Crossfade grid yet.
+            </p>
+
+            <h2>Prep gate</h2>
+            <p>
+                The first time you play a BPM list (or start a Watch sync) with Beat matching and Crossfade on, Run2Beat may show a progress sheet that scans only songs still missing cues. Cancel is safe: that play or sync continues with ordinary Crossfade for the session &mdash; no A/B seek/phase and no soft-outro pull.
+            </p>
+            <p>
+                Prep runs from the BPM-list hub and from Watch sync for enabled recipe tracks. It does not force a full-library re-analyse; large libraries stay on-demand. Cancelled prep sets a session flag so Beat matching stays off for that run only.
+            </p>
+
+            <h2>What happens at fade time</h2>
+            <p>
+                Eligibility requires Beat matching enabled, Crossfade mode, a BPM-list session, matching outgoing / next effective BPM, and (on iPhone) no cancelled-prep session flag. Then, once per pending fade:
+            </p>
+            <ol>
+                <li><strong>Soft-outro (C)</strong> &mdash; if the outgoing file has a clear die-out, shorten the transition <em>anchor</em> (capped around 12&nbsp;s / 15&nbsp;% of duration; ignore pulls under ~2.5&nbsp;s). Progress UI still shows full file length. Fade length stays six seconds; only when the blend starts can move earlier.</li>
+                <li><strong>Phase delay (B)</strong> &mdash; compute a wait of up to almost one beat so outgoing phase at elapsed time meets incoming phase at the seek position. Near-boundary → no wait.</li>
+                <li><strong>Incoming seek (A)</strong> &mdash; if grooveStart is above ~0.02&nbsp;s, schedule the next track from that frame. The ramp uses a slightly slower incoming rise onto already-loud material.</li>
+            </ol>
+            <p>
+                Explicitly not done in v2: unconditional early-cut on every fade, wall-clock-only phase (v1), or time-stretch to match different BPMs (the list already shares tempo).
+            </p>
+
+            <h2>iPhone and Apple Watch</h2>
+            <p>
+                Behaviour aims for parity; the surfaces differ:
+            </p>
+            <ul>
+                <li>The <strong>phone</strong> owns the Settings toggle and pushes <code>beatAlignEnabled</code> in the transitions payload.</li>
+                <li><strong>Cues</strong> live on SwiftData tracks on iPhone and as catalog fields on Watch playlist tracks / variants.</li>
+                <li>Watch HE-AAC tempo variants inherit phone A/B cues <strong>scaled by variant pitch</strong> (<code>1/rate</code>). Live remeasure on the watch only if catalog cues are missing. Soft-outro always measures the file that is actually playing.</li>
+                <li>Prep UI is on the phone (list play + sync); the watch has no dedicated prep sheet.</li>
+            </ul>
+
+            <h2>What Beta still means</h2>
+            <p>
+                There is no full beat grid, no phrase awareness (8/16/32-bar structure), and no hand-editable cues yet. Half-time / double-time feel and ambient openings remain failure modes. Results vary track to track &mdash; which is why the feature stays labelled BETA and off by default. When in doubt, turn it off and you are back to the same fixed Crossfade documented on the <a href="crossfade.html">Transitions</a> page.
+            </p>
+
+            <h2>The short version</h2>
+            <p>
+                Beat matching stores where the groove starts and a phase anchor, optionally pulls the fade earlier on a clear soft outro, then seeks and nudges at Crossfade time &mdash; only on BPM lists, only when tempos match, only when you opt in. Cancel prep or flip the toggle and Crossfade behaves exactly as before.
+            </p>
+
+            <a href="crossfade.html" class="learn-more">
+                <span class="learn-more__arrow" style="transform: scaleX(-1);">&rarr;</span>
+                Back to Transitions
+            </a>
+
+        </section>
+
+        <footer class="footer">
+            <p class="footer__copyright">© 2026 Anders Westin</p>
+            <p>Email: <a href="mailto:hello@run2beat.com">hello@run2beat.com</a></p>
+            <p class="footer__sub">All rights reserved.</p>
+            <p class="footer__links">
+                <a href="privacy.html">Privacy Policy</a>
+                <span class="footer__sep">&middot;</span>
+                <a href="terms.html">Terms of Use</a>
+                <span class="footer__sep">&middot;</span>
+                <a href="support.html">Support</a>
+            </p>
+        </footer>
+    </main>
+
+    <dialog class="tf-dialog" id="appstore-dialog" aria-labelledby="appstore-dialog-title">
+        <button class="tf-dialog__close" type="button" aria-label="Close" data-tf-close>
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+        <div class="tf-dialog__inner">
+            <p class="eyebrow eyebrow--center">On the App Store</p>
+            <h3 class="tf-dialog__title" id="appstore-dialog-title">Get Run2Beat on your iPhone.</h3>
+            <p class="tf-dialog__text">
+                Run2Beat runs on iPhone and Apple Watch. Scan the QR code with your iPhone&rsquo;s camera, or open the App Store link below.
+            </p>
+            <div class="tf-dialog__qr">
+                <img src="assets/app-store-qr.svg" alt="QR code to download Run2Beat on the App Store" />
+            </div>
+            <div class="tf-dialog__url-row">
+                <code class="tf-dialog__url" id="appstore-dialog-url">https://apps.apple.com/app/id6763856621</code>
+                <button class="tf-dialog__copy" type="button" data-tf-copy aria-label="Copy link">
+                    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M9 3h9a2 2 0 0 1 2 2v9M15 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>
+                    <span data-tf-copy-label>Copy</span>
+                </button>
+            </div>
+            <p class="tf-dialog__hint">Free on the App Store. No account, no ads.</p>
+        </div>
+    </dialog>
+
+    <script src="script.js?v=5" defer></script>
+</body>
+</html>
