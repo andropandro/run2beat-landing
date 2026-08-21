@@ -4,12 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Importing music &mdash; Run2Beat</title>
-    <meta name="description" content="How music gets into Run2Beat — import individual files or whole folders from your device or iCloud Drive, skip duplicates automatically, and have every track analysed for BPM, loudness and metadata on import." />
+    <meta name="description" content="How music gets into Run2Beat — file and folder import, UX-metadata duplicate detection, optional ShazamKit identification, HE-AAC encode, and a background-safe analysis pipeline." />
     <meta name="theme-color" content="#0a0d0a" />
 
     <link rel="icon" type="image/png" href="assets/app-icon.png" />
     <link rel="apple-touch-icon" href="assets/app-icon.png" />
-    <link rel="stylesheet" href="styles.css?v=8" />
+    <link rel="stylesheet" href="styles.css?v=9" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -37,7 +37,7 @@
             <p class="eyebrow eyebrow--center">Deep dive</p>
             <h1 class="legal__title">Bring your<br />library<br />in.</h1>
             <p class="legal__lede">
-                Run2Beat plays the audio files you already own &mdash; nothing is streamed and nothing is purchased through the app. This page is the long version of how music gets in, from picking files to the moment every track lands in your Library with a tempo, even loudness and the right cover art.
+                Run2Beat plays the audio files you already own &mdash; nothing is streamed and nothing is purchased through the app. This page is the long version of how music gets in: picking files, deduplicating what you already have, enriching incomplete tags, analysing tempo and loudness, and surviving a long background batch without leaving your library half-broken.
             </p>
         </section>
 
@@ -45,7 +45,7 @@
 
             <h2>Where it all starts</h2>
             <p>
-                Everything happens in the <strong>Import Music</strong> screen. You point Run2Beat at music on your device or in iCloud Drive, choose where the tracks should land, tap <strong>Start Import</strong>, and the app handles the rest &mdash; copying, analysing tempo and loudness, and filling in any missing track details automatically.
+                Everything happens in the <strong>Import Music</strong> screen (<code>ImportView</code>). You point Run2Beat at music on your device or in iCloud Drive, choose where the tracks should land, tap <strong>Start Import</strong>, and the app handles the rest &mdash; copying, optional HE-AAC encode, Shazam fill-in when enabled, BPM and loudness analysis, and duplicate checks before anything lands in SwiftData.
             </p>
 
             <figure class="legal__figure">
@@ -89,31 +89,73 @@
                 Run2Beat imports <strong>MP3, M4A (AAC) and WAV</strong> files. That covers the vast majority of personal music libraries.
             </p>
 
-            <h2>No duplicates, ever</h2>
+            <h2>The per-file pipeline</h2>
             <p>
-                Run2Beat recognises whether a file is already in your Library, so the same track is never imported twice &mdash; only genuinely new files are added. After an import you get a short summary telling you how many tracks were added and how many were skipped as duplicates.
+                For each source URL, <code>FileManagerService.importSingleFile</code> roughly does:
+            </p>
+            <ol>
+                <li>Copy into a temp file under the Music directory.</li>
+                <li>Read embedded metadata (<code>AVAsset.load(.metadata)</code>), including whether the title was a real tag or only a file-name fallback.</li>
+                <li>Optionally call Shazam when metadata is incomplete (see below).</li>
+                <li>Transcode or copy into the final on-disk asset, embedding the resolved metadata.</li>
+                <li>Run Layer A (byte hash) then Layer B (UX-metadata) duplicate checks.</li>
+                <li>Insert or upgrade a <code>Track</code> in SwiftData; queue BPM and loudness work without letting the batch burn the CPU watchdog.</li>
+            </ol>
+            <p>
+                The Import screen locks down while a batch runs; cancel keeps everything already committed and leaves a recoverable session in the import log.
+            </p>
+
+            <h2>No duplicates &mdash; what &ldquo;same song&rdquo; means</h2>
+            <p>
+                Run2Beat keeps one Library row per recording you would recognise as the same track. A duplicate is <em>not</em> defined by identical file bytes alone: two imports of the same song can produce different on-disk bytes (HE-AAC re-encode, metadata padding) while still looking identical in the list. The rules follow <strong>what you see</strong>, and they run in three places: manual import, AirDrop playlist receive, and <strong>Settings &rarr; Library Duplicates</strong>.
             </p>
             <p>
-                The check goes further than comparing raw file bytes. Two copies of the same song can end up as technically different files &mdash; one re-encoded to HE-AAC, one with slightly different tags &mdash; while still being the same recording to you. Run2Beat instead compares what you&rsquo;d actually recognise as the same track: title and artist, tempo (or length, when tempo isn&rsquo;t known yet), and the cover art, matched by appearance rather than requiring byte-for-byte identical artwork. That keeps two genuinely different recordings of the same title &mdash; a studio cut and a live version, say &mdash; from ever being merged by mistake.
+                Two tracks match when all of the following hold:
             </p>
             <ul>
-                <li><strong>Best quality wins.</strong> If the incoming file turns out to be a better copy of a song you already have, Run2Beat upgrades the existing track in place instead of adding a second row &mdash; so it keeps every playlist and BPM list it already belonged to.</li>
-                <li><strong>Fast at any library size.</strong> Checking for duplicates never means scanning your whole library file by file. Run2Beat only compares against the small group of tracks that already share a title and artist, so the check stays instant whether your library has fifty tracks or fifty thousand.</li>
-                <li><strong>Also covers AirDrop.</strong> The same logic runs when you receive a playlist over AirDrop from another Run2Beat user, so tracks you already own are recognised there too, not just on import.</li>
+                <li><strong>Title and artist</strong> &mdash; trimmed, case- and diacritic-insensitive, collapsed whitespace, with common Unicode variants folded (ellipsis, curly quotes, and so on). Empty titles never participate.</li>
+                <li><strong>Tempo</strong> &mdash; when both rows have BPM, the whole-number BPM shown in the Library must match. When BPM is still missing (typical mid-import), <strong>duration</strong> must agree within &plusmn;2&nbsp;seconds instead.</li>
+                <li><strong>Cover art</strong> &mdash; compared with a perceptual <strong>difference hash (dHash)</strong>: thumbnail &rarr; 9&times;8 greyscale grid &rarr; 64-bit hash of horizontal brightness gradients. Covers match when Hamming distance is &le;&nbsp;10 bits. Both missing artwork also requires the duration rule; one present and one missing is <em>not</em> a duplicate (so studio vs live cuts with different art stay apart).</li>
             </ul>
             <p>
-                Already have duplicates from before &mdash; or from any other source? <strong>Settings &rarr; Library Duplicates</strong> runs a one-off sweep over your whole library, finds every group of matching tracks, keeps the best copy of each, and re-points any playlists or BPM lists at the survivor &mdash; all in the background, with progress shown on screen until it&rsquo;s done.
+                Displayed bitrate is <strong>not</strong> part of identity. It only picks the <strong>keeper</strong> when duplicates coexist: higher Library kbps, then higher raw on-disk bitrate, then earlier <code>addedDate</code>. On import, a better incoming copy replaces the existing file in place (same UUID, playlists and BPM lists preserved). Equal or worse quality is skipped and the existing row is linked to any new playlist instead.
+            </p>
+
+            <h2>Two detection layers</h2>
+            <ul>
+                <li><strong>Layer A &mdash; byte hash.</strong> Fast SHA-256 lookups on <code>Track.audioHash</code> catch exact re-imports of the same source file. AirDrop also compares the package manifest hash, then staged file bytes, before falling through to metadata matching.</li>
+                <li><strong>Layer B &mdash; UX metadata.</strong> <code>TrackDuplicateDetector</code> builds identity fields from title, artist, artwork, duration and bitrate. A per-batch <code>LibraryDuplicateIndex</code> buckets the library by normalised title + artist only (no cover decode at build time), then runs the artwork-aware decision only inside that small bucket.</li>
+            </ul>
+            <p>
+                That index matters. An earlier design decoded every cover and computed a dHash for the whole library on every imported file. On a multi-thousand-track library that N&times;M decode storm pushed memory and CPU into jetsam / watchdog kills with the screen locked &mdash; and under pressure intermittent decode failures returned a nil hash so real duplicates slipped through in waves. Tempo is deliberately not in the bucket key (incoming BPM is usually still <code>nil</code>); <code>areSameSong</code> reconciles tempo inside the bucket.
+            </p>
+            <p>
+                The Settings sweep uses the same identity rules with a different shape: cheap coarse buckets on the main actor, snapshot cover bytes only for true multi-row candidates, decode and cluster off the main thread, then rewrite playlist memberships, play-order arrays and BPM-recipe selections before deleting surplus rows. Do not move full-library cover decode back onto the main actor.
             </p>
 
             <h2>What happens to every track</h2>
             <p>
-                Importing isn&rsquo;t just copying. As each file comes in, Run2Beat does three things automatically &mdash; all on your device:
+                Importing isn&rsquo;t just copying. As each file comes in, Run2Beat does three things automatically &mdash; all on your device (Shazam needs the network when enabled):
             </p>
             <ul>
-                <li><strong>BPM analysis.</strong> Every track&rsquo;s tempo is <a href="bpm-analysis.html">measured on-device</a>, nothing leaves your phone. The BPM appears next to the track and powers sorting and <a href="bpm-lists.html">BPM lists</a> later. Tracks the detector was unsure about are clearly flagged so you stay in control of the beat.</li>
-                <li><strong>Loudness levelling.</strong> Each track&rsquo;s <a href="volume-normalisation.html">loudness (in LUFS) is measured</a> so quiet and loud songs can be played back at a consistent level.</li>
-                <li><strong>Shazam metadata.</strong> If a track is missing its title, artist or cover art, Run2Beat can identify it via Shazam during import and fill in the right information. You can switch this on or off in Settings under Import.</li>
+                <li><strong>BPM analysis.</strong> Every track&rsquo;s tempo is <a href="bpm-analysis.html">measured on-device</a>. Tracks the detector was unsure about are clearly flagged. Analysis is serialised across the batch so file N+1 does not transcode while file N&rsquo;s BPM still burns a second core.</li>
+                <li><strong>Loudness levelling.</strong> Each track&rsquo;s <a href="volume-normalisation.html">loudness (in LUFS) is measured</a> with a bounded analyser pass so quiet and loud songs play back at a consistent level without blowing the memory budget.</li>
+                <li><strong>Shazam metadata.</strong> Optional enrichment for incomplete tags &mdash; detailed below.</li>
             </ul>
+
+            <h2>Shazam auto-identification</h2>
+            <p>
+                Untagged files (<code>track01.mp3</code> with no ID3) used to land looking like a folder listing. With <strong>Identify music automatically</strong> on (Settings &rarr; Import; off by default), incomplete metadata triggers a ShazamKit match <em>during</em> the same <code>importSingleFile</code> call &mdash; before the converted file is finalised &mdash; so recovered title, artist and artwork can be written into the output.
+            </p>
+            <p>
+                A call runs when any of title (file-name fallback only), artist, album or artwork is missing. Genres, ISRC and catalog URLs are not triggers; they are bonus fields harvested on a successful match. Matching is <strong>fill-in-blanks</strong>: existing tags are never overwritten. Catalog fields that ID3 cannot provide (genres, ISRC, Apple Music URL, Shazam web URL, release date) are stored when Shazam returns them.
+            </p>
+            <p>
+                The signature pipeline samples about <strong>12 seconds</strong> of audio starting at roughly <strong>25&nbsp;% into the track</strong> (not frame&nbsp;0), so quiet intros and spoken openings are less likely to spoil the match. Work runs off the main actor; transient ShazamKit / XPC failures retry once with a short backoff, while a true catalog miss is not retried. An in-process rate limiter floors matches at ~120&nbsp;ms apart and backs off adaptively when the recent failure rate climbs, so a long batch does not trip Apple&rsquo;s soft service cap.
+            </p>
+            <p>
+                Optional <strong>Only import identified songs</strong> (requires auto-identify on): incomplete files that Shazam cannot match are deleted from the temp area and never enter the Library. Complete files still import without contacting Shazam. Album is never returned by ShazamKit&rsquo;s catalog match API &mdash; identification remains best-effort, not authoritative.
+            </p>
 
             <h2>Where tracks land</h2>
             <p>
@@ -125,12 +167,26 @@
                 If you want to fit more music on your iPhone, you can have imported files re-encoded to <strong>HE-AAC</strong> &mdash; a modern, efficient format. A typical 4-minute song lands around 2&nbsp;MB instead of roughly 4&nbsp;MB for a 128&nbsp;kbps MP3, about half the storage for quality most people can&rsquo;t tell apart at running volumes. It&rsquo;s off by default and lives in Settings under Import. (<a href="apple-watch-sync.html">Apple Watch sync</a> always uses HE-AAC to keep the watch&rsquo;s storage small, regardless of this setting.)
             </p>
 
-            <h2>How long it takes &mdash; and walking away</h2>
+            <h2>Background-safe batches</h2>
             <p>
-                Plan for roughly <strong>8 seconds per track with the screen locked</strong> &mdash; about 13 minutes for 100 tracks, 25&ndash;30 minutes for 200. With the screen on in the foreground it&rsquo;s nearly twice as fast. The small pauses between tracks are deliberate: they keep iOS from shutting the app down while it works in the background, so you can lock the phone, go do something else, and come back to a finished library. A large import uses about as much battery as playing music for the same time (on the order of 5&nbsp;% for 200 tracks) &mdash; for very large jobs, plug in first.
+                Large imports with the screen locked used to fail in several ways: iOS SIGKILL from sustained background CPU, jetsam from climbing memory, ShazamKit transient storms, or an external drive dying mid-batch with no clean recovery. The pipeline defends each layer:
+            </p>
+            <ul>
+                <li><strong>ImportLog.</strong> A SwiftData session row is created before the first file and saved after every successful insert (source name, counts, bytes, track UUIDs). If iOS kills the app at file 142 of 150, Settings &rarr; Import &rarr; Import logs can remove that partial batch in one tap.</li>
+                <li><strong>CPU throttle.</strong> BPM work is serialised across files, and an adaptive sleep (longer in background, longer when the SoC is hot) keeps duty cycle under the undocumented watchdog. Wall-clock cost is roughly 1.8&ndash;2.2&times; a parallel-everything import &mdash; the trade-off for being able to lock the phone and walk away.</li>
+                <li><strong>Memory hygiene.</strong> Artwork buffers are released after merge; AV readers stay per-file scoped; loudness analysis stays channel- and duration-bounded; duplicate checks use the title/artist index instead of decoding every cover every time.</li>
+                <li><strong>BackgroundActivityKeeper.</strong> Same silent-audio keeper used by bulk loudness / BPM re-analyse and Watch sync, so the process stays scheduled for wall-clock time (it does not exempt you from the CPU watchdog).</li>
+            </ul>
+            <p>
+                Plan for roughly <strong>8 seconds per track with the screen locked</strong> &mdash; about 13 minutes for 100 tracks, 25&ndash;30 minutes for 200. With the screen on in the foreground it&rsquo;s nearly twice as fast. A large import uses about as much battery as playing music for the same time (on the order of 5&nbsp;% for 200 tracks) &mdash; for very large jobs, plug in first.
             </p>
             <p>
-                You can <strong>cancel at any time</strong>, and anything already imported is kept. Even in the rare case the import is interrupted, Run2Beat keeps a log of each session so you can cleanly remove a partial batch from Settings &mdash; you&rsquo;ll never have to hunt through your Library track by track.
+                You can <strong>cancel at any time</strong>; anything already imported is kept. Empty sessions (cancelled before the first file) are pruned from the log so the list stays useful.
+            </p>
+
+            <h2>The short version</h2>
+            <p>
+                Pick files or a folder, choose a destination, start the import. Run2Beat copies and optionally encodes, fills incomplete tags via Shazam when you ask, measures BPM and loudness, skips or upgrades duplicates using what you would recognise as the same song, and leaves an audit trail so a killed background batch is recoverable. The Library stays one row per recording &mdash; not one row per accidental re-import.
             </p>
 
             <a href="index.html" class="learn-more">
@@ -154,7 +210,6 @@
         </footer>
     </main>
 
-    <!-- App Store dialog -->
     <dialog class="tf-dialog" id="appstore-dialog" aria-labelledby="appstore-dialog-title">
         <button class="tf-dialog__close" type="button" aria-label="Close" data-tf-close>
             <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" d="M6 6l12 12M18 6L6 18"/></svg>
