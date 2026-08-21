@@ -17,6 +17,8 @@ frame uses `object-fit: cover`.
 | `watch.jpg`               | Take it anywhere / Watch | Apple Watch playback screen (left of the pair).                                     |
 | `watch-2.jpg`             | Take it anywhere / Watch | Second Apple Watch screen shown side by side with `watch.jpg`.                      |
 | `airdrop.jpg`             | Take it anywhere / Share | iOS share sheet with AirDrop highlighted, or the in-app share confirmation.        |
+| `equalizer.jpg`           | Equalizer deep dive      | The Equalizer sheet with preset chips and the ten-band graphic EQ.                 |
+| `import.jpg`              | Import deep dive         | The Import Music screen with Files/Folder sections and Start Import.               |
 
 ## Tips for great-looking screenshots
 
