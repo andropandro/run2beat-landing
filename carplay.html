@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CarPlay &mdash; Run2Beat</title>
+    <meta name="description" content="How Run2Beat works in Apple CarPlay — three driving-safe tabs for BPM lists, playlists and equalizer presets, shared playback with the iPhone, and the Now Playing polish that keeps the car surface usable." />
+    <meta name="theme-color" content="#0a0d0a" />
+
+    <link rel="icon" type="image/png" href="assets/app-icon.png" />
+    <link rel="apple-touch-icon" href="assets/app-icon.png" />
+    <link rel="stylesheet" href="styles.css?v=9" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+    <div class="grain"></div>
+    <div class="ambient ambient--green"></div>
+    <div class="ambient ambient--mint"></div>
+
+    <header class="nav">
+        <a href="index.html" class="nav__brand">
+            <img src="assets/app-icon.png" alt="" class="nav__icon" />
+            <span class="nav__name">Run2Beat</span>
+        </a>
+        <nav class="nav__links">
+            <a href="index.html">Home</a>
+            <a href="privacy.html">Privacy</a>
+            <a href="support.html">Support</a>
+            <a href="https://apps.apple.com/app/id6763856621" class="nav__cta js-appstore" target="_blank" rel="noopener">Get the app</a>
+        </nav>
+    </header>
+
+    <main class="legal">
+        <section class="legal__hero">
+            <p class="eyebrow eyebrow--center">Deep dive</p>
+            <h1 class="legal__title">Plug in.<br />Press<br />play.</h1>
+            <p class="legal__lede">
+                Apple CarPlay is Run2Beat&rsquo;s third runtime &mdash; alongside the iPhone app and the Apple Watch companion. Same library, same player, same equalizer. This page is the long version of what shows up in the car, what Apple allows audio apps to build, and how the in-car surface stays in lock-step with your phone.
+            </p>
+        </section>
+
+        <section class="legal__body">
+
+            <h2>The product principle</h2>
+            <p>
+                Identical to the Watch split of responsibilities: the <strong>iPhone is the configuration and processing hub</strong>. Library imports, BPM recipes, playlist editing, equalizer preset CRUD and pitch rendering all happen on the phone. <strong>CarPlay is a read-only playback runtime</strong> that exposes only what a driver needs at the wheel &mdash; browse, start playback, toggle favourite, switch EQ preset. There is no creating, renaming, deleting or editing in the car.
+            </p>
+            <p>
+                That is why the homepage line &ldquo;Setup, presets and EQ stay on the iPhone &mdash; the car just plays&rdquo; is not marketing fluff; it is the architecture.
+            </p>
+
+            <h2>Three driving-safe tabs</h2>
+            <p>
+                The in-car UI is a <code>CPTabBarTemplate</code> with three tabs, deliberately mirroring the Watch app so the surfaces feel familiar across devices:
+            </p>
+            <ul>
+                <li><strong>BPM lists</strong> &mdash; alphabetical browse of every saved recipe. Open a list and you get a single <em>Shuffle</em> action plus a read-only track listing. In-car BPM playback is shuffle-only; you cannot pick a starting track from the wheel.</li>
+                <li><strong>Playlists</strong> &mdash; the same hierarchy the iPhone uses: Favorites first, then pinned playlists, then your folders, then ungrouped lists. Open a playlist for Play, Shuffle, or tap a track to start from that row.</li>
+                <li><strong>Equalizer</strong> &mdash; presets only. A Standard (flat) row plus one row per saved preset, with a checkmark on the active choice. No per-band sliders in the car &mdash; Apple&rsquo;s HIG treats fine-grained controls as a distraction while driving.</li>
+            </ul>
+
+            <h2>What CarPlay lets you build (and what it doesn&rsquo;t)</h2>
+            <p>
+                CarPlay is not a place to ship a custom UI. Audio apps get a constrained set of system templates and nothing else. Every layout decision below is downstream of that fact.
+            </p>
+            <p>
+                Available building blocks include a top-level tab bar (up to five tabs), list templates with sections and rows, and the shared system Now Playing screen &mdash; where apps may attach up to five custom buttons but cannot replace the layout, move the transport controls, or override fonts. Notable things audio apps <em>cannot</em> do: render SwiftUI or arbitrary UIKit in the car; customise Now Playing&rsquo;s hero / scrubber / transport chrome; hide tabs based on state; show animations inside list rows; or invent gestures beyond list taps and the stock transport.
+            </p>
+            <p>
+                The only real lever for visual richness on Now Playing is the artwork you hand to <code>MPNowPlayingInfoCenter</code> &mdash; which is why the branded placeholder cover matters so much when a track has no embedded art.
+            </p>
+
+            <h2>One process, one player, one store</h2>
+            <p>
+                The CarPlay scene runs in the <em>same</em> iPhone process as the phone UI. Both scenes must therefore agree on the SwiftData store (playlists created on iPhone appear in the car without a manual refresh), the process-wide <code>TrackPlayer</code> singleton (pause in the car pauses on the phone mini-player), and <code>AudioEqualizer.shared</code> (a preset switched at a red light is heard immediately). A classic per-view player would mean double playback whenever both screens were visible; CarPlay attaches to the same shared player the dashboard already uses.
+            </p>
+            <p>
+                There is no separate CarPlay target and no extra sync channel to the Watch. The car reads the same SwiftData store and the same equalizer singleton the phone does, so all three surfaces stay in lock-step.
+            </p>
+
+            <h2>Playlists tab &mdash; same hierarchy as iPhone</h2>
+            <p>
+                The Playlists builder mirrors the phone ordering: Favorites and pinned at the top, then user-defined groups in the same order you arranged them in Manage Groups (or alphabetical if you never set a manual order), then ungrouped playlists. Collapsed groups on iPhone are intentionally ignored in the car &mdash; CarPlay list sections cannot collapse, so every section stays expanded and the head unit scrolls.
+            </p>
+            <p>
+                Every row can show a 1-or-4 album-art mosaic matching the phone&rsquo;s playlist artwork grid, pre-rendered at about 80&nbsp;pt so memory stays bounded when scrolling large libraries. Zero covers fall back to an SF Symbol; one to three covers use the first full-bleed; four or more become a 2&times;2 grid with a hairline gutter.
+            </p>
+            <p>
+                Starting playback uses the same path as the phone playlist detail view: build a queue, optionally enable shuffle after start (because the player resets shuffle on play), then push the shared Now Playing template. Pushing that template is idempotent &mdash; a double-push of the same system singleton is an error, so the builder only pushes when Now Playing is not already on top.
+            </p>
+
+            <h2>BPM lists tab &mdash; shuffle only, on purpose</h2>
+            <p>
+                BPM recipes come from the same UserDefaults store the iPhone BPM Lists screen writes. Rows show the familiar <em>N tracks · duration</em> subtitle. Open a recipe and the only action that starts audio is Shuffle; the track list is a preview so you can see what is coming.
+            </p>
+            <p>
+                Two details keep that contract honest without looking broken. Disabled rows in CarPlay are automatically dimmed, and the product forbids dimmed text &mdash; so track rows stay fully enabled and opaque, with an empty tap handler that only dismisses CarPlay&rsquo;s tap-acknowledgment spinner. Without that handler the spinner would hang forever and block Shuffle. Shuffle itself calls the same pitch-correct BPM recipe playback path the phone uses, so every tempo refinement on iPhone lands in the car for free.
+            </p>
+
+            <h2>Equalizer tab &mdash; presets, not sliders</h2>
+            <p>
+                The Equalizer tab is a thin presentation layer over the same singleton described on the <a href="equalizer.html">Equalizer</a> deep dive. Standard plus saved presets; tap to activate; checkmark on the active row. No band sliders, matching Apple&rsquo;s driving-safety guidance and the Watch picker&rsquo;s spirit. Switching a preset updates live audio through the shared player immediately.
+            </p>
+
+            <h2>Now Playing &mdash; favourite star and artwork</h2>
+            <p>
+                CarPlay&rsquo;s Now Playing screen is a system singleton. Apps cannot redesign it; they can attach a handful of buttons and supply metadata. Run2Beat adds a favourite star that uses the same filled / outline symbols as the iPhone mini player. The button is rebuilt on every state change because its image is immutable after construction.
+            </p>
+            <p>
+                Favourite state stays correct even when you toggle from the phone mid-drive: every site that mutates favourite status posts a shared notification, and the CarPlay controller rebuilds the star. It also watches the current track, so advancing to a different song refreshes the button for that track&rsquo;s status.
+            </p>
+            <p>
+                Artwork is both the hero image and the blurred backdrop behind the template. Tracks without embedded covers used to leave a flat, empty Now Playing screen. Run2Beat always supplies artwork to the system Now Playing info centre &mdash; the track&rsquo;s own cover when present, otherwise a branded 1024&times;1024 placeholder with a warm diagonal gradient and a waveform glyph, in the same spirit as Apple Music&rsquo;s fallback covers. Declaring a large maximum artwork size also prevents tiny imported thumbnails from capping how large CarPlay is willing to draw the hero. The same placeholder lifts the iPhone lock screen and Watch transport for cover-less tracks.
+            </p>
+
+            <h2>Performance on large libraries</h2>
+            <p>
+                On libraries with many thousands of tracks, a naive refresh strategy is fatal. Early builds rebuilt every CarPlay list whenever the current track changed: rematerialising the whole library and redecoding mosaics on the main actor for seconds at a time. Audio kept playing on its real-time thread, but Now Playing metadata, tap completions and row paints starved &mdash; which looked like &ldquo;artwork arrives late&rdquo;, &ldquo;BPM detail won&rsquo;t open&rdquo;, or even &ldquo;the equalizer overlay is animating&rdquo; when mosaics rippled on auto-advance.
+            </p>
+            <p>
+                The fix is layered: builders cache a library snapshot for the CarPlay session and refresh it only when the library actually changes; mosaics are cached per playlist / recipe; root tabs subscribe to playlist / recipe / playing state rather than every track advance; and when the playing list does change, only the affected row images are updated surgically. Connecting to a head unit also prefetches dashboard artwork so the first Now Playing paint is not cold.
+            </p>
+
+            <h2>Design rules from Apple&rsquo;s HIG</h2>
+            <ul>
+                <li>Limit interaction to a few taps &mdash; nothing drills deeper than two levels from the tab bar.</li>
+                <li>Make playback the priority; Equalizer is the only non-playback tab and sits at the edge of the bar.</li>
+                <li>Use system templates only; honour the system Now Playing screen.</li>
+                <li>No ads or promotional content in the car.</li>
+            </ul>
+
+            <h2>The short version</h2>
+            <p>
+                CarPlay is a driving-safe window onto the same Run2Beat library and player you already use on iPhone and Apple Watch. Three tabs, shuffle-first BPM lists, full playlist control, preset-only EQ, a favourite star that stays in sync, and artwork that never leaves the Now Playing screen empty. Setup stays on the phone; the car just plays.
+            </p>
+
+            <a href="index.html" class="learn-more">
+                <span class="learn-more__arrow" style="transform: scaleX(-1);">&rarr;</span>
+                Back to the overview
+            </a>
+
+        </section>
+
+        <footer class="footer">
+            <p class="footer__copyright">© 2026 Anders Westin</p>
+            <p>Email: <a href="mailto:hello@run2beat.com">hello@run2beat.com</a></p>
+            <p class="footer__sub">All rights reserved.</p>
+            <p class="footer__links">
+                <a href="privacy.html">Privacy Policy</a>
+                <span class="footer__sep">&middot;</span>
+                <a href="terms.html">Terms of Use</a>
+                <span class="footer__sep">&middot;</span>
+                <a href="support.html">Support</a>
+            </p>
+        </footer>
+    </main>
+
+    <!-- App Store dialog -->
+    <dialog class="tf-dialog" id="appstore-dialog" aria-labelledby="appstore-dialog-title">
+        <button class="tf-dialog__close" type="button" aria-label="Close" data-tf-close>
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+        <div class="tf-dialog__inner">
+            <p class="eyebrow eyebrow--center">On the App Store</p>
+            <h3 class="tf-dialog__title" id="appstore-dialog-title">Get Run2Beat on your iPhone.</h3>
+            <p class="tf-dialog__text">
+                Run2Beat runs on iPhone and Apple Watch. Scan the QR code with your iPhone&rsquo;s camera, or open the App Store link below.
+            </p>
+            <div class="tf-dialog__qr">
+                <img src="assets/app-store-qr.svg" alt="QR code to download Run2Beat on the App Store" />
+            </div>
+            <div class="tf-dialog__url-row">
+                <code class="tf-dialog__url" id="appstore-dialog-url">https://apps.apple.com/app/id6763856621</code>
+                <button class="tf-dialog__copy" type="button" data-tf-copy aria-label="Copy link">
+                    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M9 3h9a2 2 0 0 1 2 2v9M15 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>
+                    <span data-tf-copy-label>Copy</span>
+                </button>
+            </div>
+            <p class="tf-dialog__hint">Free on the App Store. No account, no ads.</p>
+        </div>
+    </dialog>
+
+    <script src="script.js?v=5" defer></script>
+</body>
+</html>
