@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Equalizer &mdash; Run2Beat</title>
-    <meta name="description" content="How the Run2Beat equalizer works — a 10-band graphic EQ from 32 Hz to 16 kHz at ±12 dB, named presets, the non-flat glow, and a custom DSP that brings it to Apple Watch." />
+    <meta name="description" content="How the Run2Beat equalizer works in depth — ISO 10-band graphic EQ, named presets, live AVAudioUnitEQ on iPhone, and a custom biquad cascade that brings the same curve to Apple Watch." />
     <meta name="theme-color" content="#0a0d0a" />
 
     <link rel="icon" type="image/png" href="assets/app-icon.png" />
@@ -93,7 +93,16 @@
 
             <h2>It shapes everything, instantly</h2>
             <p>
-                The EQ sits in Run2Beat&rsquo;s audio engine, so it colours <em>every</em> playback path &mdash; a library track, a tempo-matched BPM-list song, a playlist on shuffle. On iPhone the curve lives in a dedicated EQ node wired right before the mixer, which means a slider move takes effect on the currently playing track immediately, with no pause and no audible glitch.
+                The EQ sits in Run2Beat&rsquo;s audio engine, so it colours <em>every</em> playback path &mdash; a library track, a tempo-matched BPM-list song, a playlist on shuffle. On iPhone the pipeline is a single unified graph:
+            </p>
+            <p>
+                <code>player &rarr; time-pitch &rarr; equalizer &rarr; mixer</code>
+            </p>
+            <p>
+                The time-pitch node is what BPM lists use to nudge a song onto your target cadence; for ordinary library and playlist playback it simply sits at rate&nbsp;1.0 and passes audio through. The equalizer is Apple&rsquo;s <strong>AVAudioUnitEQ</strong> with ten parametric bands, one octave of bandwidth each, wired immediately before the mixer. Because band gains can be written while the engine is running, a slider move takes effect on the currently playing track immediately &mdash; no pause, no rebuild, no audible glitch.
+            </p>
+            <p>
+                Crossfades keep the same sound profile across the blend. The secondary engine used during a fade carries its own identical EQ node; when the ramp finishes and that engine promotes to primary, its EQ becomes the live one. Your curve never drops out mid-transition.
             </p>
 
             <figure class="legal__figure">
@@ -111,23 +120,70 @@
 
             <h2>On your Apple Watch</h2>
             <p>
-                Every preset you save syncs automatically to the watch over the regular sync. On the wrist you pick a preset straight from the Home view and change your sound profile without touching the phone. If you haven&rsquo;t saved any presets, the watch simply plays flat &mdash; and the equalizer card is hidden until there&rsquo;s something to choose.
+                Every preset you save syncs automatically to the watch over the regular sync. On the wrist you pick a preset straight from the Home view and change your sound profile without touching the phone. If you haven&rsquo;t saved any presets, the watch simply plays flat &mdash; and the equalizer card is hidden until there&rsquo;s something to choose. Each row in the picker shows a short curve hint (for example <em>+4&nbsp;dB @ 4k</em>) so you can tell presets apart on a wrist-sized screen without drawing all ten sliders.
             </p>
             <p>
-                Two sensible rules keep this predictable: the <strong>phone is the source of truth</strong> for the preset list (the watch holds a read-only copy you can&rsquo;t edit), and the <strong>active choice is per-device</strong> &mdash; what you pick on your wrist won&rsquo;t silently change what&rsquo;s selected on the phone, and vice versa. Delete a preset on the phone and it disappears from the watch at the next sync.
+                Two sensible rules keep this predictable: the <strong>phone is the source of truth</strong> for the preset list (the watch holds a read-only copy you can&rsquo;t edit), and the <strong>active choice is per-device</strong> &mdash; what you pick on your wrist won&rsquo;t silently change what&rsquo;s selected on the phone, and vice versa. Delete a preset on the phone and it disappears from the watch at the next sync; rename or retune it and the watch keeps the same selection highlighted, because each preset carries a stable ID that survives name and curve edits.
             </p>
 
-            <h2>Under the hood, for the curious</h2>
+            <h2>Why the Watch needs its own EQ</h2>
             <p>
-                watchOS doesn&rsquo;t offer Apple&rsquo;s built-in EQ audio unit at all &mdash; the entire effect family is unavailable on the platform. Rather than ship the watch a flat, EQ-less player or bloat every sync with multiple pre-rendered versions of each track, Run2Beat brings its own EQ: a <strong>custom 10-band peaking-filter DSP</strong> (a biquad cascade derived from the well-known Audio EQ Cookbook, with a per-band width of about one octave to match the ISO spacing). It pre-processes the decoded audio on the watch itself before playback, so any preset you pick applies with zero extra transfer cost.
+                watchOS does not offer Apple&rsquo;s built-in EQ audio unit at all &mdash; the entire <code>AVAudioUnitEffect</code> family (<code>AVAudioUnitEQ</code>, reverb, distortion, &hellip;) is marked unavailable on the platform. The phone pipeline therefore cannot be reused as-is.
             </p>
             <p>
-                A nice side effect of that design: a perfectly flat curve is detected and skipped entirely, so the default sound costs no processing at all. And whether you&rsquo;re on the phone or the watch, changing the curve mid-track is engineered to be click-free.
+                Two alternatives were considered and rejected. Showing a picker but playing everything flat would break the point of the feature. Pre-rendering every track on the phone for every preset would multiply storage and sync time unacceptably on a watch. The shipped answer is a <strong>custom 10-band peaking-filter DSP</strong> that pre-processes decoded audio on the watch itself, so any preset you pick applies with zero extra transfer cost.
+            </p>
+
+            <h2>The Watch DSP &mdash; a biquad cascade</h2>
+            <p>
+                Each band is a peaking biquad whose coefficients come from Robert Bristow-Johnson&rsquo;s <em>Audio EQ Cookbook</em>. With <strong>Q&nbsp;&approx;&nbsp;1.414</strong> each band spans roughly one octave &mdash; the right match for the ISO spacing so adjacent bands blend smoothly instead of fighting each other. A gain of exactly 0&nbsp;dB short-circuits to an identity coefficient set, so flat bands cost nothing in the inner loop.
+            </p>
+            <p>
+                The processor applies all ten filters in series using Direct Form&nbsp;II Transposed topology (two state variables per channel per band, packed into one contiguous array to keep the hot path allocation-free). Output is clamped to a wide safety margin against numerical runaway at extreme settings; for normal music material that clamp never engages. A perfectly flat curve is detected up front and the whole pass is skipped, so the default sound costs no CPU at all.
+            </p>
+            <p>
+                Updating gains mid-track does <em>not</em> reset filter state, which is what keeps on-the-fly tweaks free of clicks. A full reconfigure (new sample rate, channel count, or a fresh track load) does reset state, as expected between songs.
+            </p>
+
+            <h2>How the Watch applies a preset</h2>
+            <p>
+                Because the EQ lives in Run2Beat&rsquo;s own code rather than in an audio unit, the watch cannot simply &ldquo;insert an effect&rdquo; into a live graph. Instead it keeps two PCM buffers per track:
+            </p>
+            <ul>
+                <li><strong>Source buffer</strong> &mdash; the canonical decoded copy of the file.</li>
+                <li><strong>Processed buffer</strong> &mdash; a channel-by-channel copy with the active EQ cascade applied in place, then scheduled onto <code>AVAudioPlayerNode</code>.</li>
+            </ul>
+            <p>
+                For a typical three-minute stereo track at 44.1&nbsp;kHz that buffer is on the order of tens of megabytes &mdash; comfortable on modern Apple Watch hardware, and far simpler than a streaming ring buffer that would have to carry biquad state across segment boundaries. It also makes preset changes trivial: re-copy source &rarr; processed, re-run the cascade, reschedule.
+            </p>
+            <p>
+                Changing preset while a song is already playing is carefully ordered so you never hear a click. The watch reprocesses the <em>entire</em> source from frame&nbsp;0 first (warming the filters), then stops the node, notes the current playhead, and reschedules only the remainder from that point. Stale completion callbacks from the previous schedule are ignored via a monotonically bumped token, so a mid-track EQ change cannot accidentally fire &ldquo;track ended&rdquo; logic from the old buffer.
+            </p>
+            <p>
+                One detail that matters for BPM lists: pitch adjustment on the watch is already baked into the files during sync. The watch player never re-pitches at playback time &mdash; it only applies your EQ curve on top of the pre-rendered tempo.
+            </p>
+
+            <h2>How presets travel to the Watch</h2>
+            <p>
+                Preset payloads ride the same WatchConnectivity application-context path as recipes, playlists and transition settings. Whenever you save, update, rename or delete a preset on the phone, Run2Beat pushes the <em>full current list</em> &mdash; there is no separate &ldquo;delete this ID&rdquo; message. An item missing from the incoming list is gone on the watch; an empty list clears the cache entirely, which hides the home card and forces flat playback.
+            </p>
+            <p>
+                The phone tries both a durable <code>updateApplicationContext</code> write and a low-latency <code>sendMessage</code> when the watch is reachable, and presets also piggy-back on every broader sync. The watch validates every entry on arrival (malformed records are dropped), diffs by ID and update time, and only notifies the player when something actually changed. Order is preserved end-to-end, so the chip row on the phone and the picker on the wrist stay in the same sequence.
+            </p>
+
+            <h2>What is stored where</h2>
+            <p>
+                On iPhone, live band gains, the saved preset list and the active preset ID each live under their own UserDefaults key, so a slider drag only rewrites the gains array and stays cheap. On Apple Watch the synced preset list is a mirror of the phone, while the <em>active</em> preset ID is a separate watch-local key &mdash; that is how your wrist choice survives restarts without waiting for a fresh sync, and without overwriting the phone&rsquo;s live curve.
             </p>
 
             <h2>It remembers</h2>
             <p>
                 Band gains, your saved preset list and the currently active preset all survive app restarts &mdash; on both iPhone and Apple Watch. You set your sound once; Run2Beat keeps it.
+            </p>
+
+            <h2>The short version</h2>
+            <p>
+                Ten ISO bands at &plusmn;12&nbsp;dB, named presets, a live EQ node on iPhone and a custom biquad cascade on Apple Watch. The phone owns the preset list; each device keeps its own active choice. Flat costs nothing; everything else follows you from pocket to wrist without re-transferring your music.
             </p>
 
             <a href="index.html" class="learn-more">

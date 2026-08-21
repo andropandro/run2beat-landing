@@ -4,12 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Crossfade &mdash; Run2Beat</title>
-    <meta name="description" content="How Run2Beat moves between tracks — gapless changes or a fixed-length crossfade, optional Beat matching (BETA) for BPM lists, and how it works the same on iPhone and Apple Watch." />
+    <meta name="description" content="How Run2Beat transitions work in depth — fixed 6-second equal-power crossfade or gapless preload, phased arming on iPhone and Apple Watch, and optional Beat matching (BETA) for BPM lists." />
     <meta name="theme-color" content="#0a0d0a" />
 
     <link rel="icon" type="image/png" href="assets/app-icon.png" />
     <link rel="apple-touch-icon" href="assets/app-icon.png" />
-    <link rel="stylesheet" href="styles.css?v=8" />
+    <link rel="stylesheet" href="styles.css?v=9" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -37,7 +37,7 @@
             <p class="eyebrow eyebrow--center">Deep dive</p>
             <h1 class="legal__title">One song<br />into the<br />next.</h1>
             <p class="legal__lede">
-                Crossfade decides what happens in the gap between two tracks &mdash; an instant cut, or a smooth overlap that keeps the rhythm of your run going. This page is the long version of how Run2Beat moves from one song to the next.
+                Crossfade decides what happens in the gap between two tracks &mdash; an instant cut, or a smooth overlap that keeps the rhythm of your run going. This page is the long version of how Run2Beat moves from one song to the next on iPhone and Apple Watch.
             </p>
         </section>
 
@@ -48,9 +48,12 @@
                 In <strong>Settings &rarr; Transitions</strong> you choose how Run2Beat advances when one track ends and the next begins:
             </p>
             <ul>
-                <li><strong>Gapless.</strong> The next track starts the instant the current one ends &mdash; a clean cut with no overlap.</li>
-                <li><strong>Crossfade.</strong> The next track begins just before the current one finishes. The outgoing track fades down while the incoming one fades up, so the two overlap for a few seconds and the transition is seamless. The fade length is <strong>fixed</strong> and the same on iPhone and Apple Watch.</li>
+                <li><strong>Gapless.</strong> The next track starts the instant the current one ends &mdash; a clean cut with no overlap. The next file is still <em>preloaded</em> ahead of time, so Gapless is an instant handoff rather than a cold load that would insert a multi-second spin between songs.</li>
+                <li><strong>Crossfade.</strong> The next track begins just before the current one finishes. The outgoing track fades down while the incoming one fades up, so the two overlap for a fixed <strong>six seconds</strong> on both iPhone and Apple Watch. There is no length slider &mdash; the overlap is the same everywhere so the blend sounds identical in your pocket and on your wrist.</li>
             </ul>
+            <p>
+                The default mode is Crossfade. Switching to Gapless clears Beat matching automatically; the beat-match toggle is only available while Crossfade is selected.
+            </p>
 
             <h2>Only on automatic changes</h2>
             <p>
@@ -59,15 +62,15 @@
             <ul>
                 <li>Skip forward or jump back &mdash; instant, no fade.</li>
                 <li>Tap a different track in a list &mdash; instant, no fade.</li>
-                <li>Pause &mdash; stops immediately and cancels any fade that was about to start.</li>
+                <li>Pause &mdash; stops immediately and cancels any pending fade.</li>
             </ul>
             <p>
-                If you reach the end of the queue there&rsquo;s nothing to fade into, so the last track simply ends.
+                If you reach the end of the queue there&rsquo;s nothing to fade into, so the last track simply ends. User actions always cancel an armed or in-flight fade and tear down any standby chain that was being prepared.
             </p>
 
             <h2>Change it mid-run</h2>
             <p>
-                You don&rsquo;t have to stop playback to change your mind. The setting is re-checked before each automatic advance, so if you switch between Gapless and Crossfade during a song, the new choice takes effect at the very next automatic track change. A fade that has already started keeps going as it began.
+                You don&rsquo;t have to stop playback to change your mind. Roughly <strong>22 seconds before each track ends</strong>, Run2Beat re-reads the transition setting and decides whether <em>this</em> automatic advance should crossfade. Flip Gapless &harr; Crossfade earlier than that and the new choice takes effect on the current transition; flip later and it applies to the next song instead. Once a fade is armed for the current advance, it stays committed &mdash; a late toggle cannot abort a fade that is already about to start. A fade that has already begun keeps the length and curve it started with.
             </p>
 
             <h2>Beat matching (BETA)</h2>
@@ -75,28 +78,66 @@
                 With Crossfade on, Settings also offers an optional <strong>Beat matching (BETA)</strong> toggle &mdash; a feature we are testing for <em>BPM lists</em>. During the fade, the next track can begin where the music picks up (past a quiet intro), and the change may wait a moment so the beat lines up better between songs. Results vary from track to track; that is why it is labelled BETA and off by default.
             </p>
             <p>
-                The first time you use it, Run2Beat may need a one-time prep scan so it knows where each song&rsquo;s groove starts. That scan is shown in a progress sheet before playback or Watch sync, and only runs for songs that still need it. Beat matching does <em>not</em> apply to the Library, standard playlists, or a change to a different tempo (for example after a warm-up into your full target BPM). Plain Crossfade is unchanged when the toggle is off.
+                Under the hood each track can store two cues measured once and reused: a <strong>groove start</strong> (where high energy / pulse gets going &mdash; the seek target for intro skip) and a <strong>beat zero</strong> near the file start (a phase anchor). Soft outros are measured live at play time when a clear die-out is present, so a quiet ending can pull the fade anchor a little earlier without unconditionally cutting the outgoing song short. The phase nudge only runs when outgoing and incoming tempos match &mdash; a warm-up track stepping up into a different target BPM is skipped on purpose.
             </p>
             <p>
-                The setting syncs to Apple Watch with your other transition choices. Prep cues travel with AirDrop when you share a playlist or BPM list, so a friend who receives the package does not have to re-scan songs you already prepared.
+                The first time you use it, Run2Beat may need a one-time prep scan before BPM-list playback or Watch sync. That scan is shown in a progress sheet and only runs for songs that still need cues; cancel continues without requiring data for that session. Beat matching does <em>not</em> apply to the Library, standard playlists, or Gapless. Plain Crossfade is unchanged when the toggle is off. The setting syncs to Apple Watch; cues travel with AirDrop when you share a playlist or BPM list.
             </p>
 
-            <h2>How the fade actually works</h2>
+            <h2>Equal-power fade, not a linear dip</h2>
             <p>
-                To overlap two tracks, Run2Beat keeps both songs audible together during the blend &mdash; a smooth equal-power ramp rather than pausing one engine mid-fade. Gapless handoffs preload the next track ahead of time so there is no audible gap. The same rules apply whether you are listening on iPhone or Apple Watch.
+                A linear amplitude ramp dips about 3&nbsp;dB in the middle of the blend and perceptually feels shorter than the wall-clock overlap. Run2Beat instead drives a manual <strong>equal-power</strong> curve: with progress <code>t</code> from 0 to 1 warped slightly so the incoming track becomes audible a bit sooner (helps quiet intros), then mapped through <code>cos</code>&nbsp;/&nbsp;<code>sin</code> so both tracks stay audible across the whole six seconds. There is no mid-fade <code>engine.pause()</code> and no attaching a silent chain halfway through a song &mdash; both caused glitches in earlier designs.
+            </p>
+            <p>
+                On iPhone the ramp updates player-node volumes at about 30&nbsp;Hz on the main run loop. On Apple Watch a background timer at about 60&nbsp;Hz ramps each track&rsquo;s gain-mixer <code>outputVolume</code> instead &mdash; player-node volume did not audibly change the watch mix, and a GCD timer keeps firing even when the screen is off (where the main run loop tends to coalesce).
+            </p>
+
+            <h2>How iPhone arms a crossfade</h2>
+            <p>
+                The phone pipeline is one <code>AVAudioEngine</code>:
+            </p>
+            <p>
+                <code>player &rarr; time-pitch &rarr; equalizer &rarr; mixer</code>
+            </p>
+            <p>
+                Crossfade uses a dual-slot idea: primary chain for the song you hear, plus a standby chain prepared for the next one. When a track starts, a single timer walks two phases:
+            </p>
+            <ul>
+                <li><strong>Evaluation</strong> &mdash; about 22&nbsp;s before the end (or sooner if less remains). Re-reads Settings and decides whether this auto-advance should fade.</li>
+                <li><strong>Ramp trigger</strong> &mdash; exactly six seconds before the end. Opens the incoming file on a fresh player / time-pitch / EQ chain, starts it silent, swaps Now Playing to the incoming track, and begins the equal-power ramp. When the ramp finishes, the standby graph promotes to primary and the old nodes are torn down.</li>
+            </ul>
+            <p>
+                Gapless on iPhone still preloads the next track into a warm secondary path so natural end is an instant handoff rather than a cold open. Look-ahead for the next song peeks the queue without mutating &ldquo;already played&rdquo; state until the fade (or handoff) actually commits.
             </p>
 
             <h2>On your Apple Watch</h2>
             <p>
-                Crossfade works on the watch too, and follows exactly the same rules. There&rsquo;s an extra wrinkle under the hood: because watchOS has to run your equalizer curve over the incoming track before it can play, Run2Beat prepares that next track <em>early</em> &mdash; decoding and processing it while the current song is still at full volume &mdash; so the few seconds of prep happen <em>outside</em> the audible fade. The result is that you always hear the full overlap, never a clipped one.
+                Crossfade on the watch follows the same rules and the same six-second equal-power curve, but the graph has an extra constraint: watchOS cannot use Apple&rsquo;s EQ audio unit, so the incoming track must be decoded and run through Run2Beat&rsquo;s own EQ into a temp buffer <em>before</em> it can play. That prep used to be scheduled just-in-time and sometimes bled into the audible fade on a cold first transition. Today prep starts as soon as evaluation fires &mdash; while the outgoing track is still at full volume &mdash; so the entire decode cost is paid outside the overlap.
             </p>
             <p>
-                Transition settings &mdash; Gapless, Crossfade, and Beat matching &mdash; are owned by the iPhone. Your choices travel to the watch as part of the regular sync, so run a sync after changing them to be sure the watch is using the latest values. When Beat matching cues were prepared on the phone, the watch prefers those over measuring again on the transferred files.
+                Arming therefore has <strong>three phases</strong> on the watch: evaluation (adaptive lead sized to fade + measured prep budget, capped around 24&nbsp;s), immediate prep of the next file, then a ramp-ready callback that waits until exactly six seconds remain whenever prep finished early enough. Only if prep ran pathologically long does the ramp start immediately with its duration clamped to whatever time is left. A rolling window of past prep durations seeds the next session&rsquo;s schedule so the lead stays realistic after the first song.
             </p>
+            <p>
+                Some pre-rendered Watch files carry a sliver of trailing silence from the encoder. Displayed duration stays on the full decoded length, but crossfade and gapless <em>arming</em> can anchor to the audible musical end so the six-second overlap lands on music rather than dead air. The on-screen title does not jump when prep begins &mdash; the queue index advances only when the audible fade actually starts, so a cancelled prep never leaves the UI ahead of the audio.
+            </p>
+
+            <h2>How settings reach the Watch</h2>
+            <p>
+                The iPhone is the sole authority for transition settings. Mode, the fixed fade length and Beat matching travel inside the regular WatchConnectivity application-context payload alongside recipes, playlists and equaliser presets. Settings also pushes immediately when you toggle while the watch is reachable. The watch applies incoming values and never echoes them back. After changing Transitions, a sync (or an immediate push while paired and reachable) is what makes the wrist match your pocket.
+            </p>
+
+            <h2>Invariants worth knowing</h2>
+            <ul>
+                <li>Only automatic advances fade; manual control always wins.</li>
+                <li>Evaluation freezes the decision for the current transition; later toggles affect the next song.</li>
+                <li>Both tracks are audible together during the blend &mdash; equal-power, not pause-then-resume.</li>
+                <li>Watch EQ/decode prep happens outside the audible fade whenever possible.</li>
+                <li>Phone owns Settings; Watch mirrors them.</li>
+            </ul>
 
             <h2>The short version</h2>
             <p>
-                Pick Gapless for a clean cut or Crossfade for a smooth overlap, and forget about it. Optionally try Beat matching (BETA) on BPM lists when you want fades that feel a little more in time. Run2Beat fades only when it advances on its own, never gets in the way when you take control, and behaves the same on your wrist as in your pocket.
+                Pick Gapless for a clean cut or Crossfade for a fixed six-second equal-power overlap, and forget about it. Optionally try Beat matching (BETA) on BPM lists when you want fades that feel a little more in time. Run2Beat fades only when it advances on its own, never gets in the way when you take control, and behaves the same on your wrist as in your pocket &mdash; with the watch doing its EQ homework early so you still hear the full blend.
             </p>
 
             <a href="index.html" class="learn-more">
