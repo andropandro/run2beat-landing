@@ -4,12 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Volume normalisation &mdash; Run2Beat</title>
-    <meta name="description" content="How Run2Beat measures every track's loudness in LUFS and adjusts playback so old recordings and modern masters sound equally loud — on iPhone and Apple Watch." />
+    <meta name="description" content="How Run2Beat measures integrated loudness (ITU-R BS.1770 / LUFS) at import, applies true-peak-safe gain at playback on iPhone and Apple Watch, and why analyse-once-apply-at-playback beats Sound Check or re-encoding." />
     <meta name="theme-color" content="#0a0d0a" />
 
     <link rel="icon" type="image/png" href="assets/app-icon.png" />
     <link rel="apple-touch-icon" href="assets/app-icon.png" />
-    <link rel="stylesheet" href="styles.css?v=8" />
+    <link rel="stylesheet" href="styles.css?v=9" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -37,7 +37,7 @@
             <p class="eyebrow eyebrow--center">Deep dive</p>
             <h1 class="legal__title">Even loud.<br />Even quiet.<br />Just right.</h1>
             <p class="legal__lede">
-                Modern releases are mixed at very different loudness levels &mdash; a 2024 pop master sits roughly twice as loud as a 2002 jazz ballad. Run2Beat measures every track on import and adjusts playback so you never have to reach for the volume control between songs.
+                Modern releases are mixed at very different loudness levels &mdash; a 2024 pop master sits roughly twice as loud as a 2002 jazz ballad. Run2Beat measures every track on import and adjusts playback so you never have to reach for the volume control between songs. This page is the long version of how that works.
             </p>
         </section>
 
@@ -48,71 +48,120 @@
                 For two decades the music industry mastered records louder and louder. A modern pop release typically lands at <strong>&minus;7 to &minus;9 LUFS integrated</strong>; a jazz album from 2002 sits at <strong>&minus;18 to &minus;22 LUFS</strong>. Perceptually, that&rsquo;s roughly a factor of two in loudness &mdash; the difference between &ldquo;in the room&rdquo; and &ldquo;background music&rdquo;.
             </p>
             <p>
-                The phone&rsquo;s volume slider can&rsquo;t fix that. It&rsquo;s the input to whatever your headphones do; it doesn&rsquo;t touch the mastering decisions baked into each file. Per-track normalisation is the only solution that actually flattens the perceived-loudness curve.
+                The phone&rsquo;s volume slider can&rsquo;t fix that. It&rsquo;s the input to whatever your headphones do; it doesn&rsquo;t touch the mastering decisions baked into each file. A single global gain in the audio engine wouldn&rsquo;t help either &mdash; it would raise or lower the whole queue together and leave the relative gap between a loud pop master and a quiet jazz ballad exactly as wide. <strong>Per-track</strong> normalisation is the only solution that flattens the perceived-loudness curve.
             </p>
 
             <h2>Three different things people call &ldquo;volume&rdquo;</h2>
             <ul>
                 <li><strong>Sample peak</strong> &mdash; the highest single sample value in the file. Useful for clipping protection, but barely correlates with what you hear.</li>
-                <li><strong>True peak (dBTP)</strong> &mdash; inter-sample peak after the digital-to-analogue reconstruction filter. EBU&nbsp;R&nbsp;128 says this should stay below &minus;1&nbsp;dBTP so the audio never clips on the way out.</li>
-                <li><strong>Integrated loudness (LUFS)</strong> &mdash; the hearing-weighted mean level over the whole track, gated to ignore long silences. This is what perceived &ldquo;loudness&rdquo; actually is, and it&rsquo;s what Apple Music, Spotify, YouTube and broadcasters use.</li>
+                <li><strong>True peak (dBTP)</strong> &mdash; inter-sample peak after the digital-to-analogue reconstruction filter. EBU&nbsp;R&nbsp;128 says this should stay below &minus;1&nbsp;dBTP so the audio never clips on the way out. That ceiling is what lets Run2Beat raise a quiet track safely.</li>
+                <li><strong>Integrated loudness (LUFS)</strong> &mdash; the hearing-weighted mean level over the whole track, gated to ignore long silences. Two tracks with identical sample peaks can still be 8&nbsp;dB apart in LUFS &mdash; and the LUFS gap is what you actually hear.</li>
             </ul>
-
-            <h2>Standard, reference and target</h2>
             <p>
-                Run2Beat follows the same loudness model as the major streaming services: <strong>ITU-R BS.1770 / EBU R 128</strong>. The reference level you can choose in Settings is one of three commonly used targets:
+                LUFS (Loudness Units relative to Full Scale) is K-weighted: a filter chain from ITU-R BS.1770 that mimics the ear&rsquo;s frequency response, then block mean-square measurement with gating so a long fade-out or thirty seconds of room tone doesn&rsquo;t pull the average down. Every modern loudness tool &mdash; ffmpeg, foobar2000, Audacity, libebur128 &mdash; is implementing that same maths. There is essentially one right answer for &ldquo;what is this file&rsquo;s integrated loudness&rdquo;.
+            </p>
+
+            <h2>Standards, reference and target</h2>
+            <p>
+                Run2Beat follows <strong>ITU-R BS.1770</strong> for the measurement and borrows the <strong>&minus;1&nbsp;dBTP true-peak ceiling</strong> from EBU R&nbsp;128 (broadcast TV&rsquo;s &minus;23&nbsp;LUFS target is far quieter than streaming; we are not a broadcaster). Streaming services have converged on a listening reference around &minus;14&nbsp;LUFS:
             </p>
             <ul>
-                <li><strong>&minus;14 LUFS</strong> (default) &mdash; matches Apple Music, Spotify Normal and YouTube. The right choice for most listeners.</li>
-                <li><strong>&minus;16 LUFS</strong> &mdash; quieter, more headroom on dynamic recordings.</li>
+                <li><strong>&minus;14 LUFS</strong> (default) &mdash; matches Apple Music&rsquo;s current stream, Spotify Normal and YouTube. The right choice for most listeners.</li>
+                <li><strong>&minus;16 LUFS</strong> &mdash; quieter, more headroom on dynamic recordings (closer to older Apple Sound Check).</li>
                 <li><strong>&minus;11 LUFS</strong> &mdash; louder, like Spotify&rsquo;s &ldquo;Loud&rdquo; setting; leaves less headroom on aggressive masters.</li>
             </ul>
+            <p>
+                Changing the reference never re-analyses your files. The player recomputes gain from the stored LUFS and the live setting, so switching &minus;14 &rarr; &minus;16 is instant.
+            </p>
+
+            <h2>Why not just trust iOS Sound Check?</h2>
+            <p>
+                Two hard blockers. Sound Check is off by default in iOS Settings &rarr; Music, so most people have never enabled it. And even when it is on, it only applies to tracks the Music app owns. Run2Beat plays its own files through its own <code>AVAudioEngine</code> graph and would receive zero benefit. Self-managed loudness is not optional &mdash; it is the only path that reliably evening out a Run2Beat library on every device and OS configuration.
+            </p>
+
+            <h2>Architecture: measure once, apply at playback</h2>
+            <p>
+                Three approaches were considered:
+            </p>
+            <ul>
+                <li><strong>Analyse at import, apply at playback</strong> (chosen) &mdash; store integrated LUFS and true peak on the track; both iPhone and Apple Watch apply the same gain formula at play time. One-time cost, zero CPU in the hot path, toggleable, and the reference can change without touching the audio again.</li>
+                <li><strong>Analyse while playing</strong> (rejected) &mdash; roughly what Sound Check does. Needs lookahead (otherwise the first seconds of each track are unnormalised), continuous CPU, and cannot be mirrored on the Watch without a second heavy analyser or accepting phone/watch mismatch.</li>
+                <li><strong>Re-encode files to a normalised level</strong> (rejected) &mdash; destroys headroom, locks you into one reference forever, risks new clipping, and makes files sound permanently odd against other apps that already stream at &minus;14&nbsp;LUFS.</li>
+            </ul>
+            <p>
+                The chosen hybrid keeps the original files untouched. Gain is never persisted as a fixed number &mdash; only the measurement is &mdash; so Settings can always retarget.
+            </p>
 
             <h2>How a track gets its loudness number</h2>
             <p>
-                When you import a file, Run2Beat decodes the audio at its native sample rate and runs the broadcast-standard BS.1770 loudness algorithm directly on your device. The result &mdash; integrated LUFS plus the file&rsquo;s true-peak value in dBTP &mdash; is stored on the track in your library. It never has to be measured again. The work happens once during import and is part of the few-seconds-per-song cost mentioned on the <a href="index.html#library">home page</a>; everything you read below about wall-clock time and battery applies to the standalone <em>&ldquo;Re-measure all loudness&rdquo;</em> button in Settings, not to import.
+                When you import a file, Run2Beat first looks for embedded tags that already tell the truth: <strong>ReplayGain 2.0</strong> track gain / peak, or Apple&rsquo;s <strong>iTunNORM</strong> Sound Check blob. If either parses cleanly, the heavy pass is skipped &mdash; the file already knows its loudness. Otherwise the audio is decoded at native sample rate and run through a BS.1770 analyser (libebur128 under the hood) on device. The result &mdash; integrated LUFS plus true peak in dBTP &mdash; is stored on the track and never needs to be measured again for ordinary playback.
             </p>
             <p>
-                Embedded ReplayGain 2.0 and iTunes Sound Check tags are read first when present; the heavy analysis pass only runs if the file isn&rsquo;t already telling us its loudness.
+                Analysis runs on the <em>original</em> decoded audio, not on a later HE-AAC re-encode, so the numbers represent the source you handed the app. Channels are clamped to stereo and the read is bounded to roughly the first two and a half minutes: integrated loudness for consumer music converges well inside that window, and the bound keeps decoder memory safely under iOS&rsquo;s background jetsam ceiling on long bulk jobs. Very short tracks and all-silent files are skipped rather than persisting an unreliable value.
+            </p>
+            <p>
+                The work is part of the few-seconds-per-song import cost mentioned on the <a href="index.html#library">home page</a>. Everything below about wall-clock time and battery applies to the standalone <em>Re-measure all loudness</em> button in Settings, not to ordinary import.
             </p>
 
             <h2>How the gain is applied at playback</h2>
             <p>
-                On every track change Run2Beat computes the gain it needs to land the track on your chosen reference:
+                On every track change Run2Beat computes the gain it needs to land the track on your chosen reference, then sets a mixer-node <code>outputVolume</code> (a sample-accurate linear scalar in the existing mix pass):
             </p>
             <p style="font-family: ui-monospace, SFMono-Regular, Menlo, monospace; padding: 14px 18px; background: rgba(255,255,255,0.04); border-radius: 12px; font-size: 14px; line-height: 1.6;">
                 gainDB&nbsp;=&nbsp;referenceLUFS&nbsp;&minus;&nbsp;measuredLUFS<br />
-                gainDB&nbsp;=&nbsp;min(gainDB,&nbsp;&minus;1.0&nbsp;&minus;&nbsp;measuredTruePeakDBTP)
+                gainDB&nbsp;=&nbsp;min(gainDB,&nbsp;&minus;1.0&nbsp;&minus;&nbsp;measuredTruePeakDBTP)<br />
+                volume&nbsp;=&nbsp;10^(gainDB&nbsp;/&nbsp;20)
             </p>
             <p>
-                The first line raises quiet tracks and lowers loud ones. The second is the <strong>true-peak ceiling</strong>: a quiet track is never amplified so much that its inter-sample peaks would clip after the D/A reconstruction. The clamp guarantees inaudible digital protection on every track, every time.
+                The first line raises quiet tracks and lowers loud ones. The second is the <strong>true-peak ceiling</strong>: a quiet track is never amplified so much that its inter-sample peaks would clip after D/A reconstruction. Tracks that already clip in the source (true peak above 0&nbsp;dBTP) never get positive gain. If normalisation is off, or a legacy track has no measurement yet, the mixer stays at unity and the file plays at its native level.
             </p>
             <p>
-                The gain is a sample-accurate scalar applied during the existing audio-mixer pass &mdash; effectively zero extra CPU, no extra latency.
+                Cost: effectively zero &mdash; a multiply during mixing that already happens. No extra DSP stage, no extra latency. The loudness stage is independent of the <a href="equalizer.html">equalizer</a> and <a href="crossfade.html">crossfade</a>; those features behave the same with normalisation on or off.
             </p>
 
             <h2>Same numbers, same loudness on Apple Watch</h2>
             <p>
-                When a BPM list or playlist syncs to your Apple Watch, the per-track LUFS and true-peak values travel along with the audio. The Watch player applies the same gain formula as the iPhone, so switching from headphones on the phone to AirPods paired to the watch doesn&rsquo;t need a volume bump.
+                When a BPM list or playlist syncs to your Apple Watch, per-track <code>lufs</code> and <code>truePeak</code> travel in the transfer metadata &mdash; two doubles, negligible against the audio payload. The Watch player applies the <em>same</em> gain formula; it never runs the analyser itself. The reference level rides the regular application-context preferences channel, so changing &minus;14 &rarr; &minus;16 on the phone is honoured on the wrist after the next settings push.
+            </p>
+            <p>
+                Because both devices compute <code>gain = reference &minus; measured</code> from identical metadata, switching from headphones on the phone to AirPods paired to the watch should not need a volume bump. The phone measures the library file; the watch plays a watch-export HE-AAC variant. Those encodings keep near-identical integrated loudness in practice, so one original-file measurement serves both sides.
+            </p>
+
+            <h2>Settings: toggle, reference, true-peak protection</h2>
+            <p>
+                The Loudness levelling card in Settings mirrors the BPM-analysis card on purpose: expand/collapse, info sheet, toggle (on by default), reference picker, and a primary <strong>Re-measure all loudness</strong> button. An optional true-peak protection switch keeps the &minus;1&nbsp;dBTP clamp on by default &mdash; leave it on unless you know why you want it off. You can also ask for a notification when a bulk re-measure finishes.
             </p>
 
             <h2>Re-measuring the library</h2>
             <p>
-                If you change reference level, want to re-measure after an algorithm update, or simply want every legacy track that pre-dates the loudness feature to have a value, Settings has a <strong>&ldquo;Re-measure all loudness&rdquo;</strong> button. Some honest expectations for that run:
+                Use the bulk button when you want every legacy track that predates the feature to have a value, or after an analyser update. Some honest expectations:
             </p>
             <ul>
                 <li><strong>Takes time.</strong> Each track needs a couple of seconds of analysis. Across several hundred tracks, the full run easily exceeds an hour.</li>
-                <li><strong>Battery-heavy.</strong> The phone decodes every file and runs the same DSP pipeline that broadcasters use. Battery drops noticeably faster than during normal playback for as long as the run is in progress. Connecting a charger is recommended.</li>
-                <li><strong>Keeps running in the background.</strong> The run continues with the screen locked or the app in the background, the same way the BPM re-analysis does &mdash; silent audio combined with the app&rsquo;s audio background mode. Run2Beat takes a short pause between every track to stay inside iOS&rsquo;s background limits, which keeps the run alive at the cost of roughly doubling its wall-clock duration.</li>
-                <li><strong>Replaces existing values.</strong> The result simply overwrites the previous one. Recently imported tracks go in too.</li>
+                <li><strong>Battery-heavy.</strong> The phone decodes every file and runs broadcast-grade DSP. Connecting a charger is recommended.</li>
+                <li><strong>Keeps running in the background.</strong> The run continues with the screen locked or the app backgrounded, using the same background-activity keeper as BPM re-analysis and Watch sync &mdash; a silent keep-alive that exploits the app&rsquo;s audio background mode, far beyond the ~30&nbsp;s grace of a bare <code>beginBackgroundTask</code>. Between tracks the loop sleeps briefly so iOS&rsquo;s background CPU watchdog does not SIGKILL a sustained full-core decode marathon; that roughly halves duty cycle and stretches wall-clock time, by design.</li>
+                <li><strong>Replaces existing values</strong> and pushes fresh metadata to the Watch on the next sync. There is no auto-trigger on launch &mdash; libraries with thousands of tracks would otherwise spin up unprompted.</li>
             </ul>
             <p>
-                Rule of thumb: a library of around a thousand tracks takes well over an hour and uses roughly as much battery as a couple of hours of music playback. Plan accordingly.
+                Rule of thumb: around a thousand tracks takes well over an hour and uses roughly as much battery as a couple of hours of music playback. Plan accordingly.
             </p>
 
-            <h2>Where loudness fits with the rest</h2>
+            <h2>AirDrop and shared playlists</h2>
             <p>
-                Volume normalisation is independent of the equalizer and crossfade &mdash; it&rsquo;s applied in a separate mixer stage so EQ presets and crossfade behave exactly the same with normalisation on or off. Tracks imported before the feature shipped have no measured loudness and simply play at their native level until you trigger the re-measure.
+                When someone sends you a Run2Beat playlist package, per-track loudness and true-peak measurements from the sender can travel in the manifest. Genuinely new tracks adopt those values; deduplicated hits that still lack a local measurement can be back-filled &mdash; but a value you already measured locally is never overwritten by a remote one. Older packages without the fields simply decode as &ldquo;not measured yet&rdquo; until you run a bulk re-measure.
+            </p>
+
+            <h2>What this does not do</h2>
+            <ul>
+                <li><strong>No dynamic-range compression.</strong> A quiet intro into a loud chorus still has that internal shape; only the overall level matches the rest of the library. That is correct behaviour for levelling.</li>
+                <li><strong>No album-gain mode</strong> in the first iteration &mdash; track gain is enough when albums are mastered consistently, which covers almost all personal libraries.</li>
+                <li><strong>No per-track manual override</strong> yet (the moral equivalent of manual BPM). Easy to add later; no demand yet.</li>
+                <li><strong>Integrated LUFS only</strong> &mdash; not short-term or momentary loudness.</li>
+            </ul>
+
+            <h2>The short version</h2>
+            <p>
+                Measure integrated loudness once at import (or trust ReplayGain / Sound Check tags when present), store LUFS and true peak, apply a true-peak-safe gain at playback on iPhone and Apple Watch from your chosen &minus;14 / &minus;16 / &minus;11 reference. Don&rsquo;t re-encode. Don&rsquo;t rely on iOS Sound Check. Don&rsquo;t analyse mid-song. Even loud, even quiet, same formula on both devices.
             </p>
 
             <a href="index.html" class="learn-more">
