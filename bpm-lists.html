@@ -65,6 +65,19 @@
                 Picking an activity sets the matching icon and a sensible target tempo. From there every value is yours to fine-tune &mdash; the activity is just a head start, not a lock.
             </p>
 
+            <figure class="legal__figure">
+                <div class="phone-frame" data-screenshot="bpm-lists-target">
+                    <img src="assets/screenshots/bpm-lists-target.jpg" alt="BPM list editor showing Target BPM slider at 70 BPM, Max Pitching, Multipliers and Play time" onerror="this.style.display='none'" />
+                    <div class="phone-frame__placeholder">
+                        <div class="phone-frame__dot"></div>
+                        <strong>Target BPM</strong>
+                        <span>Screenshot placeholder</span>
+                        <small>bpm-lists-target.jpg</small>
+                    </div>
+                </div>
+                <figcaption>The recipe editor: Target BPM sits at the top of the controls, with Max pitching, multipliers and play time beneath.</figcaption>
+            </figure>
+
             <h2>2. Target BPM &mdash; your step cadence</h2>
             <p>
                 This is the single most important number in the recipe: the rhythm your feet should follow, in steps per minute. Many runners settle somewhere in the 170&ndash;180 range; a brisk power-walk often lands around 130. You can dial anything from 60 to 220&nbsp;BPM.
@@ -185,6 +198,19 @@
                 Playback uses a shared <code>BPMRecipe.makePlaybackPlan</code>: warm-up tracks first (internally shuffled among themselves) at the lowered pitch, then the remainder shuffled at target; <code>shuffle</code> is off so auto-advance cannot reshuffle and break warm-up-first order. While a warm-up song plays, Now Playing shows the cooldown badge and the <strong>actual warm-up tempo</strong> &mdash; not the list target &mdash; so the pulse matches the cadence your feet should follow right now. Settings travel with AirDrop and full-library backup; they are part of the Watch sync signature so toggling warm-up reliably re-renders variants.
             </p>
 
+            <figure class="legal__figure">
+                <div class="phone-frame" data-screenshot="bpm-lists-swap">
+                    <img src="assets/screenshots/bpm-lists-swap.jpg" alt="BPM list track rows with a purple swap-candidate flag and a swipe revealing Replace and Delete actions" onerror="this.style.display='none'" />
+                    <div class="phone-frame__placeholder">
+                        <div class="phone-frame__dot"></div>
+                        <strong>Swap candidates</strong>
+                        <span>Screenshot placeholder</span>
+                        <small>bpm-lists-swap.jpg</small>
+                    </div>
+                </div>
+                <figcaption>Swap candidates: a purple flag on skipped tracks, plus swipe actions to replace or delete.</figcaption>
+            </figure>
+
             <h2>Swap candidates &mdash; songs you keep skipping</h2>
             <p>
                 Not every match is a keeper at your target tempo. When you deliberately skip a track while a BPM list is playing &mdash; on <strong>iPhone or Apple Watch</strong> &mdash; Run2Beat flags it as a <strong>swap candidate</strong> for that list: a song you didn&rsquo;t enjoy at this cadence, and an obvious candidate to replace.
@@ -198,6 +224,19 @@
             <p>
                 Sync is a <strong>separate two-way ledger</strong> over <code>WCSession.transferUserInfo</code> &mdash; deliberately not inside the selection/content application-context payload, so flags cannot bloat convergence or block a sync. Watch skips are queued events (guaranteed delivery, retried across launches); the phone applies them idempotently by event id. Whenever the phone inserts or clears flags it pushes an authoritative per-recipe snapshot to the watch, which overwrites its local copy and drops stale pending events for that list. Content re-sync never wipes wrist-side flags the listener just made.
             </p>
+
+            <figure class="legal__figure">
+                <div class="phone-frame phone-frame--watch" data-screenshot="bpm-lists-watch">
+                    <img src="assets/screenshots/bpm-lists-watch.jpg" alt="Apple Watch BPM Lists screen showing Motionscykel EDM with 24 tracks, duration and 70 BPM" onerror="this.style.display='none'" />
+                    <div class="phone-frame__placeholder">
+                        <div class="phone-frame__dot"></div>
+                        <strong>Apple Watch</strong>
+                        <span>Screenshot placeholder</span>
+                        <small>bpm-lists-watch.jpg</small>
+                    </div>
+                </div>
+                <figcaption>BPM lists on Apple Watch: name, track count, duration and target cadence at a glance.</figcaption>
+            </figure>
 
             <h2>On your Apple Watch</h2>
             <p>
