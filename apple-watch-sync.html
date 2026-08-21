@@ -4,12 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Apple Watch sync &mdash; Run2Beat</title>
-    <meta name="description" content="How Run2Beat syncs BPM lists and playlists from iPhone to Apple Watch — manual sync, what gets transferred, what to expect, and tips for fast and reliable transfers." />
+    <meta name="description" content="How Run2Beat syncs BPM lists and playlists from iPhone to Apple Watch — WatchConnectivity transport, HE-AAC export, delta signatures, convergence verification, and sleep-robust transfers." />
     <meta name="theme-color" content="#0a0d0a" />
 
     <link rel="icon" type="image/png" href="assets/app-icon.png" />
     <link rel="apple-touch-icon" href="assets/app-icon.png" />
-    <link rel="stylesheet" href="styles.css?v=8" />
+    <link rel="stylesheet" href="styles.css?v=9" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -37,7 +37,7 @@
             <p class="eyebrow eyebrow--center">Deep dive</p>
             <h1 class="legal__title">Sync,<br />then run<br />untethered.</h1>
             <p class="legal__lede">
-                Run2Beat syncs BPM lists and standard playlists from your iPhone to your paired Apple Watch so you can leave the phone at home and run with just AirPods. This page is the long version of what that sync does, what it doesn&rsquo;t do, and how to make it fast and reliable.
+                Run2Beat syncs BPM lists and standard playlists from your iPhone to your paired Apple Watch so you can leave the phone at home and run with just AirPods. This page is the long version of what that sync does, how the transfer protocol works, and how to make it fast and reliable.
             </p>
         </section>
 
@@ -48,15 +48,29 @@
                 The iPhone is Run2Beat&rsquo;s configuration and processing hub: it stores your library, computes BPM, measures loudness, builds BPM lists and pre-renders any tempo-shifted variants. The Apple Watch is a playback runtime &mdash; it stores the synced files and plays them back, nothing more.
             </p>
             <p>
-                Everything you see on the Watch is the result of an explicit sync from the iPhone&rsquo;s Sync screen.
+                Everything you see on the Watch is the result of an explicit sync from the iPhone&rsquo;s Sync screen. There is no hidden background sync.
             </p>
 
             <h2>Manual and visible</h2>
             <p>
-                There is no hidden background sync. You start it yourself from the iPhone&rsquo;s Sync screen, where the app shows you exactly what&rsquo;s new, updated or deleted before you commit. While the sync runs the iPhone shows a live overlay with progress; the Watch screen shows nothing during the transfer &mdash; that&rsquo;s normal.
+                You start sync yourself from the iPhone&rsquo;s Sync screen, where the app shows connectivity readiness and exactly what&rsquo;s <strong>new</strong>, <strong>updated</strong> or <strong>deleted</strong> before you commit. While the sync runs, a live overlay shows progress; the Watch screen shows nothing during the transfer &mdash; that&rsquo;s normal.
             </p>
+
+            <figure class="legal__figure">
+                <div class="phone-frame" data-screenshot="watch-sync">
+                    <img src="assets/screenshots/watch-sync.jpg" alt="Run2Beat Sync overlay on iPhone showing Syncing to Apple Watch, progress percentage, current track title, track counter, and Cancel" onerror="this.style.display='none'" />
+                    <div class="phone-frame__placeholder">
+                        <div class="phone-frame__dot"></div>
+                        <strong>Watch sync</strong>
+                        <span>Screenshot placeholder</span>
+                        <small>watch-sync.jpg</small>
+                    </div>
+                </div>
+                <figcaption>The sync overlay: percentage, current track, &ldquo;Track X of Y&rdquo;, Cancel, and a reminder that sync continues with the screen off.</figcaption>
+            </figure>
+
             <p>
-                The two devices need to be active at the moment you start a sync. After that, both screens can be off &mdash; the transfer keeps running over Bluetooth in the background. There is one caveat for very long first-time syncs on older watches, covered in <a href="#long-syncs">Long first-time syncs on older watches</a> below.
+                Both apps need to be open and active at the moment you start. After that, both screens can be off &mdash; the transfer keeps running over Bluetooth. There is one caveat for very long first-time syncs on older watches, covered in <a href="#long-syncs">Long first-time syncs on older watches</a> below.
             </p>
 
             <h2>What gets transferred</h2>
@@ -67,61 +81,116 @@
                 <li>The <strong>audio file</strong>, always transcoded to HE-AAC for compactness on the watch. If the track is already HE-AAC in your Library it stays at that efficient profile (64&nbsp;kbps); if it&rsquo;s still MP3, AAC or WAV on the phone, the watch copy is encoded a step higher (80&nbsp;kbps) so you keep more of the original quality.</li>
                 <li><strong>Title, artist and artwork</strong> embedded in the file&rsquo;s metadata as a fall-back so the playlist is reconstructable even if the structured payload arrives late.</li>
                 <li><strong>BPM and loudness data</strong> (LUFS, true peak) so the Watch player applies the same gain math as the iPhone &mdash; the same track sounds equally loud on both devices.</li>
-                <li>For BPM lists: <strong>pre-rendered tempo variants</strong>. The iPhone applies the recipe&rsquo;s rate change with pitch preservation up front, so the Watch never has to do that work itself.</li>
-                <li>The <strong>play order</strong> and the list metadata.</li>
+                <li>For BPM lists: <strong>pre-rendered tempo variants</strong>. The iPhone applies the recipe&rsquo;s rate change with pitch preservation (<code>AVAudioTimePitchAlgorithm.spectral</code>) in a single-pass encode, so the Watch never has to do that work itself.</li>
+                <li>The <strong>play order</strong> and list metadata (including mosaic thumbnails when present).</li>
             </ul>
             <p>
-                Equalizer presets sync separately via the Watch app&rsquo;s shared settings channel. On the Watch you pick a preset directly from the Home view to change sound profile without your phone.
+                Equalizer presets and transition settings (crossfade / gapless / beat matching) travel via the WatchConnectivity shared-settings channel alongside the list payload. On the Watch you pick an EQ preset directly from the Home view without your phone.
+            </p>
+
+            <h2>Delta sync and signatures</h2>
+            <p>
+                The iPhone keeps deterministic <strong>signatures</strong> of every list that has successfully landed on the Watch &mdash; recipe signatures from the explicit track selection, playlist signatures from ordered track IDs, durations and name. Pending changes are computed by comparing current app state to those stored signatures:
+            </p>
+            <ul>
+                <li><strong>New</strong> &mdash; selected on the phone, not yet verified on the watch.</li>
+                <li><strong>Updated</strong> &mdash; membership, order or name changed since the last successful sync.</li>
+                <li><strong>Deleted</strong> &mdash; removed from the phone selection; the watch gets an explicit remove.</li>
+            </ul>
+            <p>
+                Unchanged lists are skipped. Only new or changed audio files are queued for <code>transferFile</code>. Re-open the Sync screen with nothing changed and the next sync takes the <strong>fast path</strong>: the watch&rsquo;s installed snapshot already matches the expected IDs, track counts and on-disk file counts, so the orchestrator skips the transfer machinery and returns immediately.
+            </p>
+            <p>
+                An edited list that is still installed on the watch never takes that fast path. The snapshot only reports per-list counts, not the exact track-ID set, so a content-change guard forces a full re-transfer and reconciliation whenever a list is marked <code>.updated</code> &mdash; otherwise a rename or membership edit could silently never leave the phone.
+            </p>
+
+            <h2>Transport: three WatchConnectivity channels</h2>
+            <p>
+                Sync rides Apple&rsquo;s WatchConnectivity framework. Three channels do different jobs:
+            </p>
+            <ul>
+                <li><strong><code>transferFile</code></strong> &mdash; one outbound transfer per audio asset. Queued by the OS; survives sleep on both devices.</li>
+                <li><strong><code>updateApplicationContext</code></strong> &mdash; structured metadata (recipes, playlists, assignments, variants, shared settings). Persistent; delivered when the watch wakes if the app was suspended.</li>
+                <li><strong><code>sendMessage</code></strong> &mdash; foreground fast path for the same critical payloads and for the watch&rsquo;s ACK snapshot. Requires <code>isReachable</code> on both sides; fails silently when the watch screen is off.</li>
+            </ul>
+            <p>
+                Critical payloads always go over the dual channel (message + application context) so sleep cannot strand a delivery. Files and context are sleep-resilient; the fast ACK path is not &mdash; which is why the iPhone waits up to about <strong>120 seconds</strong> for the watch to confirm what actually landed.
+            </p>
+
+            <h2>Convergence: a list is synced only when it is verified</h2>
+            <p>
+                After every file is queued, the orchestrator enters a per-list convergence loop. For each list it polls the watch&rsquo;s installed snapshot and requires all three:
+            </p>
+            <ul>
+                <li>the list ID is present on the watch,</li>
+                <li>the watch&rsquo;s <code>trackCount</code> matches the iPhone&rsquo;s expected count,</li>
+                <li>the watch&rsquo;s <code>verifiedTrackCount</code> (audio files physically present under <code>Documents/Music/</code>) also matches.</li>
+            </ul>
+            <p>
+                Only lists that clear all three checks are marked verified and get their signatures persisted. Lists still missing at the timeout are handled <strong>per list, not for the whole sync</strong>: the watch receives an explicit remove so orphan metadata and half-written files do not linger, and the iPhone clears that list&rsquo;s signature so the next sync retries it from scratch. You never keep a list that looks playable on the Watch but is missing some of its files.
+            </p>
+            <p>
+                If the watch stayed unreachable for the entire convergence window, the orchestrator has no evidence the list broke. Those <strong>unconfirmed</strong> lists are left untouched &mdash; still playable in their prior state on the wrist, still pending on the phone until a reachable sync finishes the change. That is what keeps renaming an already-installed list safe over a flaky Bluetooth link.
+            </p>
+
+            <h2>Keeping the Watch awake during transfer</h2>
+            <p>
+                When the watch screen turns off, watchOS may suspend the app. File and context delivery still work (the OS queues them), but ACK timing becomes unpredictable and <code>sendMessage</code> stops working. Run2Beat starts a <strong><code>WKExtendedRuntimeSession</code></strong> on the watch as soon as sync begins so the process stays alive with the display off, delegate callbacks fire promptly, and the fast ACK path can succeed when reachability returns.
+            </p>
+            <p>
+                That session can only be <em>started</em> while the watch app is in the foreground &mdash; which is why both apps must be active when you tap Start. An early sync-start signal (transaction ID only, no track payload) is pushed from the phone before the first file transfer so the session takes hold while the wrist is still awake. Once running, you can lower your wrist and lock the phone.
+            </p>
+            <p>
+                The session is not unlimited. watchOS ends it after a platform-defined window (on the order of several minutes). Everyday syncs finish well inside that budget; see <a href="#long-syncs">Long first-time syncs</a> for the edge case.
             </p>
 
             <h2>Speed and time expectations</h2>
             <p>
-                Files are sent over Bluetooth. That&rsquo;s a Bluetooth-shaped pipe - a normal-length playlist routinely takes several minutes to transfer for the first time. Subsequent syncs are much faster because Run2Beat only transfers what&rsquo;s actually new or changed; lists and tracks that are already on the Watch are skipped.
+                Files travel over Bluetooth. A normal-length playlist routinely takes several minutes the first time. Subsequent syncs are much faster because only what is new or changed is transferred; lists already verified on the Watch are skipped.
             </p>
             <p>
-                If you re-open the Sync screen without having changed anything, the next sync completes almost immediately - the iPhone verifies the Watch is already in the desired state and skips the transfer machinery entirely.
-            </p>
-            <p>
-                Practical tips for fast and reliable syncs:
+                Practical tips:
             </p>
             <ul>
                 <li><strong>Keep iPhone and Watch close together.</strong> Bluetooth degrades quickly with distance and obstacles.</li>
-                <li><strong>Wear the watch or leave it charging.</strong> Both devices need to be awake at the moment sync starts. After that they can both go to sleep.</li>
-                <li><strong>iPhone keeps syncing in the background.</strong> Lock the screen, switch to another app - the transfer continues. The overlay updates the next time you return to Run2Beat.</li>
-                <li><strong>Plan ahead for first-time syncs of large lists.</strong> Sending new tracks to the Watch always takes time; syncing tonight for tomorrow morning&rsquo;s run goes a long way. Re-running the sync later with no changes is effectively instant.</li>
+                <li><strong>Open both apps to start.</strong> After that they can both sleep.</li>
+                <li><strong>iPhone keeps syncing in the background.</strong> Lock the screen or switch apps &mdash; the transfer continues. The overlay updates when you return to Run2Beat.</li>
+                <li><strong>Plan ahead for first-time syncs of large lists.</strong> Sending new tracks always takes time; syncing tonight for tomorrow morning&rsquo;s run goes a long way.</li>
             </ul>
 
             <h2 id="long-syncs">Long first-time syncs on older watches</h2>
             <p>
-                To receive data while its screen is off, the Watch keeps the Run2Beat app awake in short background windows &mdash; roughly ten minutes at a time. This is an Apple platform limit, not a Run2Beat setting, and for everyday syncs it is far more time than the transfer needs.
+                The extended-runtime window is an Apple platform limit, not a Run2Beat setting. For everyday syncs it is far more time than the transfer needs. It can matter for a <strong>big first-time sync of many tracks and lists</strong> that runs longer than a single window &mdash; more often on <strong>older hardware</strong> (Apple Watch Series 6 and earlier), over <strong>weak Bluetooth</strong>, or when the watch is <strong>warm and throttling</strong>.
             </p>
             <p>
-                It can matter in one specific case: a <strong>big first-time sync of many tracks and lists</strong> that runs longer than a single window. The chance of hitting it is higher on <strong>older hardware</strong> (Apple Watch Series 6 and earlier, which both transfer and process more slowly), over <strong>weak or distant Bluetooth</strong>, or when the watch is <strong>warm and throttling</strong>. The same overnight sync that sails through on a recent watch can cross the window boundary on an older one.
+                The symptom is unmistakable and harmless: with the watch screen off the transfer appears to <strong>pause</strong>, and the iPhone overlay stops advancing. It does not fail and nothing is corrupted &mdash; the watch simply cannot reopen a background window on its own while the screen is off.
             </p>
             <p>
-                The symptom is unmistakable and harmless: with the watch screen off the transfer appears to <strong>pause</strong>, and the iPhone overlay stops advancing. It does not fail and nothing is corrupted &mdash; the watch simply cannot reopen a background window on its own while the screen is off, because the system only allows the app to start a new window when it is in the foreground.
-            </p>
-            <p>
-                To carry a long sync to the finish line:
+                To finish a long sync:
             </p>
             <ul>
-                <li><strong>Glance at the watch or raise your wrist every few minutes.</strong> Each time the app becomes active it opens a fresh window and the transfer resumes from exactly where it stopped.</li>
-                <li><strong>Or keep the watch screen on</strong> while the big first sync runs &mdash; for example on the charger, or simply by looking at it from time to time.</li>
-                <li><strong>Split a huge first sync into smaller rounds</strong> if you prefer: sync a couple of lists, let them finish, then sync the rest. Each smaller round fits comfortably inside one window.</li>
-                <li><strong>Remember it is a one-time cost.</strong> Once the tracks are on the watch, later syncs only move what changed and complete in seconds, so they never approach the window limit.</li>
+                <li><strong>Glance at the watch or raise your wrist every few minutes.</strong> Each time the app becomes active it opens a fresh window and the transfer resumes from where it stopped.</li>
+                <li><strong>Or keep the watch screen on</strong> while the big first sync runs &mdash; for example on the charger.</li>
+                <li><strong>Split a huge first sync into smaller rounds</strong> if you prefer: sync a couple of lists, let them finish, then sync the rest.</li>
+                <li><strong>Remember it is a one-time cost.</strong> Later syncs only move what changed and complete in seconds.</li>
             </ul>
 
             <h2>Cancel any time, resume later</h2>
             <p>
-                The Sync screen has a visible Cancel control while a transfer is in flight. Cancelling is safe &mdash; the next sync simply picks up what&rsquo;s still missing. The pending-change indicator on the Sync screen tells you exactly what hasn&rsquo;t made it across yet.
+                The overlay&rsquo;s Cancel control aborts immediately: outstanding WatchConnectivity file transfers are cancelled, polling loops exit within a few hundred milliseconds, and transient progress state is cleared. The next sync resets every overlay flag, runs a pre-sync orphan cleanup for anything half-written on the watch, and picks up lists whose signatures were never written &mdash; they show as still pending on the Sync screen.
+            </p>
+
+            <h2>Clear Apple Watch Data</h2>
+            <p>
+                The Sync screen can wipe the watch installation clean. That cancels any in-flight sync, waits for an explicit ACK from the watch, drains leftover file transfers from the session queue, and clears the iPhone&rsquo;s mirror of what was installed (signatures, snapshots, the WatchSync export cache and pre-rendered variants). Preferences such as EQ presets and transition settings are kept. The next sync then behaves like a genuine first-time transfer &mdash; without clearing the phone-side mirror, skip logic would assume the watch still held every file and leave you with metadata pointing at audio that never arrives.
             </p>
 
             <h2>Standalone playback on the Watch</h2>
             <p>
-                Once a list is synced, the Watch can play it back without the phone. You pair your AirPods directly to the Watch, open Run2Beat on the wrist, pick a BPM list or playlist and press play.
+                Once a list is synced, the Watch can play it without the phone. Pair AirPods directly to the Watch, open Run2Beat on the wrist, pick a BPM list or playlist and press play.
             </p>
             <p>
-                The Watch player honours the same volume normalisation, the same EQ preset and the same crossfade behaviour as the iPhone &mdash; the audio decisions are baked into the synced files and metadata, so the sound is identical regardless of which device you&rsquo;re listening from.
+                The Watch player honours the same volume normalisation, the same EQ preset and the same crossfade behaviour as the iPhone &mdash; audio decisions travel as synced files and metadata, so the sound matches whichever device you listen from.
             </p>
 
             <h2>If something doesn&rsquo;t arrive</h2>
@@ -129,14 +198,14 @@
                 The Sync screen surfaces an item-level pending list and explicit error messages. Common situations:
             </p>
             <ul>
-                <li><strong>&ldquo;Watch not reachable&rdquo;.</strong> The Watch app isn&rsquo;t open in the background or the devices are out of Bluetooth range. Open the Run2Beat app on the Watch once to bring the connection back up; sync will then start normally.</li>
-                <li><strong>A list is never half-synced.</strong> If a transfer is interrupted - low battery, the Watch leaves range for a long time, you cancel mid-sync - Run2Beat verifies on a per-list basis that both the list&rsquo;s metadata and every audio file actually landed on the Watch. Lists that don&rsquo;t pass that check within the sync window are removed from the Watch and queued for a fresh transfer on the next sync. You never end up with a list that looks playable on the Watch but is missing some of its files.</li>
-                <li><strong>&ldquo;On Watch&rdquo; badge.</strong> After a successful sync each list shows a green &ldquo;On Watch&rdquo; indicator confirming the Watch holds both the list&rsquo;s metadata and every one of its audio files.</li>
+                <li><strong>&ldquo;Watch not reachable&rdquo;.</strong> The Watch app isn&rsquo;t open or the devices are out of Bluetooth range. Open Run2Beat on the Watch once; sync then starts normally.</li>
+                <li><strong>A list is never half-synced.</strong> Interrupted transfers are verified per list; incomplete lists are removed from the Watch and queued fresh on the next sync.</li>
+                <li><strong>&ldquo;On Watch&rdquo; badge.</strong> After a successful sync each list shows a green &ldquo;On Watch&rdquo; indicator confirming both metadata and every audio file are present. An edited list shows that changes will sync instead, until the next successful run.</li>
             </ul>
 
             <h2>Storage on the Watch</h2>
             <p>
-                Audio files land in the Watch&rsquo;s app sandbox as HE-AAC. A typical 4-minute song is roughly <strong>2&nbsp;MB at 64&nbsp;kbps</strong> when the Library copy was already HE-AAC, or a little larger at <strong>80&nbsp;kbps</strong> when Run2Beat encodes from a higher-quality original on the phone &mdash; still about half the size of a comparable MP3 or AAC-LC file. Either way, a multi-hour BPM list fits comfortably alongside other Apple Watch content on a modern watch.
+                Audio files land in the Watch&rsquo;s app sandbox as HE-AAC. A typical 4-minute song is roughly <strong>2&nbsp;MB at 64&nbsp;kbps</strong> when the Library copy was already HE-AAC, or a little larger at <strong>80&nbsp;kbps</strong> when Run2Beat encodes from a higher-quality original on the phone &mdash; still about half the size of a comparable MP3 or AAC-LC file. Cache names include the bitrate tier, so a policy or source-type change invalidates stale exports on the next sync instead of reusing the wrong encode.
             </p>
 
             <h2>Privacy reminder</h2>
