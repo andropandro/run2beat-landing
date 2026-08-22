@@ -76,7 +76,7 @@
 
             <h2>Why not just trust iOS Sound Check?</h2>
             <p>
-                Two hard blockers. Sound Check is off by default in iOS Settings &rarr; Music, so most people have never enabled it. And even when it is on, it only applies to tracks the Music app owns. Run2Beat plays its own files through its own <code>AVAudioEngine</code> graph and would receive zero benefit. Self-managed loudness is not optional &mdash; it is the only path that reliably evening out a Run2Beat library on every device and OS configuration.
+                Two hard blockers. Sound Check is off by default in iOS Settings &rarr; Music, so most people have never enabled it. And even when it is on, it only applies to tracks the Music app owns. Run2Beat plays its own files through its own audio-engine graph and would receive zero benefit. Self-managed loudness is not optional &mdash; it is the only path that reliably evening out a Run2Beat library on every device and OS configuration.
             </p>
 
             <h2>Architecture: measure once, apply at playback</h2>
@@ -105,7 +105,7 @@
 
             <h2>How the gain is applied at playback</h2>
             <p>
-                On every track change Run2Beat computes the gain it needs to land the track on your chosen reference, then sets a mixer-node <code>outputVolume</code> (a sample-accurate linear scalar in the existing mix pass):
+                On every track change Run2Beat computes the gain it needs to land the track on your chosen reference, then sets a mixer-node output volume (a sample-accurate linear scalar in the existing mix pass):
             </p>
             <p style="font-family: ui-monospace, SFMono-Regular, Menlo, monospace; padding: 14px 18px; background: rgba(255,255,255,0.04); border-radius: 12px; font-size: 14px; line-height: 1.6;">
                 gainDB&nbsp;=&nbsp;referenceLUFS&nbsp;&minus;&nbsp;measuredLUFS<br />
@@ -121,10 +121,10 @@
 
             <h2>Same numbers, same loudness on Apple Watch</h2>
             <p>
-                When a BPM list or playlist syncs to your Apple Watch, per-track <code>lufs</code> and <code>truePeak</code> travel in the transfer metadata &mdash; two doubles, negligible against the audio payload. The Watch player applies the <em>same</em> gain formula; it never runs the analyser itself. The reference level rides the regular application-context preferences channel, so changing &minus;14 &rarr; &minus;16 on the phone is honoured on the wrist after the next settings push.
+                When a BPM list or playlist syncs to your Apple Watch, per-track loudness and true-peak values travel in the transfer metadata &mdash; two numbers, negligible against the audio payload. The Watch player applies the <em>same</em> gain formula; it never runs the analyser itself. The reference level rides the regular shared-settings preferences channel, so changing &minus;14 &rarr; &minus;16 on the phone is honoured on the wrist after the next settings push.
             </p>
             <p>
-                Because both devices compute <code>gain = reference &minus; measured</code> from identical metadata, switching from headphones on the phone to AirPods paired to the watch should not need a volume bump. The phone measures the library file; the watch plays a watch-export HE-AAC variant. Those encodings keep near-identical integrated loudness in practice, so one original-file measurement serves both sides.
+                Because both devices compute gain&nbsp;=&nbsp;reference&nbsp;&minus;&nbsp;measured from identical metadata, switching from headphones on the phone to AirPods paired to the watch should not need a volume bump. The phone measures the library file; the watch plays a watch-export HE-AAC variant. Those encodings keep near-identical integrated loudness in practice, so one original-file measurement serves both sides.
             </p>
 
             <h2>Settings: toggle, reference, true-peak protection</h2>
@@ -139,7 +139,7 @@
             <ul>
                 <li><strong>Takes time.</strong> Each track needs a couple of seconds of analysis. Across several hundred tracks, the full run easily exceeds an hour.</li>
                 <li><strong>Battery-heavy.</strong> The phone decodes every file and runs broadcast-grade DSP. Connecting a charger is recommended.</li>
-                <li><strong>Keeps running in the background.</strong> The run continues with the screen locked or the app backgrounded, using the same background-activity keeper as BPM re-analysis and Watch sync &mdash; a silent keep-alive that exploits the app&rsquo;s audio background mode, far beyond the ~30&nbsp;s grace of a bare <code>beginBackgroundTask</code>. Between tracks the loop sleeps briefly so iOS&rsquo;s background CPU watchdog does not SIGKILL a sustained full-core decode marathon; that roughly halves duty cycle and stretches wall-clock time, by design.</li>
+                <li><strong>Keeps running in the background.</strong> The run continues with the screen locked or the app backgrounded, using the same background-activity keeper as BPM re-analysis and Watch sync &mdash; a silent keep-alive that exploits the app&rsquo;s audio background mode, far beyond the ~30&nbsp;s grace of a bare system background task. Between tracks the loop sleeps briefly so iOS&rsquo;s background CPU watchdog does not kill a sustained full-core decode marathon; that roughly halves duty cycle and stretches wall-clock time, by design.</li>
                 <li><strong>Replaces existing values</strong> and pushes fresh metadata to the Watch on the next sync. There is no auto-trigger on launch &mdash; libraries with thousands of tracks would otherwise spin up unprompted.</li>
             </ul>
             <p>

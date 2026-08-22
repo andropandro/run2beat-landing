@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BPM lists &mdash; Run2Beat</title>
-    <meta name="description" content="How BPM lists work in Run2Beat: recipe matching math, multipliers, play time, deterministic warm-up pitch, two-way swap-candidate skip flags, folders in UserDefaults, and Apple Watch pre-rendered variants." />
+    <meta name="description" content="How BPM lists work in Run2Beat: recipes, multipliers, play time, warm-up, swap candidates, folders, and Apple Watch pre-timed variants that help you keep your steps locked to the beat." />
     <meta name="theme-color" content="#0a0d0a" />
 
     <link rel="icon" type="image/png" href="assets/app-icon.png" />
@@ -37,7 +37,7 @@
             <p class="eyebrow eyebrow--center">Deep dive</p>
             <h1 class="legal__title">One recipe.<br />Every step<br />in time.</h1>
             <p class="legal__lede">
-                BPM lists are the heart of Run2Beat. A BPM list isn&rsquo;t a fixed playlist &mdash; it&rsquo;s a saved <em>recipe</em> that decides your target step cadence, how much music you want and where the songs come from. Run2Beat finds the matching tracks, shuffles a selection, and plays them back tempo-matched to your stride in real time. This page is the long version of everything that recipe can do.
+                BPM lists are the heart of Run2Beat. A BPM list isn&rsquo;t a fixed playlist &mdash; it&rsquo;s a saved <em>recipe</em> that decides the cadence you want to hold, how much music you want and where the songs come from. Run2Beat finds matching tracks, shuffles a selection, and times them so the beat sits at that cadence &mdash; helping your steps lock to the music as it pulls you along. This page is the long version of everything that recipe can do.
             </p>
         </section>
 
@@ -78,17 +78,17 @@
                 <figcaption>The recipe editor: Target BPM sits at the top of the controls, with Max pitching, multipliers and play time beneath.</figcaption>
             </figure>
 
-            <h2>2. Target BPM &mdash; your step cadence</h2>
+            <h2>2. Target BPM &mdash; the cadence you want to hold</h2>
             <p>
-                This is the single most important number in the recipe: the rhythm your feet should follow, in steps per minute. Many runners settle somewhere in the 170&ndash;180 range; a brisk power-walk often lands around 130. You can dial anything from 60 to 220&nbsp;BPM.
+                This is the single most important number in the recipe: the rhythm you want your feet to follow, in steps per minute. Many runners settle somewhere in the 170&ndash;180 range; a brisk power-walk often lands around 130. You can dial anything from 60 to 220&nbsp;BPM.
             </p>
             <p>
-                Everything else in the recipe exists to serve this number &mdash; to find music that can land on it, and to nudge tracks onto it cleanly during playback.
+                Everything else in the recipe exists to serve this number &mdash; to find music that can sit at that cadence, and to time each track so the beat is steady enough for you to lock onto and hold.
             </p>
 
             <h2>3. Max pitching &mdash; how far a song may bend</h2>
             <p>
-                Very few songs sit at <em>exactly</em> your target tempo. Max pitching is the tolerance that decides how much Run2Beat is allowed to digitally speed up or slow down a track so its beat lines up with your cadence. It runs from 0&nbsp;% up to 15&nbsp;%, and a new list starts at a practical <strong>&plusmn;10&nbsp;%</strong>.
+                Very few songs sit at <em>exactly</em> your target tempo. Max pitching is the tolerance that decides how much Run2Beat is allowed to digitally speed up or slow down a track so its beat matches the cadence you want to hold. It runs from 0&nbsp;% up to 15&nbsp;%, and a new list starts at a practical <strong>&plusmn;10&nbsp;%</strong>.
             </p>
             <p>
                 The trade-off is simple and worth understanding:
@@ -122,15 +122,15 @@
             </p>
 
             <p>
-                Throughout, one principle holds: <strong>songs always play near their natural tempo &mdash; only the beat you choose to step on changes.</strong> A 2/1 match isn&rsquo;t slowed to a crawl; it plays normally while you simply take two steps per beat.
+                Throughout, one principle holds: <strong>songs always play near their natural tempo &mdash; you choose which beat relationship keeps your steps in time.</strong> A 2/1 match isn&rsquo;t slowed to a crawl; it plays normally while you simply take two steps per beat.
             </p>
             <p>
-                The reason to enable more than one multiplier is reach. With 1/1, 2/1 and 1/2 all on, the algorithm can sweep your entire library and work out, song by song, exactly which relationship makes it fit your feet &mdash; whether it&rsquo;s naturally fast, slow, or right on the money. By default a new recipe runs with 1/1 and 2/1 enabled.
+                The reason to enable more than one multiplier is reach. With 1/1, 2/1 and 1/2 all on, the algorithm can sweep your entire library and work out, song by song, exactly which relationship lets your feet stay locked to the music &mdash; whether the track is naturally fast, slow, or right on the money. By default a new recipe runs with 1/1 and 2/1 enabled.
             </p>
 
             <h2>How matching works under the hood</h2>
             <p>
-                For the curious, here is the exact rule Run2Beat applies to every candidate track (<code>BPMRecipe.calculateMatch</code>). For each multiplier you&rsquo;ve enabled, it computes the song&rsquo;s <em>effective</em> tempo and compares it to your target:
+                For the curious, here is the exact rule Run2Beat applies to every candidate track. For each multiplier you&rsquo;ve enabled, it computes the song&rsquo;s <em>effective</em> tempo and compares it to your target:
             </p>
             <ul>
                 <li><strong>1/1</strong> compares the song&rsquo;s own BPM to your target.</li>
@@ -138,10 +138,10 @@
                 <li><strong>1/2</strong> compares <em>half</em> the song&rsquo;s BPM to your target (so a 350&nbsp;BPM song reads as 175).</li>
             </ul>
             <p>
-                Pitch for a chosen frame is <code>pitch% = (targetBPM / (trackBPM &times; multiplier) &minus; 1) &times; 100</code>. A song qualifies if at least one enabled frame lands within your max-pitching tolerance. When several multipliers would all work, Run2Beat keeps the <em>closest</em> match &mdash; the smallest absolute pitch &mdash; and stores that per-track amount so the iPhone and the Apple Watch reproduce identical playback.
+                The tempo shift for a chosen frame is <code>pitch% = (targetBPM / (trackBPM &times; multiplier) &minus; 1) &times; 100</code>. A song qualifies if at least one enabled frame lands within your max-pitching tolerance. When several multipliers would all work, Run2Beat keeps the <em>closest</em> match &mdash; the smallest absolute shift &mdash; and remembers that per-track amount so the iPhone and the Apple Watch play identically.
             </p>
             <p>
-                After you change the list&rsquo;s target BPM and choose to keep the current songs, tracks that no longer fit inside Max pitching stay in the selection and play via <code>closestMatch</code> (same formula, tolerance ignored). Those rows show in red in the detail editor with a warning; Watch sync still pre-renders them at the new target.
+                After you change the list&rsquo;s target BPM and choose to keep the current songs, tracks that no longer fit inside Max pitching stay in the selection and still play at the new target (same formula, tolerance ignored). Those rows show in red in the detail editor with a warning; Watch sync still pre-times them to the new cadence.
             </p>
 
             <h2>5. How much music &mdash; play time</h2>
@@ -176,26 +176,26 @@
                 Tempos you&rsquo;ve set or corrected yourself are always trusted and always eligible &mdash; you&rsquo;ve explicitly vouched for them. (You can read the full story of how tempo is measured, and what &ldquo;low confidence&rdquo; means, on the <a href="bpm-analysis.html">BPM analysis</a> page.)
             </p>
 
-            <h2>Playback &mdash; tempo-matched in real time</h2>
+            <h2>Playback &mdash; timed so you can lock to the beat</h2>
             <p>
-                Press play on a BPM list and Run2Beat always shuffles. As each track comes up it&rsquo;s nudged onto your target cadence on the fly, by exactly the per-track amount the recipe worked out &mdash; so a 168&nbsp;BPM song and a 182&nbsp;BPM song both arrive at your feet at, say, 175. Voices and instruments keep sounding natural; it&rsquo;s the rhythm that locks to you, not the other way around.
+                Press play on a BPM list and Run2Beat always shuffles. As each track comes up it is gently timed to your target cadence &mdash; by exactly the per-track amount the recipe worked out &mdash; so a 168&nbsp;BPM song and a 182&nbsp;BPM song both present a steady beat at, say, 175. Voices and instruments keep sounding natural; <strong>your steps lock to the music</strong>, and the rhythm pulls you along so you can hold the pace.
             </p>
             <p>
-                The now-playing screen even pulses in time with the target tempo, so the whole app breathes at the pace of your run.
+                The now-playing screen even pulses in time with the target tempo, so the whole app breathes at the cadence you are aiming for.
             </p>
 
-            <h2>Warm-up &mdash; ease into your cadence</h2>
+            <h2>Warm-up &mdash; ease into the cadence you want</h2>
             <p>
                 A run rarely starts at full pace, so a BPM list can begin with an optional <strong>warm-up</strong>: the first few songs play at a gentler tempo before the list ramps up to your target BPM. You set two things &mdash; <strong>how many</strong> songs warm you up, and the <strong>warm-up tempo</strong> itself. The only rule is that the warm-up tempo has to sit <em>below</em> your target (strictly lower by at least 1&nbsp;BPM; floor 60); a 175&nbsp;BPM list can warm up at 150, or just at 170 for the lightest of eases.
             </p>
             <p>
-                The recipe stores <code>warmupEnabled</code>, <code>warmupTrackCount</code> and <code>warmupBPM</code> (0 = unset, then defaults to about 20&nbsp;BPM below target). The warm-up set is <strong>deterministic</strong>: sort the resolved track IDs by <code>uuidString</code> and take the leading N. Same songs every session, identical on iPhone and Watch, and self-healing when you swap a warm-up row out &mdash; the next ID in that sort is promoted automatically. Rows show a purple <code>figure.cooldown</code> chip in the detail editor; list cards show the same icon when warm-up is on.
+                Warm-up remembers whether it is on, how many lead songs to use, and the warm-up tempo (if you leave that unset it defaults to about 20&nbsp;BPM below target). The warm-up set is <strong>deterministic</strong>: the same songs lead every session, identical on iPhone and Watch, and self-healing when you swap a warm-up row out &mdash; the next eligible song is promoted automatically. Rows show a purple warm-up chip in the detail editor; list cards show the same icon when warm-up is on.
             </p>
             <p>
-                Tempo math keeps the track in its chosen beat frame and applies a constant ratio on top: <code>warmupPitch = ((1 + pitch/100) &times; (warmupBPM / targetBPM) &minus; 1) &times; 100</code>. No multiplier re-selection &mdash; warm-up simply slows the same rendering. Each warm-up song plays once as the intro and does not replay later at target tempo.
+                Tempo math keeps each track in its chosen beat relationship and applies a constant slowdown on top, so warm-up simply plays the same rendering a bit slower &mdash; no multiplier re-selection. Each warm-up song plays once as the intro and does not replay later at target tempo.
             </p>
             <p>
-                Playback uses a shared <code>BPMRecipe.makePlaybackPlan</code>: warm-up tracks first (internally shuffled among themselves) at the lowered pitch, then the remainder shuffled at target; <code>shuffle</code> is off so auto-advance cannot reshuffle and break warm-up-first order. While a warm-up song plays, Now Playing shows the cooldown badge and the <strong>actual warm-up tempo</strong> &mdash; not the list target &mdash; so the pulse matches the cadence your feet should follow right now. Settings travel with AirDrop and full-library backup; they are part of the Watch sync signature so toggling warm-up reliably re-renders variants.
+                Playback always puts warm-up tracks first (shuffled among themselves) at the lowered tempo, then the remainder shuffled at target, and keeps that order so auto-advance cannot reshuffle warm-up away. While a warm-up song plays, Now Playing shows the warm-up badge and the <strong>actual warm-up tempo</strong> &mdash; not the list target &mdash; so the pulse matches the cadence your feet should follow right now. Settings travel with AirDrop and full-library backup; they are part of what the Watch sync fingerprints, so toggling warm-up reliably rebuilds the timed files on the wrist.
             </p>
 
             <figure class="legal__figure">
@@ -216,13 +216,13 @@
                 Not every match is a keeper at your target tempo. When you deliberately skip a track while a BPM list is playing &mdash; on <strong>iPhone or Apple Watch</strong> &mdash; Run2Beat flags it as a <strong>swap candidate</strong> for that list: a song you didn&rsquo;t enjoy at this cadence, and an obvious candidate to replace.
             </p>
             <p>
-                Only a deliberate forward skip counts (on-screen next, AirPods / Control Centre / CarPlay / remote next routed through <code>skipForward</code>). Natural end-of-track advances, crossfades and auto-skips over a missing file never flag anything. The flag is per list (<code>BPMRecipe.skippedTrackIDs</code>): the same song can be a candidate in one recipe and untouched in another. Duplicating or AirDropping a list starts with an empty flag set.
+                Only a deliberate forward skip counts (on-screen next, AirPods / Control Centre / CarPlay / remote next). Natural end-of-track advances, crossfades and auto-skips over a missing file never flag anything. The flag is per list: the same song can be a candidate in one recipe and untouched in another. Duplicating or AirDropping a list starts with an empty flag set.
             </p>
             <p>
-                Flags show up in the detail view (compact flag pill + thin purple border) and on the list card while any remain. Replace / delete drops the flag; replacement draws only from matches not already in the list by id <em>or</em> by song identity. Clear from the menu or swipe, or save the list after a warning that saving resets candidates. The pruner keeps <code>skippedTrackIDs</code> a strict subset of the selection.
+                Flags show up in the detail view (compact flag pill + thin purple border) and on the list card while any remain. Replace / delete drops the flag; replacement draws only from matches not already in the list by identity. Clear from the menu or swipe, or save the list after a warning that saving resets candidates. Flagged songs are always a strict subset of the current selection.
             </p>
             <p>
-                Sync is a <strong>separate two-way ledger</strong> over <code>WCSession.transferUserInfo</code> &mdash; deliberately not inside the selection/content application-context payload, so flags cannot bloat convergence or block a sync. Watch skips are queued events (guaranteed delivery, retried across launches); the phone applies them idempotently by event id. Whenever the phone inserts or clears flags it pushes an authoritative per-recipe snapshot to the watch, which overwrites its local copy and drops stale pending events for that list. Content re-sync never wipes wrist-side flags the listener just made.
+                Flags sync on a <strong>separate two-way channel</strong> &mdash; deliberately not inside the main list-content payload, so they cannot bloat convergence or block a sync. Watch skips are queued for guaranteed delivery and retried across launches; the phone applies them once per event. Whenever the phone inserts or clears flags it pushes an authoritative per-list snapshot to the watch, which overwrites its local copy and drops stale pending events for that list. Content re-sync never wipes wrist-side flags the listener just made.
             </p>
 
             <figure class="legal__figure">
@@ -240,15 +240,15 @@
 
             <h2>On your Apple Watch</h2>
             <p>
-                BPM lists come with you when you leave the phone behind. The key difference is <em>when</em> the tempo work happens: watchOS cannot run Apple&rsquo;s live time-pitch unit, so Run2Beat renders each song to its target tempo <strong>up front</strong> during sync and transfers the finished, BPM-adjusted HE-AAC. No live pitching, no battery-hungry DSP on the wrist &mdash; just the right tempo, already baked in.
+                BPM lists come with you when you leave the phone behind. The key difference is <em>when</em> the tempo work happens: the Watch cannot run the same live tempo adjustment as the iPhone, so Run2Beat times each song to your target cadence <strong>up front</strong> during sync and transfers the finished, HE-AAC file. No live pitching, no battery-hungry processing on the wrist &mdash; just the right tempo already baked in, so your steps can lock to the beat with the phone at home.
             </p>
             <p>
-                Warm-up songs need only <strong>one</strong> file each, rendered at the warm-up tempo instead of the target (variant id folds pitch in, so a config change re-renders). Assignments carry <code>isWarmup: true</code> for ordering: the watch shuffles warm-up items first, then the rest. Sync still counts one file per track &mdash; no extra convergence cost. (More on transport on the <a href="apple-watch-sync.html">Apple Watch sync</a> page.)
+                Warm-up songs need only <strong>one</strong> file each, rendered at the warm-up tempo instead of the target (a config change rebuilds that file). Assignments mark which songs are warm-up for ordering: the watch plays warm-up items first, then the rest. Sync still counts one file per track &mdash; no extra convergence cost. (More on transport on the <a href="apple-watch-sync.html">Apple Watch sync</a> page.)
             </p>
 
             <h2>Editing a saved list</h2>
             <p>
-                Change the target BPM on a saved list and Run2Beat asks whether to reshuffle or keep your current songs. Keep them, and every track is re-timed to the new cadence; songs that would need more pitch than Max pitching normally allows stay in the list, shown in red with a warning, and still play at the new target on both iPhone and Apple Watch. Change Max pitching, multipliers or the source and the list updates in place &mdash; a fresh shuffle is how you draw a clean selection again. Nothing sticks until you tap <strong>Update BPM list</strong>.
+                Change the target BPM on a saved list and Run2Beat asks whether to reshuffle or keep your current songs. Keep them, and every track is re-timed to the new cadence so you can still lock your steps to the beat; songs that would need more pitch than Max pitching normally allows stay in the list, shown in red with a warning, and still play at the new target on both iPhone and Apple Watch. Change Max pitching, multipliers or the source and the list updates in place &mdash; a fresh shuffle is how you draw a clean selection again. Nothing sticks until you tap <strong>Update BPM list</strong>.
             </p>
 
             <h2>Keeping a list honest after re-analysis</h2>
@@ -261,7 +261,7 @@
                 You can create as many BPM lists as you like and give each one a name. Organise them into <strong>folders</strong> the same way you already can with standard playlists &mdash; create and rename groups, collapse sections, and move a list into a folder from its menu. Folders are an iPhone layout aid; what syncs to Apple Watch stays a flat set of lists.
             </p>
             <p>
-                Recipes live as Codable JSON in UserDefaults (<code>run2beat.bpmlists.recipes</code>), not SwiftData. Groups follow the same pattern: <code>run2beat.bpmlists.groups</code>, optional manual order, collapse ids, and <code>BPMRecipe.groupID</code> (<code>nil</code> = Other). The list UI stays flat and alphabetical until the first group exists, then switches to Groups + &ldquo;Other BPM lists&rdquo;. Deleting a group can remove only the folder or the folder and its recipes; music files always stay in the library. Orphaned group membership is pruned on the phone only.
+                Recipes and folders are stored as local preferences on the iPhone (not in the same store as your music library). Groups share that pattern: optional manual order, collapse state, and which folder each list belongs to (ungrouped lists appear under Other). The list UI stays flat and alphabetical until the first folder exists, then switches to Groups + &ldquo;Other BPM lists&rdquo;. Deleting a group can remove only the folder or the folder and its recipes; music files always stay in the library. Orphaned folder membership is cleaned up on the phone only.
             </p>
             <p>
                 Long-press a list to shuffle-play it instantly, duplicate it as a starting point for a variation, copy its songs into a regular playlist, rename it, send the full recipe (including warm-up) via AirDrop, or delete it. When a list has swap candidates, the same menu and swipe actions also let you clear those flags without opening the detail view. Deleting a BPM list only removes the recipe &mdash; every track stays safely in your library.
@@ -269,7 +269,7 @@
 
             <h2>The short version</h2>
             <p>
-                A BPM list is a saved recipe: activity, target cadence, how far songs may bend, which beat frames to use, how long to play, and where candidates come from. Shuffle materialises a concrete selection; warm-up slows a deterministic leading set; skips flag swap candidates on a two-way Watch ledger; folders organise the phone UI. iPhone pitches live; Watch plays pre-rendered variants &mdash; same cadence either way.
+                A BPM list is a saved recipe: activity, the cadence you want to hold, how far songs may bend, which beat relationships to use, how long to play, and where candidates come from. Shuffle materialises a concrete selection; warm-up slows a deterministic leading set; skips flag swap candidates on a two-way Watch channel; folders organise the phone UI. iPhone times songs live; Watch plays pre-timed files &mdash; either way, the beat is steady so your steps can lock to the music.
             </p>
 
             <a href="index.html" class="learn-more">

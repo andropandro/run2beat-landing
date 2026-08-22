@@ -83,17 +83,17 @@
                 A and B are measured once and stored on the track. C is measured live when the song plays, because Watch time-stretched variants need the processed file and soft outros are not packaged for AirDrop.
             </p>
 
-            <h2>Stored data model</h2>
+            <h2>Stored cues</h2>
             <p>
                 Each library track can carry:
             </p>
             <ul>
-                <li><strong><code>grooveStartSeconds</code></strong> &mdash; A: seconds into the file for intro skip.</li>
-                <li><strong><code>beatZeroSeconds</code></strong> &mdash; B: phase anchor near the start.</li>
-                <li><strong><code>beatMatchDataVersion</code></strong> &mdash; heuristic schema stamp; bump it and prep re-fills stale cues.</li>
+                <li><strong>Groove start</strong> &mdash; A: seconds into the file for intro skip.</li>
+                <li><strong>Beat zero</strong> &mdash; B: phase anchor near the start.</li>
+                <li><strong>Cue schema version</strong> &mdash; heuristic stamp; when it bumps, prep re-fills stale cues.</li>
             </ul>
             <p>
-                <strong><code>nil</code></strong> means not analysed; <strong><code>0</code></strong> means analysed and the cue is at the file beginning (valid). The same three fields travel in AirDrop playlist / BPM-list packages and in the Watch sync catalog. Soft-outro pull is never stored.
+                A missing value means not analysed; a stored zero means analysed and the cue is at the file beginning (valid). The same three fields travel in AirDrop playlist / BPM-list packages and in the Watch sync catalog. Soft-outro pull is never stored.
             </p>
 
             <h2>How A and B are measured</h2>
@@ -101,10 +101,10 @@
                 Analysis scans only the <strong>opening window</strong> of the file (lookahead up to roughly 90&nbsp;s, capped by duration) &mdash; not a full-file decode.
             </p>
             <p>
-                <strong>Groove start (A)</strong> is an energy / RMS heuristic: compare an intro floor to a later peak, prefer a sustained high level, else a large jump, else a soft rise, then optionally snap toward the nearest beat of the list BPM hint. Already-loud openings, no rise, or unreadable files return <code>0</code> with a machine-readable reason for logs. It is not arrangement-aware; soft pads and spoken intros can still mis-cue.
+                <strong>Groove start (A)</strong> is an energy / RMS heuristic: compare an intro floor to a later peak, prefer a sustained high level, else a large jump, else a soft rise, then optionally snap toward the nearest beat of the list BPM hint. Already-loud openings, no rise, or unreadable files return a cue at the file start, with a reason recorded for logs. It is not arrangement-aware; soft pads and spoken intros can still mis-cue.
             </p>
             <p>
-                <strong>Beat zero (B)</strong> is not a full beat grid today. The analyser takes RMS peaks in the first ~24&nbsp;s, uses period&nbsp;=&nbsp;60&nbsp;/&nbsp;BPM, scores candidate phase offsets in <code>[0, period)</code>, and stores the best phase. Without a usable BPM hint, beatZero falls back to <code>0</code>. Tempo detection elsewhere still uses BeatNet; its per-frame beat channel is not persisted as a Crossfade grid yet.
+                <strong>Beat zero (B)</strong> is not a full beat grid today. The analyser takes RMS peaks in the first ~24&nbsp;s, uses period&nbsp;=&nbsp;60&nbsp;/&nbsp;BPM, scores candidate phase offsets across one beat period, and stores the best phase. Without a usable BPM hint, beat zero falls back to the file start. Tempo detection elsewhere still uses BeatNet; its per-frame beat channel is not persisted as a Crossfade grid yet.
             </p>
 
             <h2>Prep gate</h2>
@@ -122,7 +122,7 @@
             <ol>
                 <li><strong>Soft-outro (C)</strong> &mdash; if the outgoing file has a clear die-out, shorten the transition <em>anchor</em> (capped around 12&nbsp;s / 15&nbsp;% of duration; ignore pulls under ~2.5&nbsp;s). Progress UI still shows full file length. Fade length stays six seconds; only when the blend starts can move earlier.</li>
                 <li><strong>Phase delay (B)</strong> &mdash; compute a wait of up to almost one beat so outgoing phase at elapsed time meets incoming phase at the seek position. Near-boundary → no wait.</li>
-                <li><strong>Incoming seek (A)</strong> &mdash; if grooveStart is above ~0.02&nbsp;s, schedule the next track from that frame. The ramp uses a slightly slower incoming rise onto already-loud material.</li>
+                <li><strong>Incoming seek (A)</strong> &mdash; if groove start is above ~0.02&nbsp;s, schedule the next track from that frame. The ramp uses a slightly slower incoming rise onto already-loud material.</li>
             </ol>
             <p>
                 Explicitly not done in v2: unconditional early-cut on every fade, wall-clock-only phase (v1), or time-stretch to match different BPMs (the list already shares tempo).
@@ -133,9 +133,9 @@
                 Behaviour aims for parity; the surfaces differ:
             </p>
             <ul>
-                <li>The <strong>phone</strong> owns the Settings toggle and pushes <code>beatAlignEnabled</code> in the transitions payload.</li>
-                <li><strong>Cues</strong> live on SwiftData tracks on iPhone and as catalog fields on Watch playlist tracks / variants.</li>
-                <li>Watch HE-AAC tempo variants inherit phone A/B cues <strong>scaled by variant pitch</strong> (<code>1/rate</code>). Live remeasure on the watch only if catalog cues are missing. Soft-outro always measures the file that is actually playing.</li>
+                <li>The <strong>phone</strong> owns the Settings toggle and pushes the Beat matching flag in the transitions payload.</li>
+                <li><strong>Cues</strong> live on library tracks on iPhone and as catalog fields on Watch playlist tracks / variants.</li>
+                <li>Watch HE-AAC tempo variants inherit phone A/B cues <strong>scaled by variant pitch</strong> (1&nbsp;/&nbsp;rate). Live remeasure on the watch only if catalog cues are missing. Soft-outro always measures the file that is actually playing.</li>
                 <li>Prep UI is on the phone (list play + sync); the watch has no dedicated prep sheet.</li>
             </ul>
 

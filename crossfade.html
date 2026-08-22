@@ -90,18 +90,18 @@
 
             <h2>Equal-power fade, not a linear dip</h2>
             <p>
-                A linear amplitude ramp dips about 3&nbsp;dB in the middle of the blend and perceptually feels shorter than the wall-clock overlap. Run2Beat instead drives a manual <strong>equal-power</strong> curve: with progress <code>t</code> from 0 to 1 warped slightly so the incoming track becomes audible a bit sooner (helps quiet intros), then mapped through <code>cos</code>&nbsp;/&nbsp;<code>sin</code> so both tracks stay audible across the whole six seconds. There is no mid-fade <code>engine.pause()</code> and no attaching a silent chain halfway through a song &mdash; both caused glitches in earlier designs.
+                A linear amplitude ramp dips about 3&nbsp;dB in the middle of the blend and perceptually feels shorter than the wall-clock overlap. Run2Beat instead drives a manual <strong>equal-power</strong> curve: with progress <em>t</em> from 0 to 1 warped slightly so the incoming track becomes audible a bit sooner (helps quiet intros), then mapped through cos&nbsp;/&nbsp;sin so both tracks stay audible across the whole six seconds. There is no mid-fade engine pause and no attaching a silent chain halfway through a song &mdash; both caused glitches in earlier designs.
             </p>
             <p>
-                On iPhone the ramp updates player-node volumes at about 30&nbsp;Hz on the main run loop. On Apple Watch a background timer at about 60&nbsp;Hz ramps each track&rsquo;s gain-mixer <code>outputVolume</code> instead &mdash; player-node volume did not audibly change the watch mix, and a GCD timer keeps firing even when the screen is off (where the main run loop tends to coalesce).
+                On iPhone the ramp updates player-node volumes at about 30&nbsp;Hz on the main run loop. On Apple Watch a background timer at about 60&nbsp;Hz ramps each track&rsquo;s gain-mixer output volume instead &mdash; player-node volume did not audibly change the watch mix, and a background timer keeps firing even when the screen is off (where the main run loop tends to coalesce).
             </p>
 
             <h2>How iPhone arms a crossfade</h2>
             <p>
-                The phone pipeline is one <code>AVAudioEngine</code>:
+                The phone pipeline is one audio engine:
             </p>
             <p>
-                <code>player &rarr; time-pitch &rarr; equalizer &rarr; mixer</code>
+                player &rarr; time-pitch &rarr; equalizer &rarr; mixer
             </p>
             <p>
                 Crossfade uses a dual-slot idea: primary chain for the song you hear, plus a standby chain prepared for the next one. When a track starts, a single timer walks two phases:
@@ -127,7 +127,7 @@
 
             <h2>How settings reach the Watch</h2>
             <p>
-                The iPhone is the sole authority for transition settings. Mode, the fixed fade length and Beat matching travel inside the regular WatchConnectivity application-context payload alongside recipes, playlists and equaliser presets. Settings also pushes immediately when you toggle while the watch is reachable. The watch applies incoming values and never echoes them back. After changing Transitions, a sync (or an immediate push while paired and reachable) is what makes the wrist match your pocket.
+                The iPhone is the sole authority for transition settings. Mode, the fixed fade length and Beat matching travel inside the regular WatchConnectivity shared-settings payload alongside recipes, playlists and equaliser presets. Settings also pushes immediately when you toggle while the watch is reachable. The watch applies incoming values and never echoes them back. After changing Transitions, a sync (or an immediate push while paired and reachable) is what makes the wrist match your pocket.
             </p>
 
             <h2>Invariants worth knowing</h2>

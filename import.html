@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Importing music &mdash; Run2Beat</title>
-    <meta name="description" content="How music gets into Run2Beat — file and folder import, UX-metadata duplicate detection, optional ShazamKit identification, HE-AAC encode, and a background-safe analysis pipeline." />
+    <meta name="description" content="How music gets into Run2Beat — file and folder import, UX-metadata duplicate detection, optional Shazam identification, HE-AAC encode, and a background-safe analysis pipeline." />
     <meta name="theme-color" content="#0a0d0a" />
 
     <link rel="icon" type="image/png" href="assets/app-icon.png" />
@@ -45,7 +45,7 @@
 
             <h2>Where it all starts</h2>
             <p>
-                Everything happens in the <strong>Import Music</strong> screen (<code>ImportView</code>). You point Run2Beat at music on your device or in iCloud Drive, choose where the tracks should land, tap <strong>Start Import</strong>, and the app handles the rest &mdash; copying, optional HE-AAC encode, Shazam fill-in when enabled, BPM and loudness analysis, and duplicate checks before anything lands in SwiftData.
+                Everything happens in the <strong>Import Music</strong> screen. You point Run2Beat at music on your device or in iCloud Drive, choose where the tracks should land, tap <strong>Start Import</strong>, and the app handles the rest &mdash; copying, optional HE-AAC encode, Shazam fill-in when enabled, BPM and loudness analysis, and duplicate checks before anything lands in the library database.
             </p>
 
             <figure class="legal__figure">
@@ -91,15 +91,15 @@
 
             <h2>The per-file pipeline</h2>
             <p>
-                For each source URL, <code>FileManagerService.importSingleFile</code> roughly does:
+                For each source file the importer roughly does:
             </p>
             <ol>
                 <li>Copy into a temp file under the Music directory.</li>
-                <li>Read embedded metadata (<code>AVAsset.load(.metadata)</code>), including whether the title was a real tag or only a file-name fallback.</li>
+                <li>Read embedded metadata via Apple&rsquo;s media APIs, including whether the title was a real tag or only a file-name fallback.</li>
                 <li>Optionally call Shazam when metadata is incomplete (see below).</li>
                 <li>Transcode or copy into the final on-disk asset, embedding the resolved metadata.</li>
                 <li>Run Layer A (byte hash) then Layer B (UX-metadata) duplicate checks.</li>
-                <li>Insert or upgrade a <code>Track</code> in SwiftData; queue BPM and loudness work without letting the batch burn the CPU watchdog.</li>
+                <li>Insert or upgrade a library row in the database; queue BPM and loudness work without letting the batch burn the CPU watchdog.</li>
             </ol>
             <p>
                 The Import screen locks down while a batch runs; cancel keeps everything already committed and leaves a recoverable session in the import log.
@@ -118,19 +118,19 @@
                 <li><strong>Cover art</strong> &mdash; compared with a perceptual <strong>difference hash (dHash)</strong>: thumbnail &rarr; 9&times;8 greyscale grid &rarr; 64-bit hash of horizontal brightness gradients. Covers match when Hamming distance is &le;&nbsp;10 bits. Both missing artwork also requires the duration rule; one present and one missing is <em>not</em> a duplicate (so studio vs live cuts with different art stay apart).</li>
             </ul>
             <p>
-                Displayed bitrate is <strong>not</strong> part of identity. It only picks the <strong>keeper</strong> when duplicates coexist: higher Library kbps, then higher raw on-disk bitrate, then earlier <code>addedDate</code>. On import, a better incoming copy replaces the existing file in place (same UUID, playlists and BPM lists preserved). Equal or worse quality is skipped and the existing row is linked to any new playlist instead.
+                Displayed bitrate is <strong>not</strong> part of identity. It only picks the <strong>keeper</strong> when duplicates coexist: higher Library kbps, then higher raw on-disk bitrate, then earlier date added. On import, a better incoming copy replaces the existing file in place (same UUID, playlists and BPM lists preserved). Equal or worse quality is skipped and the existing row is linked to any new playlist instead.
             </p>
 
             <h2>Two detection layers</h2>
             <ul>
-                <li><strong>Layer A &mdash; byte hash.</strong> Fast SHA-256 lookups on <code>Track.audioHash</code> catch exact re-imports of the same source file. AirDrop also compares the package manifest hash, then staged file bytes, before falling through to metadata matching.</li>
-                <li><strong>Layer B &mdash; UX metadata.</strong> <code>TrackDuplicateDetector</code> builds identity fields from title, artist, artwork, duration and bitrate. A per-batch <code>LibraryDuplicateIndex</code> buckets the library by normalised title + artist only (no cover decode at build time), then runs the artwork-aware decision only inside that small bucket.</li>
+                <li><strong>Layer A &mdash; byte hash.</strong> Fast SHA-256 lookups on each track&rsquo;s stored audio hash catch exact re-imports of the same source file. AirDrop also compares the package manifest hash, then staged file bytes, before falling through to metadata matching.</li>
+                <li><strong>Layer B &mdash; UX metadata.</strong> The duplicate detector builds identity fields from title, artist, artwork, duration and bitrate. A per-batch library index buckets the library by normalised title + artist only (no cover decode at build time), then runs the artwork-aware decision only inside that small bucket.</li>
             </ul>
             <p>
-                That index matters. An earlier design decoded every cover and computed a dHash for the whole library on every imported file. On a multi-thousand-track library that N&times;M decode storm pushed memory and CPU into jetsam / watchdog kills with the screen locked &mdash; and under pressure intermittent decode failures returned a nil hash so real duplicates slipped through in waves. Tempo is deliberately not in the bucket key (incoming BPM is usually still <code>nil</code>); <code>areSameSong</code> reconciles tempo inside the bucket.
+                That index matters. An earlier design decoded every cover and computed a dHash for the whole library on every imported file. On a multi-thousand-track library that N&times;M decode storm pushed memory and CPU into jetsam / watchdog kills with the screen locked &mdash; and under pressure intermittent decode failures returned no hash so real duplicates slipped through in waves. Tempo is deliberately not in the bucket key (incoming BPM is usually still missing); the same-song check reconciles tempo inside the bucket.
             </p>
             <p>
-                The Settings sweep uses the same identity rules with a different shape: cheap coarse buckets on the main actor, snapshot cover bytes only for true multi-row candidates, decode and cluster off the main thread, then rewrite playlist memberships, play-order arrays and BPM-recipe selections before deleting surplus rows. Do not move full-library cover decode back onto the main actor.
+                The Settings sweep uses the same identity rules with a different shape: cheap coarse buckets on the main thread, snapshot cover bytes only for true multi-row candidates, decode and cluster in the background, then rewrite playlist memberships, play order and BPM-list selections before deleting surplus rows. Decoding every cover on the main thread for a full-library pass is what the older design got wrong &mdash; that path is deliberately avoided.
             </p>
 
             <h2>What happens to every track</h2>
@@ -145,16 +145,16 @@
 
             <h2>Shazam auto-identification</h2>
             <p>
-                Untagged files (<code>track01.mp3</code> with no ID3) used to land looking like a folder listing. With <strong>Identify music automatically</strong> on (Settings &rarr; Import; off by default), incomplete metadata triggers a ShazamKit match <em>during</em> the same <code>importSingleFile</code> call &mdash; before the converted file is finalised &mdash; so recovered title, artist and artwork can be written into the output.
+                Untagged files (<code>track01.mp3</code> with no ID3) used to land looking like a folder listing. With <strong>Identify music automatically</strong> on (Settings &rarr; Import; off by default), incomplete metadata triggers a Shazam match <em>during</em> the same per-file import step &mdash; before the converted file is finalised &mdash; so recovered title, artist and artwork can be written into the output.
             </p>
             <p>
                 A call runs when any of title (file-name fallback only), artist, album or artwork is missing. Genres, ISRC and catalog URLs are not triggers; they are bonus fields harvested on a successful match. Matching is <strong>fill-in-blanks</strong>: existing tags are never overwritten. Catalog fields that ID3 cannot provide (genres, ISRC, Apple Music URL, Shazam web URL, release date) are stored when Shazam returns them.
             </p>
             <p>
-                The signature pipeline samples about <strong>12 seconds</strong> of audio starting at roughly <strong>25&nbsp;% into the track</strong> (not frame&nbsp;0), so quiet intros and spoken openings are less likely to spoil the match. Work runs off the main actor; transient ShazamKit / XPC failures retry once with a short backoff, while a true catalog miss is not retried. An in-process rate limiter floors matches at ~120&nbsp;ms apart and backs off adaptively when the recent failure rate climbs, so a long batch does not trip Apple&rsquo;s soft service cap.
+                The signature pipeline samples about <strong>12 seconds</strong> of audio starting at roughly <strong>25&nbsp;% into the track</strong> (not from the very first frame), so quiet intros and spoken openings are less likely to spoil the match. Work runs off the main thread; transient Shazam / service failures retry once with a short backoff, while a true catalog miss is not retried. An in-process rate limiter floors matches at ~120&nbsp;ms apart and backs off adaptively when the recent failure rate climbs, so a long batch does not trip Apple&rsquo;s soft service cap.
             </p>
             <p>
-                Optional <strong>Only import identified songs</strong> (requires auto-identify on): incomplete files that Shazam cannot match are deleted from the temp area and never enter the Library. Complete files still import without contacting Shazam. Album is never returned by ShazamKit&rsquo;s catalog match API &mdash; identification remains best-effort, not authoritative.
+                Optional <strong>Only import identified songs</strong> (requires auto-identify on): incomplete files that Shazam cannot match are deleted from the temp area and never enter the Library. Complete files still import without contacting Shazam. Album is never returned by Shazam&rsquo;s catalog match &mdash; identification remains best-effort, not authoritative.
             </p>
 
             <h2>Where tracks land</h2>
@@ -169,13 +169,13 @@
 
             <h2>Background-safe batches</h2>
             <p>
-                Large imports with the screen locked used to fail in several ways: iOS SIGKILL from sustained background CPU, jetsam from climbing memory, ShazamKit transient storms, or an external drive dying mid-batch with no clean recovery. The pipeline defends each layer:
+                Large imports with the screen locked used to fail in several ways: iOS killing the app from sustained background CPU, jetsam from climbing memory, transient Shazam service storms, or an external drive dying mid-batch with no clean recovery. The pipeline defends each layer:
             </p>
             <ul>
-                <li><strong>ImportLog.</strong> A SwiftData session row is created before the first file and saved after every successful insert (source name, counts, bytes, track UUIDs). If iOS kills the app at file 142 of 150, Settings &rarr; Import &rarr; Import logs can remove that partial batch in one tap.</li>
+                <li><strong>Import log.</strong> A session row is created in the library database before the first file and saved after every successful insert (source name, counts, bytes, track UUIDs). If iOS kills the app at file 142 of 150, Settings &rarr; Import &rarr; Import logs can remove that partial batch in one tap.</li>
                 <li><strong>CPU throttle.</strong> BPM work is serialised across files, and an adaptive sleep (longer in background, longer when the SoC is hot) keeps duty cycle under the undocumented watchdog. Wall-clock cost is roughly 1.8&ndash;2.2&times; a parallel-everything import &mdash; the trade-off for being able to lock the phone and walk away.</li>
-                <li><strong>Memory hygiene.</strong> Artwork buffers are released after merge; AV readers stay per-file scoped; loudness analysis stays channel- and duration-bounded; duplicate checks use the title/artist index instead of decoding every cover every time.</li>
-                <li><strong>BackgroundActivityKeeper.</strong> Same silent-audio keeper used by bulk loudness / BPM re-analyse and Watch sync, so the process stays scheduled for wall-clock time (it does not exempt you from the CPU watchdog).</li>
+                <li><strong>Memory hygiene.</strong> Artwork buffers are released after merge; media readers stay per-file scoped; loudness analysis stays channel- and duration-bounded; duplicate checks use the title/artist index instead of decoding every cover every time.</li>
+                <li><strong>Background activity keeper.</strong> Same silent-audio keeper used by bulk loudness / BPM re-analyse and Watch sync, so the process stays scheduled for wall-clock time (it does not exempt you from the CPU watchdog).</li>
             </ul>
             <p>
                 Plan for roughly <strong>8 seconds per track with the screen locked</strong> &mdash; about 13 minutes for 100 tracks, 25&ndash;30 minutes for 200. With the screen on in the foreground it&rsquo;s nearly twice as fast. A large import uses about as much battery as playing music for the same time (on the order of 5&nbsp;% for 200 tracks) &mdash; for very large jobs, plug in first.

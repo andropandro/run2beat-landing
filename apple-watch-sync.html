@@ -81,7 +81,7 @@
                 <li>The <strong>audio file</strong>, always transcoded to HE-AAC for compactness on the watch. If the track is already HE-AAC in your Library it stays at that efficient profile (64&nbsp;kbps); if it&rsquo;s still MP3, AAC or WAV on the phone, the watch copy is encoded a step higher (80&nbsp;kbps) so you keep more of the original quality.</li>
                 <li><strong>Title, artist and artwork</strong> embedded in the file&rsquo;s metadata as a fall-back so the playlist is reconstructable even if the structured payload arrives late.</li>
                 <li><strong>BPM and loudness data</strong> (LUFS, true peak) so the Watch player applies the same gain math as the iPhone &mdash; the same track sounds equally loud on both devices.</li>
-                <li>For BPM lists: <strong>pre-rendered tempo variants</strong>. The iPhone applies the recipe&rsquo;s rate change with pitch preservation (<code>AVAudioTimePitchAlgorithm.spectral</code>) in a single-pass encode, so the Watch never has to do that work itself.</li>
+                <li>For BPM lists: <strong>pre-rendered tempo variants</strong>. The iPhone applies the recipe&rsquo;s rate change with pitch preservation (Apple&rsquo;s spectral time-pitch algorithm) in a single-pass encode, so the Watch never has to do that work itself.</li>
                 <li>The <strong>play order</strong> and list metadata (including mosaic thumbnails when present).</li>
             </ul>
             <p>
@@ -98,10 +98,10 @@
                 <li><strong>Deleted</strong> &mdash; removed from the phone selection; the watch gets an explicit remove.</li>
             </ul>
             <p>
-                Unchanged lists are skipped. Only new or changed audio files are queued for <code>transferFile</code>. Re-open the Sync screen with nothing changed and the next sync takes the <strong>fast path</strong>: the watch&rsquo;s installed snapshot already matches the expected IDs, track counts and on-disk file counts, so the orchestrator skips the transfer machinery and returns immediately.
+                Unchanged lists are skipped. Only new or changed audio files are queued on the file-transfer channel. Re-open the Sync screen with nothing changed and the next sync takes the <strong>fast path</strong>: the watch&rsquo;s installed snapshot already matches the expected IDs, track counts and on-disk file counts, so the orchestrator skips the transfer machinery and returns immediately.
             </p>
             <p>
-                An edited list that is still installed on the watch never takes that fast path. The snapshot only reports per-list counts, not the exact track-ID set, so a content-change guard forces a full re-transfer and reconciliation whenever a list is marked <code>.updated</code> &mdash; otherwise a rename or membership edit could silently never leave the phone.
+                An edited list that is still installed on the watch never takes that fast path. The snapshot only reports per-list counts, not the exact track-ID set, so a content-change guard forces a full re-transfer and reconciliation whenever a list is marked updated &mdash; otherwise a rename or membership edit could silently never leave the phone.
             </p>
 
             <h2>Transport: three WatchConnectivity channels</h2>
@@ -109,9 +109,9 @@
                 Sync rides Apple&rsquo;s WatchConnectivity framework. Three channels do different jobs:
             </p>
             <ul>
-                <li><strong><code>transferFile</code></strong> &mdash; one outbound transfer per audio asset. Queued by the OS; survives sleep on both devices.</li>
-                <li><strong><code>updateApplicationContext</code></strong> &mdash; structured metadata (recipes, playlists, assignments, variants, shared settings). Persistent; delivered when the watch wakes if the app was suspended.</li>
-                <li><strong><code>sendMessage</code></strong> &mdash; foreground fast path for the same critical payloads and for the watch&rsquo;s ACK snapshot. Requires <code>isReachable</code> on both sides; fails silently when the watch screen is off.</li>
+                <li><strong>File transfer</strong> &mdash; one outbound transfer per audio asset. Queued by the OS; survives sleep on both devices.</li>
+                <li><strong>Shared settings / application context</strong> &mdash; structured metadata (recipes, playlists, assignments, variants, shared settings). Persistent; delivered when the watch wakes if the app was suspended.</li>
+                <li><strong>Foreground message</strong> &mdash; fast path for the same critical payloads and for the watch&rsquo;s ACK snapshot. Requires both sides to be reachable; fails silently when the watch screen is off.</li>
             </ul>
             <p>
                 Critical payloads always go over the dual channel (message + application context) so sleep cannot strand a delivery. Files and context are sleep-resilient; the fast ACK path is not &mdash; which is why the iPhone waits up to about <strong>120 seconds</strong> for the watch to confirm what actually landed.
@@ -123,8 +123,8 @@
             </p>
             <ul>
                 <li>the list ID is present on the watch,</li>
-                <li>the watch&rsquo;s <code>trackCount</code> matches the iPhone&rsquo;s expected count,</li>
-                <li>the watch&rsquo;s <code>verifiedTrackCount</code> (audio files physically present under <code>Documents/Music/</code>) also matches.</li>
+                <li>the watch&rsquo;s track count matches the iPhone&rsquo;s expected count,</li>
+                <li>the watch&rsquo;s verified track count (audio files physically present in the app&rsquo;s Music folder) also matches.</li>
             </ul>
             <p>
                 Only lists that clear all three checks are marked verified and get their signatures persisted. Lists still missing at the timeout are handled <strong>per list, not for the whole sync</strong>: the watch receives an explicit remove so orphan metadata and half-written files do not linger, and the iPhone clears that list&rsquo;s signature so the next sync retries it from scratch. You never keep a list that looks playable on the Watch but is missing some of its files.
@@ -135,7 +135,7 @@
 
             <h2>Keeping the Watch awake during transfer</h2>
             <p>
-                When the watch screen turns off, watchOS may suspend the app. File and context delivery still work (the OS queues them), but ACK timing becomes unpredictable and <code>sendMessage</code> stops working. Run2Beat starts a <strong><code>WKExtendedRuntimeSession</code></strong> on the watch as soon as sync begins so the process stays alive with the display off, delegate callbacks fire promptly, and the fast ACK path can succeed when reachability returns.
+                When the watch screen turns off, watchOS may suspend the app. File and context delivery still work (the OS queues them), but ACK timing becomes unpredictable and the foreground message channel stops working. Run2Beat starts an <strong>extended runtime session</strong> on the watch as soon as sync begins so the process stays alive with the display off, callbacks fire promptly, and the fast ACK path can succeed when reachability returns.
             </p>
             <p>
                 That session can only be <em>started</em> while the watch app is in the foreground &mdash; which is why both apps must be active when you tap Start. An early sync-start signal (transaction ID only, no track payload) is pushed from the phone before the first file transfer so the session takes hold while the wrist is still awake. Once running, you can lower your wrist and lock the phone.
@@ -182,7 +182,7 @@
 
             <h2>Clear Apple Watch Data</h2>
             <p>
-                The Sync screen can wipe the watch installation clean. That cancels any in-flight sync, waits for an explicit ACK from the watch, drains leftover file transfers from the session queue, and clears the iPhone&rsquo;s mirror of what was installed (signatures, snapshots, the WatchSync export cache and pre-rendered variants). Preferences such as EQ presets and transition settings are kept. The next sync then behaves like a genuine first-time transfer &mdash; without clearing the phone-side mirror, skip logic would assume the watch still held every file and leave you with metadata pointing at audio that never arrives.
+                The Sync screen can wipe the watch installation clean. That cancels any in-flight sync, waits for an explicit ACK from the watch, drains leftover file transfers from the session queue, and clears the iPhone&rsquo;s mirror of what was installed (signatures, snapshots, the watch-sync export cache and pre-rendered variants). Preferences such as EQ presets and transition settings are kept. The next sync then behaves like a genuine first-time transfer &mdash; without clearing the phone-side mirror, skip logic would assume the watch still held every file and leave you with metadata pointing at audio that never arrives.
             </p>
 
             <h2>Standalone playback on the Watch</h2>

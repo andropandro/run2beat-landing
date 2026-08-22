@@ -45,7 +45,7 @@
 
             <h2>The product principle</h2>
             <p>
-                Identical to the Watch split of responsibilities: the <strong>iPhone is the configuration and processing hub</strong>. Library imports, BPM recipes, playlist editing, equalizer preset CRUD and pitch rendering all happen on the phone. <strong>CarPlay is a read-only playback runtime</strong> that exposes only what a driver needs at the wheel &mdash; browse, start playback, toggle favourite, switch EQ preset. There is no creating, renaming, deleting or editing in the car.
+                Identical to the Watch split of responsibilities: the <strong>iPhone is the configuration and processing hub</strong>. Library imports, BPM recipes, playlist editing, equalizer preset create/rename/delete and pitch rendering all happen on the phone. <strong>CarPlay is a read-only playback runtime</strong> that exposes only what a driver needs at the wheel &mdash; browse, start playback, toggle favourite, switch EQ preset. There is no creating, renaming, deleting or editing in the car.
             </p>
             <p>
                 That is why the homepage line &ldquo;Setup, presets and EQ stay on the iPhone &mdash; the car just plays&rdquo; is not marketing fluff; it is the architecture.
@@ -53,7 +53,7 @@
 
             <h2>Three driving-safe tabs</h2>
             <p>
-                The in-car UI is a <code>CPTabBarTemplate</code> with three tabs, deliberately mirroring the Watch app so the surfaces feel familiar across devices:
+                The in-car UI is a system tab bar with three tabs, deliberately mirroring the Watch app so the surfaces feel familiar across devices:
             </p>
             <ul>
                 <li><strong>BPM lists</strong> &mdash; alphabetical browse of every saved recipe. Open a list and you get a single <em>Shuffle</em> action plus a read-only track listing. In-car BPM playback is shuffle-only; you cannot pick a starting track from the wheel.</li>
@@ -66,18 +66,18 @@
                 CarPlay is not a place to ship a custom UI. Audio apps get a constrained set of system templates and nothing else. Every layout decision below is downstream of that fact.
             </p>
             <p>
-                Available building blocks include a top-level tab bar (up to five tabs), list templates with sections and rows, and the shared system Now Playing screen &mdash; where apps may attach up to five custom buttons but cannot replace the layout, move the transport controls, or override fonts. Notable things audio apps <em>cannot</em> do: render SwiftUI or arbitrary UIKit in the car; customise Now Playing&rsquo;s hero / scrubber / transport chrome; hide tabs based on state; show animations inside list rows; or invent gestures beyond list taps and the stock transport.
+                Available building blocks include a top-level tab bar (up to five tabs), list templates with sections and rows, and the shared system Now Playing screen &mdash; where apps may attach up to five custom buttons but cannot replace the layout, move the transport controls, or override fonts. Notable things audio apps <em>cannot</em> do: draw a custom interface in the car; customise Now Playing&rsquo;s hero / scrubber / transport chrome; hide tabs based on state; show animations inside list rows; or invent gestures beyond list taps and the stock transport.
             </p>
             <p>
-                The only real lever for visual richness on Now Playing is the artwork you hand to <code>MPNowPlayingInfoCenter</code> &mdash; which is why the branded placeholder cover matters so much when a track has no embedded art.
+                The only real lever for visual richness on Now Playing is the artwork you hand to the system Now Playing info centre &mdash; which is why the branded placeholder cover matters so much when a track has no embedded art.
             </p>
 
             <h2>One process, one player, one store</h2>
             <p>
-                The CarPlay scene runs in the <em>same</em> iPhone process as the phone UI. Both scenes must therefore agree on the SwiftData store (playlists created on iPhone appear in the car without a manual refresh), the process-wide <code>TrackPlayer</code> singleton (pause in the car pauses on the phone mini-player), and <code>AudioEqualizer.shared</code> (a preset switched at a red light is heard immediately). A classic per-view player would mean double playback whenever both screens were visible; CarPlay attaches to the same shared player the dashboard already uses.
+                The CarPlay scene runs in the <em>same</em> iPhone process as the phone UI. Both scenes must therefore agree on the library database (playlists created on iPhone appear in the car without a manual refresh), the process-wide shared player (pause in the car pauses on the phone mini-player), and the shared equalizer (a preset switched at a red light is heard immediately). A classic per-view player would mean double playback whenever both screens were visible; CarPlay attaches to the same shared player the dashboard already uses.
             </p>
             <p>
-                There is no separate CarPlay target and no extra sync channel to the Watch. The car reads the same SwiftData store and the same equalizer singleton the phone does, so all three surfaces stay in lock-step.
+                There is no separate CarPlay target and no extra sync channel to the Watch. The car reads the same library database and the same equalizer the phone does, so all three surfaces stay in lock-step.
             </p>
 
             <h2>Playlists tab &mdash; same hierarchy as iPhone</h2>
@@ -85,15 +85,15 @@
                 The Playlists builder mirrors the phone ordering: Favorites and pinned at the top, then user-defined groups in the same order you arranged them in Manage Groups (or alphabetical if you never set a manual order), then ungrouped playlists. Collapsed groups on iPhone are intentionally ignored in the car &mdash; CarPlay list sections cannot collapse, so every section stays expanded and the head unit scrolls.
             </p>
             <p>
-                Every row can show a 1-or-4 album-art mosaic matching the phone&rsquo;s playlist artwork grid, pre-rendered at about 80&nbsp;pt so memory stays bounded when scrolling large libraries. Zero covers fall back to an SF Symbol; one to three covers use the first full-bleed; four or more become a 2&times;2 grid with a hairline gutter.
+                Every row can show a 1-or-4 album-art mosaic matching the phone&rsquo;s playlist artwork grid, pre-rendered at about 80&nbsp;pt so memory stays bounded when scrolling large libraries. Zero covers fall back to a system icon; one to three covers use the first full-bleed; four or more become a 2&times;2 grid with a hairline gutter.
             </p>
             <p>
-                Starting playback uses the same path as the phone playlist detail view: build a queue, optionally enable shuffle after start (because the player resets shuffle on play), then push the shared Now Playing template. Pushing that template is idempotent &mdash; a double-push of the same system singleton is an error, so the builder only pushes when Now Playing is not already on top.
+                Starting playback uses the same path as the phone playlist detail view: build a queue, optionally enable shuffle after start (because the player resets shuffle on play), then show the shared Now Playing screen. Showing that screen twice is an error in CarPlay, so Run2Beat only pushes it when Now Playing is not already on top.
             </p>
 
             <h2>BPM lists tab &mdash; shuffle only, on purpose</h2>
             <p>
-                BPM recipes come from the same UserDefaults store the iPhone BPM Lists screen writes. Rows show the familiar <em>N tracks · duration</em> subtitle. Open a recipe and the only action that starts audio is Shuffle; the track list is a preview so you can see what is coming.
+                BPM recipes come from the same preference store the iPhone BPM Lists screen writes. Rows show the familiar <em>N tracks · duration</em> subtitle. Open a recipe and the only action that starts audio is Shuffle; the track list is a preview so you can see what is coming.
             </p>
             <p>
                 Two details keep that contract honest without looking broken. Disabled rows in CarPlay are automatically dimmed, and the product forbids dimmed text &mdash; so track rows stay fully enabled and opaque, with an empty tap handler that only dismisses CarPlay&rsquo;s tap-acknowledgment spinner. Without that handler the spinner would hang forever and block Shuffle. Shuffle itself calls the same pitch-correct BPM recipe playback path the phone uses, so every tempo refinement on iPhone lands in the car for free.
@@ -101,12 +101,12 @@
 
             <h2>Equalizer tab &mdash; presets, not sliders</h2>
             <p>
-                The Equalizer tab is a thin presentation layer over the same singleton described on the <a href="equalizer.html">Equalizer</a> deep dive. Standard plus saved presets; tap to activate; checkmark on the active row. No band sliders, matching Apple&rsquo;s driving-safety guidance and the Watch picker&rsquo;s spirit. Switching a preset updates live audio through the shared player immediately.
+                The Equalizer tab is a thin presentation layer over the same shared equalizer described on the <a href="equalizer.html">Equalizer</a> deep dive. Standard plus saved presets; tap to activate; checkmark on the active row. No band sliders, matching Apple&rsquo;s driving-safety guidance and the Watch picker&rsquo;s spirit. Switching a preset updates live audio through the shared player immediately.
             </p>
 
             <h2>Now Playing &mdash; favourite star and artwork</h2>
             <p>
-                CarPlay&rsquo;s Now Playing screen is a system singleton. Apps cannot redesign it; they can attach a handful of buttons and supply metadata. Run2Beat adds a favourite star that uses the same filled / outline symbols as the iPhone mini player. The button is rebuilt on every state change because its image is immutable after construction.
+                CarPlay&rsquo;s Now Playing screen is owned by the system. Apps cannot redesign it; they can attach a handful of buttons and supply metadata. Run2Beat adds a favourite star that uses the same filled / outline symbols as the iPhone mini player. The button is rebuilt on every state change because its image cannot be swapped after it is first shown.
             </p>
             <p>
                 Favourite state stays correct even when you toggle from the phone mid-drive: every site that mutates favourite status posts a shared notification, and the CarPlay controller rebuilds the star. It also watches the current track, so advancing to a different song refreshes the button for that track&rsquo;s status.
@@ -117,7 +117,7 @@
 
             <h2>Performance on large libraries</h2>
             <p>
-                On libraries with many thousands of tracks, a naive refresh strategy is fatal. Early builds rebuilt every CarPlay list whenever the current track changed: rematerialising the whole library and redecoding mosaics on the main actor for seconds at a time. Audio kept playing on its real-time thread, but Now Playing metadata, tap completions and row paints starved &mdash; which looked like &ldquo;artwork arrives late&rdquo;, &ldquo;BPM detail won&rsquo;t open&rdquo;, or even &ldquo;the equalizer overlay is animating&rdquo; when mosaics rippled on auto-advance.
+                On libraries with many thousands of tracks, a naive refresh strategy is fatal. Early builds rebuilt every CarPlay list whenever the current track changed: rematerialising the whole library and redecoding mosaics on the main thread for seconds at a time. Audio kept playing on its real-time thread, but Now Playing metadata, tap completions and row paints starved &mdash; which looked like &ldquo;artwork arrives late&rdquo;, &ldquo;BPM detail won&rsquo;t open&rdquo;, or even &ldquo;the equalizer overlay is animating&rdquo; when mosaics rippled on auto-advance.
             </p>
             <p>
                 The fix is layered: builders cache a library snapshot for the CarPlay session and refresh it only when the library actually changes; mosaics are cached per playlist / recipe; root tabs subscribe to playlist / recipe / playing state rather than every track advance; and when the playing list does change, only the affected row images are updated surgically. Connecting to a head unit also prefetches dashboard artwork so the first Now Playing paint is not cold.
