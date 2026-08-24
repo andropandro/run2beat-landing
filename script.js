@@ -189,7 +189,15 @@
         }
     }
 
-    // ---------- Find music: source cards + deep-dive link ----------
+    // ---------- Find music: homepage cards + deep-dive links ----------
+    function trackFindMusic(destination, linkUrl) {
+        track("find_music_click", {
+            destination: destination || "other",
+            link_url: linkUrl || "",
+            page_path: window.location.pathname || "",
+        });
+    }
+
     document.querySelectorAll(".source-card").forEach((card) => {
         card.addEventListener("click", () => {
             let destination = "other";
@@ -202,19 +210,22 @@
             } else if (card.classList.contains("source-card--jamendo")) {
                 destination = "jamendo";
             }
-            track("find_music_click", {
-                destination,
-                link_url: card.href || "",
-            });
+            trackFindMusic(destination, card.href || "");
+        });
+    });
+
+    document.querySelectorAll("a.find-music-source").forEach((a) => {
+        a.addEventListener("click", () => {
+            trackFindMusic(
+                a.getAttribute("data-destination") || "other",
+                a.href || ""
+            );
         });
     });
 
     document.querySelectorAll('a[href="find-music.html"]').forEach((a) => {
         a.addEventListener("click", () => {
-            track("find_music_click", {
-                destination: "deep_dive",
-                link_url: a.href,
-            });
+            trackFindMusic("deep_dive", a.href);
         });
     });
 })();
