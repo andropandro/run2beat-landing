@@ -2,6 +2,20 @@
 (() => {
     "use strict";
 
+    // ---------- Google Analytics helpers ----------
+    function track(eventName, params) {
+        if (typeof window.gtag !== "function") return;
+        window.gtag("event", eventName, params || {});
+    }
+
+    function appStorePlacement(el) {
+        if (el.closest(".nav")) return "nav";
+        if (el.closest(".hero")) return "hero";
+        if (el.closest(".cta")) return "footer_cta";
+        if (el.closest(".support")) return "support";
+        return "other";
+    }
+
     // ---------- Reveal-on-scroll ----------
     // Only apply the fade to elements that start below the initial viewport,
     // so the hero/first-section content is visible immediately.
@@ -87,41 +101,55 @@
     const dialog = document.getElementById("appstore-dialog");
     const appLinks = document.querySelectorAll(".js-appstore");
     const qrLinks = document.querySelectorAll(".js-qr");
+    const onIOS = isIOS();
 
-    if (dialog) {
-        const openDialog = (fallbackHref) => {
+    // Track every App Store intent (iOS direct open + non-iOS QR path).
+    appLinks.forEach((link) => {
+        link.addEventListener("click", (e) => {
+            const placement = appStorePlacement(link);
+            const modified =
+                e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1;
+
+            if (onIOS || modified || !dialog) {
+                track("app_store_click", {
+                    method: "direct",
+                    placement,
+                    platform: onIOS ? "ios" : "other",
+                });
+                return;
+            }
+
+            // Non-iOS: intercept and show the QR dialog.
+            e.preventDefault();
+            track("app_store_click", {
+                method: "qr_dialog",
+                placement,
+                platform: "other",
+            });
+            track("qr_open", { source: "app_store_non_ios", placement });
             if (typeof dialog.showModal === "function") {
                 dialog.showModal();
-            } else if (fallbackHref) {
-                // Old browsers without <dialog> support: fall back to the link.
-                window.open(fallbackHref, "_blank", "noopener");
+            } else {
+                window.open(link.href, "_blank", "noopener");
             }
-        };
-
-        // Non-iOS visitors: intercept App Store links and show the QR dialog
-        // so they can scan it and install on their iPhone. On iOS the links
-        // open the App Store directly.
-        if (appLinks.length && !isIOS()) {
-            appLinks.forEach((link) => {
-                link.addEventListener("click", (e) => {
-                    // Allow opening in a new tab if the user really wants it.
-                    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) {
-                        return;
-                    }
-                    e.preventDefault();
-                    openDialog(link.href);
-                });
-            });
-        }
-
-        // Explicit "Show QR code" triggers always open the dialog.
-        qrLinks.forEach((link) => {
-            link.addEventListener("click", (e) => {
-                e.preventDefault();
-                openDialog();
-            });
         });
+    });
 
+    // Explicit "Show QR code" triggers always open the dialog.
+    qrLinks.forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+            e.preventDefault();
+            track("qr_open", {
+                source: "qr_button",
+                placement: appStorePlacement(btn),
+            });
+            if (dialog && typeof dialog.showModal === "function") {
+                dialog.showModal();
+            }
+        });
+    });
+
+    if (dialog) {
         // Close on backdrop click
         dialog.addEventListener("click", (e) => {
             if (e.target === dialog) dialog.close();
@@ -139,6 +167,7 @@
         if (copyBtn && copyLabel && urlText) {
             copyBtn.addEventListener("click", async () => {
                 const url = urlText.textContent.trim();
+                track("app_store_copy_link", { link_url: url });
                 try {
                     await navigator.clipboard.writeText(url);
                     copyLabel.textContent = "Copied";
@@ -159,4 +188,33 @@
             });
         }
     }
+
+    // ---------- Find music: source cards + deep-dive link ----------
+    document.querySelectorAll(".source-card").forEach((card) => {
+        card.addEventListener("click", () => {
+            let destination = "other";
+            if (card.classList.contains("source-card--soundcloud")) {
+                destination = "soundcloud";
+            } else if (card.classList.contains("source-card--bandcamp")) {
+                destination = "bandcamp";
+            } else if (card.classList.contains("source-card--fma")) {
+                destination = "freemusicarchive";
+            } else if (card.classList.contains("source-card--jamendo")) {
+                destination = "jamendo";
+            }
+            track("find_music_click", {
+                destination,
+                link_url: card.href || "",
+            });
+        });
+    });
+
+    document.querySelectorAll('a[href="find-music.html"]').forEach((a) => {
+        a.addEventListener("click", () => {
+            track("find_music_click", {
+                destination: "deep_dive",
+                link_url: a.href,
+            });
+        });
+    });
 })();
