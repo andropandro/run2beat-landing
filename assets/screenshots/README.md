@@ -19,6 +19,7 @@ frame uses `object-fit: cover`.
 | `airdrop.jpg`             | Take it anywhere / Share | iOS share sheet with AirDrop highlighted, or the in-app share confirmation.        |
 | `equalizer.jpg`           | Equalizer deep dive      | The Equalizer sheet with preset chips and the ten-band graphic EQ.                 |
 | `equalizer-watch.jpg`     | Equalizer deep dive      | Apple Watch Equalizer screen with Default and synced presets.                      |
+| `settings-import.jpg`     | Find music deep dive     | Settings → Music file import, with Only import identified songs visible.          |
 | `import.jpg`              | Import deep dive         | The Import Music screen with Files/Folder sections and Start Import.               |
 
 ## Tips for great-looking screenshots

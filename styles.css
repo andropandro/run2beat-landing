@@ -1329,6 +1329,34 @@ a { color: inherit; text-decoration: none; }
     color: var(--text-dim);
 }
 
+.find-music__tip {
+    max-width: 720px;
+    margin: 18px auto 10px;
+    padding: 16px 18px;
+    text-align: left;
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--text-muted);
+    background: rgba(var(--accent-rgb), 0.08);
+    border: 1px solid var(--brand-soft);
+    border-radius: 14px;
+}
+
+.find-music__tip strong {
+    color: var(--text);
+}
+
+.find-music__tip a {
+    color: var(--brand-bright);
+    text-decoration: underline;
+    text-decoration-color: rgba(var(--accent-bright-rgb), 0.4);
+    text-underline-offset: 3px;
+}
+
+.find-music__tip a:hover {
+    text-decoration-color: var(--brand-bright);
+}
+
 /* ---------- LEARN MORE LINK ---------- */
 
 .learn-more {

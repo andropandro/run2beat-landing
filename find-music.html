@@ -19,7 +19,7 @@
 
     <link rel="icon" type="image/png" href="assets/app-icon.png" />
     <link rel="apple-touch-icon" href="assets/app-icon.png" />
-    <link rel="stylesheet" href="styles.css?v=10" />
+    <link rel="stylesheet" href="styles.css?v=11" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -99,6 +99,30 @@
                 Some popular &ldquo;royalty-free&rdquo; libraries are built for <em>video creators</em> embedding music in YouTube or Twitch content. Their free licences often forbid using the files as a standalone listening library. We deliberately skip those for Run2Beat guidance &mdash; including services that limit free downloads to creator-only use. If a site&rsquo;s terms talk mainly about UGC and attribution in video descriptions, read carefully before treating the MP3 as gym playlist fodder.
             </p>
 
+            <h2 id="import-settings">Before you import &mdash; one Settings check</h2>
+            <p>
+                Independent and free downloads often have thin or missing tags, and many will not match in Shazam&rsquo;s catalogue. That is normal for SoundCloud promos, Bandcamp freebies and Creative Commons releases &mdash; it does not mean the file is broken.
+            </p>
+            <p>
+                In <strong>Settings &rarr; Music file import</strong>, leave <strong>Identify music automatically</strong> on if you want Shazam to fill gaps when it can. But turn <strong>Only import identified songs</strong> <em>off</em> when you are building a library from free or lesser-known tracks. With that toggle on, any file Shazam cannot identify is skipped and never lands in the Library &mdash; easy to miss if you expected every download to appear.
+            </p>
+            <p>
+                That setting is useful when you only want a catalogue of fully tagged commercial rips. For the sources on this page, off is the safer default so every file you intentionally downloaded can be analysed for BPM and used in a list. (A future app update will ship with this toggle off by default.)
+            </p>
+
+            <figure class="legal__figure">
+                <div class="phone-frame" data-screenshot="settings-import">
+                    <img src="assets/screenshots/settings-import.jpg" alt="Run2Beat Settings showing Music file import options, including Identify music automatically and Only import identified songs" onerror="this.style.display='none'" />
+                    <div class="phone-frame__placeholder">
+                        <div class="phone-frame__dot"></div>
+                        <strong>Import settings</strong>
+                        <span>Screenshot placeholder</span>
+                        <small>settings-import.jpg</small>
+                    </div>
+                </div>
+                <figcaption>Settings &rarr; Music file import: keep Identify on if you like, but turn Only import identified songs off for free and indie downloads.</figcaption>
+            </figure>
+
             <h2>Tips for training libraries</h2>
             <ul>
                 <li><strong>Match the session.</strong> Higher-energy electronic, hardstyle, bass house or drum &amp; bass often sit well around running cadences; acoustic and chill catalogues suit walks and cool-downs. Search the genre you actually enjoy &mdash; EDM is only one example.</li>
@@ -109,7 +133,7 @@
 
             <h2>After you download</h2>
             <p>
-                Copy the files to your iPhone (Files, iCloud Drive, AirDrop, or a USB drive), open Run2Beat&rsquo;s Import Music screen, and bring them into the Library. Optional Shazam fill-in can repair missing titles; BPM and loudness are measured on device. From there, build ordinary playlists or BPM lists and sync what you need to Apple Watch.
+                First, confirm <strong>Only import identified songs</strong> is off (see <a href="#import-settings">above</a>). Then copy the files to your iPhone (Files, iCloud Drive, AirDrop, or a USB drive), open Run2Beat&rsquo;s Import Music screen, and bring them into the Library. Optional Shazam fill-in can still repair missing titles when a match exists; BPM and loudness are measured on device either way. From there, build ordinary playlists or BPM lists and sync what you need to Apple Watch.
             </p>
             <p>
                 More on the pipeline: <a href="import.html">How importing works</a>.
@@ -121,7 +145,7 @@
                 <a class="find-music-source" href="https://soundcloud.com" data-destination="soundcloud" target="_blank" rel="noopener noreferrer">SoundCloud</a> (download enabled),
                 <a class="find-music-source" href="https://bandcamp.com" data-destination="bandcamp" target="_blank" rel="noopener noreferrer">Bandcamp</a> (free / name-your-price),
                 <a class="find-music-source" href="https://freemusicarchive.org" data-destination="freemusicarchive" target="_blank" rel="noopener noreferrer">Free Music Archive</a>, and
-                <a class="find-music-source" href="https://www.jamendo.com" data-destination="jamendo" target="_blank" rel="noopener noreferrer">Jamendo</a> when download is allowed. Keep the files, build the library, train without a streaming leash.
+                <a class="find-music-source" href="https://www.jamendo.com" data-destination="jamendo" target="_blank" rel="noopener noreferrer">Jamendo</a> when download is allowed. Turn <strong>Only import identified songs</strong> off before importing so unmatched free tracks still enter the Library. Keep the files, build the library, train without a streaming leash.
             </p>
 
             <a href="index.html#find-music" class="learn-more">
