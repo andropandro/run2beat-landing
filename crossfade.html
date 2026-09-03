@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Crossfade &mdash; Run2Beat</title>
-    <meta name="description" content="How Run2Beat transitions work in depth — fixed 6-second equal-power crossfade or gapless preload, phased arming on iPhone and Apple Watch, and optional Beat matching (BETA) for BPM lists." />
+    <meta name="description" content="How Run2Beat transitions work in depth — fixed 6-second equal-power crossfade or gapless preload, phased arming on iPhone and Apple Watch, and optional Beat matching for BPM lists." />
     <meta name="theme-color" content="#0a0d0a" />
 
     <!-- Google tag (gtag.js) -->
@@ -83,9 +83,9 @@
                 You don&rsquo;t have to stop playback to change your mind. Roughly <strong>22 seconds before each track ends</strong>, Run2Beat re-reads the transition setting and decides whether <em>this</em> automatic advance should crossfade. Flip Gapless &harr; Crossfade earlier than that and the new choice takes effect on the current transition; flip later and it applies to the next song instead. Once a fade is armed for the current advance, it stays committed &mdash; a late toggle cannot abort a fade that is already about to start. A fade that has already begun keeps the length and curve it started with.
             </p>
 
-            <h2>Beat matching (BETA)</h2>
+            <h2>Beat matching</h2>
             <p>
-                With Crossfade on, Settings also offers an optional <strong>Beat matching (BETA)</strong> toggle &mdash; a feature we are testing for <em>BPM lists</em>. During the fade, the next track can begin where the music picks up (past a quiet intro), and the change may wait a moment so the beat lines up better between songs. Results vary from track to track; that is why it is labelled BETA and off by default.
+                With Crossfade on, Settings also offers an optional <strong>Beat matching</strong> toggle for <em>BPM lists</em>. During the fade, the next track can begin where the music picks up (past a quiet intro), and the change may wait a moment so the beat lines up better between songs. Results vary from track to track; it is off by default.
             </p>
             <p>
                 Under the hood each track can store two cues measured once and reused: a <strong>groove start</strong> (where high energy / pulse gets going &mdash; the seek target for intro skip) and a <strong>beat zero</strong> near the file start (a phase anchor). Soft outros are measured live at play time when a clear die-out is present, so a quiet ending can pull the fade anchor a little earlier without unconditionally cutting the outgoing song short. The phase nudge only runs when outgoing and incoming tempos match &mdash; a warm-up track stepping up into a different target BPM is skipped on purpose.
@@ -151,7 +151,7 @@
 
             <h2>The short version</h2>
             <p>
-                Pick Gapless for a clean cut or Crossfade for a fixed six-second equal-power overlap, and forget about it. Optionally try Beat matching (BETA) on BPM lists when you want fades that feel a little more in time. Run2Beat fades only when it advances on its own, never gets in the way when you take control, and behaves the same on your wrist as in your pocket &mdash; with the watch doing its EQ homework early so you still hear the full blend.
+                Pick Gapless for a clean cut or Crossfade for a fixed six-second equal-power overlap, and forget about it. Optionally turn on Beat matching on BPM lists when you want fades that feel a little more in time. Run2Beat fades only when it advances on its own, never gets in the way when you take control, and behaves the same on your wrist as in your pocket &mdash; with the watch doing its EQ homework early so you still hear the full blend.
             </p>
 
             <a href="index.html" class="learn-more">

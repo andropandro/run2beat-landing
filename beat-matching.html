@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Beat matching (BETA) &mdash; Run2Beat</title>
-    <meta name="description" content="How Run2Beat Beat matching (BETA) works on BPM-list Crossfade — groove-start seek, beat-zero phase align, soft-outro pull, prep gates, and Watch cue scaling." />
+    <title>Beat matching &mdash; Run2Beat</title>
+    <meta name="description" content="How Run2Beat Beat matching works on BPM-list Crossfade — groove-start seek, beat-zero phase align, soft-outro pull, prep gates, and Watch cue scaling." />
     <meta name="theme-color" content="#0a0d0a" />
 
     <!-- Google tag (gtag.js) -->
@@ -47,7 +47,7 @@
             <p class="eyebrow eyebrow--center">Deep dive</p>
             <h1 class="legal__title">Find<br />the groove.<br />Line up.</h1>
             <p class="legal__lede">
-                Beat matching (BETA) is an optional assist on top of BPM-list Crossfade. It tries to enter the next song where the music locks in, wait a beat so phases meet, and leave a thin outro a little earlier when energy clearly dies. This page is the long technical version.
+                Beat matching is an optional assist on top of BPM-list Crossfade. It tries to enter the next song where the music locks in, wait a beat so phases meet, and leave a thin outro a little earlier when energy clearly dies. This page is the long technical version.
             </p>
         </section>
 
@@ -71,8 +71,8 @@
                 <li><strong>BPM lists only</strong> &mdash; Library and standard playlists are out of scope (tempos vary; no single list BPM).</li>
                 <li><strong>Same effective tempo</strong> &mdash; a warm-up stepping into a higher target BPM does not force phase-align; matching applies between same-tempo steps.</li>
                 <li><strong>Crossfade only</strong> &mdash; Gapless has no overlap to align. Selecting Gapless clears the Beat matching toggle.</li>
-                <li><strong>Opt-in Beta</strong> &mdash; off by default; Settings toggle; syncs to Apple Watch.</li>
-                <li><strong>Soft-outro pull, no stacked early-cut</strong> &mdash; v1&rsquo;s unconditional early cut (~12 beats on every fade) is deliberately omitted; that combination felt like chopped Crossfade.</li>
+                <li><strong>Opt-in</strong> &mdash; off by default; Settings toggle; syncs to Apple Watch.</li>
+                <li><strong>Soft-outro pull, no stacked early-cut</strong> &mdash; a clear die-out can pull the fade window forward; there is no unconditional early cut on every song.</li>
             </ul>
 
             <h2>Why this is hard</h2>
@@ -114,7 +114,7 @@
                 <strong>Groove start (A)</strong> is an energy / RMS heuristic: compare an intro floor to a later peak, prefer a sustained high level, else a large jump, else a soft rise, then optionally snap toward the nearest beat of the list BPM hint. Already-loud openings, no rise, or unreadable files return a cue at the file start, with a reason recorded for logs. It is not arrangement-aware; soft pads and spoken intros can still mis-cue.
             </p>
             <p>
-                <strong>Beat zero (B)</strong> is not a full beat grid today. The analyser takes RMS peaks in the first ~24&nbsp;s, uses period&nbsp;=&nbsp;60&nbsp;/&nbsp;BPM, scores candidate phase offsets across one beat period, and stores the best phase. Without a usable BPM hint, beat zero falls back to the file start. Tempo detection elsewhere still uses BeatNet; its per-frame beat channel is not persisted as a Crossfade grid yet.
+                <strong>Beat zero (B)</strong> is not a full beat grid. The analyser takes RMS peaks in the first ~24&nbsp;s, uses period&nbsp;=&nbsp;60&nbsp;/&nbsp;BPM, scores candidate phase offsets across one beat period, and stores the best phase. Usable BPM for this step is 60&ndash;220, matching the BPM-list editor. Without a usable BPM hint, beat zero falls back to the file start. Tempo detection elsewhere still uses BeatNet; its per-frame beat channel is not persisted as a Crossfade grid.
             </p>
 
             <h2>Prep gate</h2>
@@ -130,12 +130,12 @@
                 Eligibility requires Beat matching enabled, Crossfade mode, a BPM-list session, matching outgoing / next effective BPM, and (on iPhone) no cancelled-prep session flag. Then, once per pending fade:
             </p>
             <ol>
-                <li><strong>Soft-outro (C)</strong> &mdash; if the outgoing file has a clear die-out, shorten the transition <em>anchor</em> (capped around 12&nbsp;s / 15&nbsp;% of duration; ignore pulls under ~2.5&nbsp;s). Progress UI still shows full file length. Fade length stays six seconds; only when the blend starts can move earlier.</li>
-                <li><strong>Phase delay (B)</strong> &mdash; compute a wait of up to almost one beat so outgoing phase at elapsed time meets incoming phase at the seek position. Near-boundary → no wait.</li>
+                <li><strong>Soft-outro (C)</strong> &mdash; if the outgoing file has a clear die-out, shorten the transition <em>anchor</em> (capped around 16&nbsp;s / 15&nbsp;% of duration; ignore pulls under ~2.5&nbsp;s). The analyser looks back up to about 70&nbsp;s so a long EDM outro is visible. Progress UI still shows full file length. Fade length stays six seconds; only when the blend starts can move earlier.</li>
+                <li><strong>Phase delay (B)</strong> &mdash; compute a wait of up to almost one beat so outgoing phase at elapsed time meets incoming phase at the seek position. On iPhone the delay uses TimePitch-aware timing so cues match the audible timeline when the rate is not 1. Walking-cadence lists (down to 60&nbsp;BPM) are included. Near-boundary &rarr; no wait. The incoming shuffle track is pinned across that wait so look-ahead cannot pick a different song after the delay.</li>
                 <li><strong>Incoming seek (A)</strong> &mdash; if groove start is above ~0.02&nbsp;s, schedule the next track from that frame. The ramp uses a slightly slower incoming rise onto already-loud material.</li>
             </ol>
             <p>
-                Explicitly not done in v2: unconditional early-cut on every fade, wall-clock-only phase (v1), or time-stretch to match different BPMs (the list already shares tempo).
+                Beat matching does not add an unconditional early cut on every fade, and does not time-stretch to match different BPMs (the list already shares tempo). Phase delay uses stored beat-zero cues and TimePitch-aware timing, not wall-clock elapsed time alone.
             </p>
 
             <h2>iPhone and Apple Watch</h2>
@@ -149,9 +149,9 @@
                 <li>Prep UI is on the phone (list play + sync); the watch has no dedicated prep sheet.</li>
             </ul>
 
-            <h2>What Beta still means</h2>
+            <h2>Limits</h2>
             <p>
-                There is no full beat grid, no phrase awareness (8/16/32-bar structure), and no hand-editable cues yet. Half-time / double-time feel and ambient openings remain failure modes. Results vary track to track &mdash; which is why the feature stays labelled BETA and off by default. When in doubt, turn it off and you are back to the same fixed Crossfade documented on the <a href="crossfade.html">Transitions</a> page.
+                There is no full beat grid, no phrase awareness (8/16/32-bar structure), and no hand-editable cues. Half-time / double-time feel and ambient openings can still miss. Results vary track to track. When in doubt, turn it off and you are back to the same fixed Crossfade documented on the <a href="crossfade.html">Transitions</a> page.
             </p>
 
             <h2>The short version</h2>
