@@ -155,7 +155,7 @@
 
             <h2>Shazam auto-identification</h2>
             <p>
-                Untagged files (<code>track01.mp3</code> with no ID3) used to land looking like a folder listing. With <strong>Identify music automatically</strong> on (Settings &rarr; Import; off by default), incomplete metadata triggers a Shazam match <em>during</em> the same per-file import step &mdash; before the converted file is finalised &mdash; so recovered title, artist and artwork can be written into the output.
+                Untagged files (<code>track01.mp3</code> with no ID3) used to land looking like a folder listing. With <strong>Identify music automatically</strong> on (Settings &rarr; Import; on by default), incomplete metadata triggers a Shazam match <em>during</em> the same per-file import step &mdash; before the converted file is finalised &mdash; so recovered title, artist and artwork can be written into the output.
             </p>
             <p>
                 A call runs when any of title (file-name fallback only), artist, album or artwork is missing. Genres, ISRC and catalog URLs are not triggers; they are bonus fields harvested on a successful match. Matching is <strong>fill-in-blanks</strong>: existing tags are never overwritten. Catalog fields that ID3 cannot provide (genres, ISRC, Apple Music URL, Shazam web URL, release date) are stored when Shazam returns them.
@@ -164,7 +164,7 @@
                 The signature pipeline samples about <strong>12 seconds</strong> of audio starting at roughly <strong>25&nbsp;% into the track</strong> (not from the very first frame), so quiet intros and spoken openings are less likely to spoil the match. Work runs off the main thread; transient Shazam / service failures retry once with a short backoff, while a true catalog miss is not retried. An in-process rate limiter floors matches at ~120&nbsp;ms apart and backs off adaptively when the recent failure rate climbs, so a long batch does not trip Apple&rsquo;s soft service cap.
             </p>
             <p>
-                Optional <strong>Only import identified songs</strong> (requires auto-identify on): incomplete files that Shazam cannot match are deleted from the temp area and never enter the Library. Complete files still import without contacting Shazam. Album is never returned by Shazam&rsquo;s catalog match &mdash; identification remains best-effort, not authoritative.
+                Optional <strong>Only import identified songs</strong> (off by default; requires auto-identify on): incomplete files that Shazam cannot match are deleted from the temp area and never enter the Library. Complete files still import without contacting Shazam. Album is never returned by Shazam&rsquo;s catalog match &mdash; identification remains best-effort, not authoritative.
             </p>
             <p>
                 For free or lesser-known downloads (SoundCloud promos, Bandcamp freebies, Creative Commons catalogues), leave <strong>Only import identified songs</strong> <em>off</em> so unmatched files still land in the Library. Shazam often misses those titles; with the toggle on they would be skipped entirely. See also <a href="find-music.html#import-settings">Find music &mdash; import settings</a>.
