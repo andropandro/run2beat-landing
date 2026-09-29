@@ -85,14 +85,15 @@
             </p>
             <p>
                 <strong>How do I get files into Run2Beat?</strong><br />
-                There are exactly two paths:
+                There are three paths:
             </p>
             <ul>
-                <li><strong>The in-app Import view.</strong> Pick one or more audio files (MP3, M4A or WAV) or pick a folder &mdash; Run2Beat scans subfolders too and can optionally create one playlist per folder. iCloud Drive files are downloaded automatically before the import starts. Files are copied into Run2Beat&rsquo;s private sandbox; the originals stay where they are.</li>
+                <li><strong>The in-app Import view.</strong> Pick one or more audio files (MP3, M4A or WAV) or pick a folder &mdash; Run2Beat scans subfolders too and can optionally create one playlist per folder. iCloud Drive files are downloaded automatically before the import starts. Files are copied into Run2Beat&rsquo;s private sandbox; the originals stay where they are. The same screen also has <em>From library backup</em>, which merges selected tracks from a <code>.r2blibrary</code> file without replacing the Library.</li>
                 <li><strong>AirDrop of a Run2Beat playlist from another user.</strong> A friend who also runs Run2Beat can &ldquo;Send via AirDrop&rdquo; from a playlist on their iPhone. You receive a <code>.r2bplaylist</code> package containing the audio files, BPM values, artwork and play order, and the app imports it as a fresh playlist.</li>
+                <li><strong>Settings &rarr; Library backup.</strong> Create a backup, restore the whole file (replaces everything), or import selected tracks from a backup without wiping what is already there.</li>
             </ul>
             <p>
-                There&rsquo;s no other way in. Run2Beat is a local-files app and does not pull from streaming services or generic share-sheet sources.
+                Run2Beat is a local-files app and does not pull from streaming services or generic share-sheet sources.
             </p>
             <p>
                 <strong>Some tracks show up without a title or artwork.</strong><br />
@@ -103,6 +104,16 @@
             <p>
                 <strong>How do I move my library to a new iPhone?</strong><br />
                 In Settings you can save the whole Library as one <code>.r2blibrary</code> file &mdash; audio, playlists, BPM lists, BPM and loudness data, favourites. Restore on the new phone <em>replaces</em> everything currently in Run2Beat on that device; it is not a merge. Export first if you still need what is already there.
+            </p>
+            <p>
+                <strong>Can I add tracks from a backup without replacing the Library?</strong><br />
+                Yes. Import Music &rarr; <em>From library backup</em>, or Settings &rarr; Library backup &rarr; <em>Import tracks from backup&hellip;</em> Pick the songs you want. Duplicates are skipped. Playlists and BPM lists in the backup are not imported on that path.
+            </p>
+
+            <h2>Library</h2>
+            <p>
+                <strong>How do I delete songs?</strong><br />
+                In the Library, tap Select and then Delete. You can remove the songs you have marked, or every song shown when a filter narrows the list. The whole library cannot be deleted that way.
             </p>
 
             <h2>BPM analysis</h2>
@@ -131,7 +142,7 @@
             <h2>Sound &amp; playback</h2>
             <p>
                 <strong>Volume normalisation, EQ and crossfade</strong><br />
-                These are all controlled from Settings inside the app and applied during playback &mdash; they never modify your audio files. Volume normalisation measures every track&rsquo;s loudness in LUFS (ITU-R BS.1770 / EBU R 128, the same standard Apple Music and Spotify use) and gently raises or lowers it to a reference level you pick (&minus;14 LUFS by default), with built-in clipping protection. The equalizer has <strong>ten</strong> sliders spanning 32&nbsp;Hz to 16&nbsp;kHz at &plusmn;12&nbsp;dB; save a preset per pair of headphones and switch between them in a tap. Saved presets sync to Apple Watch automatically.
+                These are all controlled from Settings inside the app and applied during playback &mdash; they never modify your audio files. Volume normalisation measures every track&rsquo;s loudness in LUFS (ITU-R BS.1770 / EBU R 128, the same standard Apple Music and Spotify use) and gently raises or lowers it to a reference level you pick (&minus;14 LUFS by default), with built-in clipping protection. The equalizer has <strong>ten</strong> sliders spanning 32&nbsp;Hz to 16&nbsp;kHz at &plusmn;12&nbsp;dB; save a preset per pair of headphones and switch between them in a tap. Saved presets sync to Apple Watch automatically. Crossfade or Gapless, and Beat matching, you set on iPhone and separately on Apple Watch. After a phone call, the song continues from where it paused, on iPhone and in CarPlay.
             </p>
             <p>
                 See the deep dives for <a href="volume-normalisation.html">volume normalisation</a> and <a href="bpm-analysis.html">BPM analysis</a> for more.
@@ -143,7 +154,7 @@
 
             <h2>Privacy &amp; data</h2>
             <p>
-                Run2Beat keeps everything &mdash; music files, BPM data, playlists, settings &mdash; on your device. We don&rsquo;t run analytics or tracking. See the full
+                Run2Beat keeps music files, BPM data and playlists on your device. If you are signed in with your Apple ID, listening history and EQ presets are also saved to iCloud (not to Run2Beat). We don&rsquo;t run analytics or tracking. See the full
                 <a href="privacy.html">Privacy Policy</a>
                 for details.
             </p>

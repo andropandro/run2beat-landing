@@ -67,7 +67,7 @@
             </p>
             <ul>
                 <li><strong>BPM lists</strong> &mdash; alphabetical browse of every saved recipe. Folders from iPhone are skipped, so every row is a list you can open. Open a list and you get a single <em>Shuffle</em> action plus a read-only track listing. In-car BPM playback is shuffle-only; you cannot pick a starting track from the wheel.</li>
-                <li><strong>Playlists</strong> &mdash; a flat, playable list. Favourites first, then a CarPlay-only Top 50 of your most-played tracks, then pinned playlists, then the rest. Folders stay on the iPhone. Open a playlist for Play, Shuffle, or tap a track to start from that row.</li>
+                <li><strong>Playlists</strong> &mdash; a flat, playable list. Favourites first, then a CarPlay-only Top 50 of your most-played tracks, then pinned playlists, then the rest. Folders stay on the iPhone. Open a playlist and tap a track to start from that row, or use Shuffle. There is no separate Play row.</li>
                 <li><strong>Equalizer</strong> &mdash; presets only. A Standard (flat) row plus one row per saved preset, with a checkmark on the active choice. No per-band sliders in the car &mdash; Apple&rsquo;s HIG treats fine-grained controls as a distraction while driving.</li>
             </ul>
 
@@ -87,7 +87,7 @@
                 The CarPlay scene runs in the <em>same</em> iPhone process as the phone UI. Both scenes must therefore agree on the library database (playlists created on iPhone appear in the car without a manual refresh), the process-wide shared player (pause in the car pauses on the phone mini-player), and the shared equalizer (a preset switched at a red light is heard immediately). A classic per-view player would mean double playback whenever both screens were visible; CarPlay attaches to the same shared player the dashboard already uses.
             </p>
             <p>
-                There is no separate CarPlay target and no extra sync channel to the Watch. The car reads the same library database and the same equalizer the phone does, so all three surfaces stay in lock-step.
+                There is no separate CarPlay target and no extra sync channel to the Watch. The car reads the same library database and the same equalizer the phone does, so all three surfaces stay in lock-step. After a phone call, playback continues from where it paused &mdash; on iPhone and in CarPlay.
             </p>
 
             <h2>Playlists tab &mdash; flat, every row playable</h2>
@@ -110,7 +110,7 @@
                 Every row can show a 1-or-4 album-art mosaic matching the phone&rsquo;s playlist artwork grid, pre-rendered at about 80&nbsp;pt so memory stays bounded when scrolling large libraries. Zero covers fall back to a system icon (star for Favourites, chart for Top 50, pin for pinned lists); one to three covers use the first full-bleed; four or more become a 2&times;2 grid with a hairline gutter.
             </p>
             <p>
-                Starting playback uses the same path as the phone playlist detail view: build a queue, optionally enable shuffle after start (because the player resets shuffle on play), then show the shared Now Playing screen. Showing that screen twice is an error in CarPlay, so Run2Beat only pushes it when Now Playing is not already on top.
+                Starting playback uses the same path as the phone playlist detail view: build a queue from the track you tapped (or from Shuffle), optionally enable shuffle after start (because the player resets shuffle on play), then show the shared Now Playing screen. Showing that screen twice is an error in CarPlay, so Run2Beat only pushes it when Now Playing is not already on top. On a long list, the next page opens on the first row.
             </p>
 
             <h2>Top 50 &mdash; most played, in the car only</h2>
@@ -118,7 +118,7 @@
                 Top 50 is a synthetic playlist the iPhone and Watch never list. It appears directly under Favourites (or at the top when you have no favourites) and holds at most 50 tracks, ranked by play count, with ties broken by date added. Tracks with no credited listens are excluded. Each row subtitle shows artist and play count so the ranking is visible without opening Now Playing.
             </p>
             <p>
-                Detail uses the same Play, Shuffle and tap-to-start actions as a regular playlist. The list does not reshuffle while a track is playing; it refreshes when you re-select the Playlists tab.
+                Detail uses Shuffle and tap-to-start, the same as a regular playlist &mdash; there is no Play row. The list does not reshuffle while a track is playing; it refreshes when you re-select the Playlists tab.
             </p>
 
             <h2>BPM lists tab &mdash; shuffle only, on purpose</h2>
@@ -163,7 +163,7 @@
 
             <h2>The short version</h2>
             <p>
-                CarPlay is a driving-safe window onto the same Run2Beat library and player you already use on iPhone and Apple Watch. Three tabs, shuffle-first BPM lists, a flat Playlists tab with Favourites and Top 50, preset-only EQ, a favourite star that stays in sync, and artwork that never leaves the Now Playing screen empty. Setup stays on the phone; the car just plays.
+                CarPlay is a driving-safe window onto the same Run2Beat library and player you already use on iPhone and Apple Watch. Three tabs, shuffle-first BPM lists, a flat Playlists tab with Favourites and Top 50, tap-a-track (or Shuffle) to start, preset-only EQ, a favourite star that stays in sync, and artwork that never leaves the Now Playing screen empty. Setup stays on the phone; the car just plays.
             </p>
 
             <a href="index.html" class="learn-more">

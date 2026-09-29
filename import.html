@@ -117,7 +117,7 @@
 
             <h2>No duplicates &mdash; what &ldquo;same song&rdquo; means</h2>
             <p>
-                Run2Beat keeps one Library row per recording you would recognise as the same track. A duplicate is <em>not</em> defined by identical file bytes alone: two imports of the same song can produce different on-disk bytes (HE-AAC re-encode, metadata padding) while still looking identical in the list. The rules follow <strong>what you see</strong>, and they run in three places: manual import, AirDrop playlist receive, and <strong>Settings &rarr; Library Duplicates</strong>.
+                Run2Beat keeps one Library row per recording you would recognise as the same track. A duplicate is <em>not</em> defined by identical file bytes alone: two imports of the same song can produce different on-disk bytes (HE-AAC re-encode, metadata padding) while still looking identical in the list. The rules follow <strong>what you see</strong>, and they run in four places: manual import, AirDrop playlist receive, import from a library backup, and <strong>Settings &rarr; Library Duplicates</strong>. File import, AirDrop and backup import share one duplicate check, so skip-versus-upgrade cannot drift between paths.
             </p>
             <p>
                 Two tracks match when all of the following hold:
@@ -175,6 +175,14 @@
                 Tracks are <strong>always</strong> saved to your Library. You can additionally send them to a playlist &mdash; pick an existing one, or tap <em>New playlist&hellip;</em> to create one on the fly. When you choose to create playlists from folders, the destination is set for you automatically.
             </p>
 
+            <h2>From a library backup</h2>
+            <p>
+                A <code>.r2blibrary</code> backup is the whole Library in one file. Full restore still <em>replaces</em> everything currently in Run2Beat on that iPhone. You can also <strong>import selected tracks</strong> from the same file without wiping what is already there: Import Music &rarr; <em>From library backup</em>, or Settings &rarr; Library backup &rarr; <em>Import tracks from backup&hellip;</em>
+            </p>
+            <p>
+                Choose a backup, pick the songs you want, and they merge into the existing Library. Duplicates are skipped. Playlists and BPM lists inside the backup are not imported on this path. A very large backup stays browsable; the duplicate index is not rebuilt while you scroll.
+            </p>
+
             <h2>Save space with HE-AAC (optional)</h2>
             <p>
                 If you want to fit more music on your iPhone, you can have imported files re-encoded to <strong>HE-AAC</strong> &mdash; a modern, efficient format. A typical 4-minute song lands around 2&nbsp;MB instead of roughly 4&nbsp;MB for a 128&nbsp;kbps MP3, about half the storage for quality most people can&rsquo;t tell apart at running volumes. It&rsquo;s off by default and lives in Settings under Import. (<a href="apple-watch-sync.html">Apple Watch sync</a> always uses HE-AAC to keep the watch&rsquo;s storage small, regardless of this setting.)
@@ -199,7 +207,7 @@
 
             <h2>The short version</h2>
             <p>
-                Pick files or a folder, choose a destination, start the import. Run2Beat copies and optionally encodes, fills incomplete tags via Shazam when you ask, measures BPM and loudness, skips or upgrades duplicates using what you would recognise as the same song, and leaves an audit trail so a killed background batch is recoverable. The Library stays one row per recording &mdash; not one row per accidental re-import.
+                Pick files or a folder, choose a destination, start the import &mdash; or merge selected tracks from a library backup without replacing what you already have. Run2Beat copies and optionally encodes, fills incomplete tags via Shazam when you ask, measures BPM and loudness, skips or upgrades duplicates using what you would recognise as the same song, and leaves an audit trail so a killed background batch is recoverable. The Library stays one row per recording &mdash; not one row per accidental re-import.
             </p>
 
             <a href="index.html" class="learn-more">

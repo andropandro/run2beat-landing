@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Beat matching &mdash; Run2Beat</title>
-    <meta name="description" content="How Run2Beat Beat matching works on BPM-list Crossfade — groove-start seek, beat-zero phase align, soft-outro pull, prep gates, and Watch cue scaling." />
+    <meta name="description" content="How Run2Beat Beat matching works on BPM-list Crossfade — groove-start seek, beat-zero phase align, soft-outro pull, prep gates, and Watch cues measured on the rendered file." />
     <meta name="theme-color" content="#0a0d0a" />
 
     <!-- Google tag (gtag.js) -->
@@ -71,7 +71,7 @@
                 <li><strong>BPM lists only</strong> &mdash; Library and standard playlists are out of scope (tempos vary; no single list BPM).</li>
                 <li><strong>Same effective tempo</strong> &mdash; a warm-up stepping into a higher target BPM does not force phase-align; matching applies between same-tempo steps.</li>
                 <li><strong>Crossfade only</strong> &mdash; Gapless has no overlap to align. Selecting Gapless clears the Beat matching toggle.</li>
-                <li><strong>Opt-in</strong> &mdash; off by default; Settings toggle; syncs to Apple Watch.</li>
+                <li><strong>Per-device</strong> &mdash; iPhone Settings, off by default. Apple Watch has its own Settings; Beat matching starts on there, and does not follow the iPhone.</li>
                 <li><strong>Soft-outro pull, no stacked early-cut</strong> &mdash; a clear die-out can pull the fade window forward; there is no unconditional early cut on every song.</li>
             </ul>
 
@@ -143,9 +143,9 @@
                 Behaviour aims for parity; the surfaces differ:
             </p>
             <ul>
-                <li>The <strong>phone</strong> owns the Settings toggle and pushes the Beat matching flag in the transitions payload.</li>
+                <li>Each device owns its own Settings toggle. The phone no longer pushes Beat matching to the watch.</li>
                 <li><strong>Cues</strong> live on library tracks on iPhone and as catalog fields on Watch playlist tracks / variants.</li>
-                <li>Watch HE-AAC tempo variants inherit phone A/B cues <strong>scaled by variant pitch</strong> (1&nbsp;/&nbsp;rate). Live remeasure on the watch only if catalog cues are missing. Soft-outro always measures the file that is actually playing.</li>
+                <li>Watch HE-AAC tempo variants get A/B cues measured on the <strong>pitch-rendered file</strong> at sync &mdash; not library cues scaled by pitch. At each fade the watch also reads the beats in the overlap, and samples that clock before the audio graph reconnects, so the next song is not late. Soft-outro always measures the file that is actually playing. Re-sync lists already on the watch so they receive the new cues.</li>
                 <li>Prep UI is on the phone (list play + sync); the watch has no dedicated prep sheet.</li>
             </ul>
 
@@ -156,7 +156,7 @@
 
             <h2>The short version</h2>
             <p>
-                Beat matching stores where the groove starts and a phase anchor, optionally pulls the fade earlier on a clear soft outro, then seeks and nudges at Crossfade time &mdash; only on BPM lists, only when tempos match, only when you opt in. Cancel prep or flip the toggle and Crossfade behaves exactly as before.
+                Beat matching stores where the groove starts and a phase anchor, optionally pulls the fade earlier on a clear soft outro, then seeks and nudges at Crossfade time &mdash; only on BPM lists, only when tempos match, only when you turn it on (iPhone off by default; Watch on by default). Cancel prep or flip the toggle and Crossfade behaves exactly as before.
             </p>
 
             <a href="crossfade.html" class="learn-more">
