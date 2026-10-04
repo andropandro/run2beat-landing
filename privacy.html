@@ -49,7 +49,7 @@
             <p class="legal__lede">
                 Run2Beat is designed around a simple promise: the music files you provide stay on your device. Listening history and equalizer presets can copy to your iCloud account when you are signed in &mdash; they are not sent to Run2Beat.
             </p>
-            <p class="legal__updated">Last updated: September 2026</p>
+            <p class="legal__updated">Last updated: October 2026</p>
         </section>
 
         <section class="legal__body">
@@ -73,7 +73,19 @@
                 When you sync BPM lists to your Apple Watch, audio files are transferred directly from your iPhone to your paired Apple Watch using Apple&rsquo;s WatchConnectivity framework. No data passes through our servers.
             </p>
 
-            <h2>4. iCloud</h2>
+            <h2>4. Health and Bluetooth on Apple Watch</h2>
+            <p>
+                The Apple Watch app can read two kinds of data from the watch, and only to show them back to you on the wrist:
+            </p>
+            <ul>
+                <li><strong>Health.</strong> Today&rsquo;s activity summary drives the Move-goal line on the watch home screen and the Move and Exercise rows on the session page. The workout type lets a run or a walk start the BPM list you assigned to that activity. Run2Beat only reads; it never writes anything to Health.</li>
+                <li><strong>Bluetooth.</strong> The battery level of connected headphones, read from the accessory&rsquo;s public Battery Service while the session page is open, so the watch can show how much charge is left.</li>
+            </ul>
+            <p>
+                Both are optional. watchOS asks before Run2Beat gets access, and you can decline it or withdraw it later in Settings &mdash; the music keeps playing either way and those rows simply stay empty. Neither kind of data is sent to Run2Beat, copied to iCloud, or passed on to your iPhone. It stays on the watch.
+            </p>
+
+            <h2>5. iCloud</h2>
             <p>
                 When you are signed in with your Apple ID, Run2Beat uses Apple&rsquo;s iCloud Key-Value Store to keep a copy of your <strong>listening history</strong> and <strong>equalizer presets</strong>. Audio files never leave the phone. There is no Run2Beat account and no sync button; Apple copies the data in the background. Settings shows <em>Saved in iCloud</em> when this is working.
             </p>
@@ -81,17 +93,17 @@
                 The copy is private to your Apple ID and is not sent to Run2Beat. Clearing all listen counts also clears the iCloud copy. Deleting the app does not. If iCloud is off for Run2Beat, the data stays on this phone only.
             </p>
 
-            <h2>5. App analytics and tracking</h2>
+            <h2>6. App analytics and tracking</h2>
             <p>
                 The App does not use any analytics, tracking, or advertising frameworks. We do not track your usage or collect crash reports beyond what Apple may collect through its standard iOS crash reporting.
             </p>
 
-            <h2>6. Third-party services in the App</h2>
+            <h2>7. Third-party services in the App</h2>
             <p>
                 The App does not integrate with social networks or advertising platforms. Optional Shazam identification during import (when you enable it) sends audio signatures to Apple&rsquo;s ShazamKit for metadata lookup; that is the only outbound network call related to your music, and you can leave it off.
             </p>
 
-            <h2>7. This website (Run2Beat.com)</h2>
+            <h2>8. This website (Run2Beat.com)</h2>
             <p>
                 The marketing website uses <strong>Google Analytics</strong> (Google tag / gtag.js, measurement ID <code>G-TS1EQ35CVJ</code>) to understand aggregate traffic &mdash; for example page views and approximate geography. Google may process technical data such as IP address, device/browser type, and pages visited, according to Google&rsquo;s own policies. This applies only to the website, not to the App.
             </p>
@@ -99,17 +111,17 @@
                 You can limit Analytics via browser settings, privacy extensions, or Google&rsquo;s tools where available. We do not use the website Analytics to identify you inside the App, and we do not sell personal data.
             </p>
 
-            <h2>8. Children&rsquo;s Privacy</h2>
+            <h2>9. Children&rsquo;s Privacy</h2>
             <p>
                 The App and website are not directed at children under the age of 13 and we do not knowingly collect data from children.
             </p>
 
-            <h2>9. Changes to This Policy</h2>
+            <h2>10. Changes to This Policy</h2>
             <p>
                 We may update this Privacy Policy from time to time. The latest version is always available on this website and within the App.
             </p>
 
-            <h2>10. Contact</h2>
+            <h2>11. Contact</h2>
             <p>
                 If you have questions about this Privacy Policy, please contact us at
                 <a href="mailto:hello@run2beat.com" class="legal__contact">hello@run2beat.com</a>
