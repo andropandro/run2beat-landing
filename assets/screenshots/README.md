@@ -14,8 +14,12 @@ frame uses `object-fit: cover`.
 | `bpm-analysis.jpg`        | Know the tempo           | A track with the "uncertain tempo" flag, or the BPM analysis info-sheet.            |
 | `bpm-lists.jpg`           | Two ways to play / BPM   | A BPM list with per-track target tempos and the dynamic playlist UI.                |
 | `standard-playlists.jpg`  | Two ways to play / Std   | A regular playlist screen with imported music, no BPM column emphasised.            |
-| `watch.jpg`               | Take it anywhere / Watch | Apple Watch playback screen (left of the pair).                                     |
-| `watch-2.jpg`             | Take it anywhere / Watch | Second Apple Watch screen shown side by side with `watch.jpg`.                      |
+| `watch-home.png`          | Take it anywhere / Watch | Home with BPM Lists and Playlists (row 1, left).                                    |
+| `watch-session.png`       | Take it anywhere / Watch | Session page with Move, Exercise and battery (row 1, right).                       |
+| `watch-continue.png`      | Take it anywhere / Watch | Continue last and Move ticks (row 2, left).                                         |
+| `watch-now-playing-sahara.png` | Take it anywhere / Watch | Now Playing in Sahara (row 2, right).                                          |
+| `watch-now-playing.png`   | Take it anywhere / Watch | Now Playing a BPM list (row 3, left).                                               |
+| `watch-bpm-lists.png`     | Take it anywhere / Watch | BPM Lists (row 3, right).                                                           |
 | `airdrop.jpg`             | Take it anywhere / Share | iOS share sheet with AirDrop highlighted, or the in-app share confirmation.        |
 | `equalizer.jpg`           | Equalizer deep dive      | The Equalizer sheet with preset chips and the ten-band graphic EQ.                 |
 | `equalizer-watch.jpg`     | Equalizer deep dive      | Apple Watch Equalizer screen with Default and synced presets.                      |
