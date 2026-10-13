@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Apple Watch sync &mdash; Run2Beat</title>
-    <meta name="description" content="How Run2Beat syncs BPM lists and playlists from iPhone to Apple Watch — WatchConnectivity transport, HE-AAC export, delta signatures, convergence verification, and sleep-robust transfers." />
+    <meta name="description" content="How Run2Beat syncs BPM lists, playlists and Favourites from iPhone to Apple Watch, and what the watch app does on its own: Continue last, Move goal, session page, complications and watch-local settings." />
     <meta name="theme-color" content="#0a0d0a" />
 
     <!-- Google tag (gtag.js) -->
@@ -47,7 +47,7 @@
             <p class="eyebrow eyebrow--center">Deep dive</p>
             <h1 class="legal__title">Sync,<br />then run<br />untethered.</h1>
             <p class="legal__lede">
-                Run2Beat syncs BPM lists and standard playlists from your iPhone to your paired Apple Watch so you can leave the phone at home and run with just AirPods. This page is the long version of what that sync does, how the transfer protocol works, and how to make it fast and reliable.
+                Run2Beat syncs BPM lists, standard playlists and Favourites from your iPhone to your paired Apple Watch so you can leave the phone at home and run with just AirPods. This page is the long version of what that sync does, how the transfer protocol works, what the watch app does on its own, and how to make a transfer fast and reliable.
             </p>
         </section>
 
@@ -55,7 +55,7 @@
 
             <h2>The model: iPhone configures, Watch plays</h2>
             <p>
-                The iPhone is Run2Beat&rsquo;s configuration and processing hub: it stores your library, computes BPM, measures loudness, builds BPM lists and pre-renders any tempo-shifted variants. The Apple Watch is a playback runtime &mdash; it stores the synced files and plays them back. Settings on the watch cover Crossfade, Beat matching, the favourite star and Swaps; those choices stay on the wrist and do not follow the iPhone.
+                The iPhone is Run2Beat&rsquo;s configuration and processing hub: it stores your library, computes BPM, measures loudness, builds BPM lists and pre-renders any tempo-shifted variants. The Apple Watch is a playback runtime &mdash; it stores the synced files and plays them back. Settings on the watch are grouped into Home, Playback, While playing and Appearance: Continue last, Move goal, Crossfade, Beat matching, the favourite star, Swaps, Sahara and outline buttons. Those choices stay on the wrist and do not follow the iPhone. The one exception is how long a skip must wait before it marks a swap candidate: that time is set on the iPhone and used on both devices.
             </p>
             <p>
                 Everything you see on the Watch is the result of an explicit sync from the iPhone&rsquo;s Sync screen. There is no hidden background sync.
@@ -63,7 +63,7 @@
 
             <h2>Manual and visible</h2>
             <p>
-                You start sync yourself from the iPhone&rsquo;s Sync screen, where the app shows connectivity readiness and exactly what&rsquo;s <strong>new</strong>, <strong>updated</strong> or <strong>deleted</strong> before you commit. While the sync runs, a live overlay shows progress; the Watch screen shows nothing during the transfer &mdash; that&rsquo;s normal.
+                You start sync yourself from the iPhone&rsquo;s Sync screen, where the app shows connectivity readiness and exactly what&rsquo;s <strong>new</strong>, <strong>updated</strong> or <strong>deleted</strong> before you commit. Favourites appears there as its own row once at least one song is starred, and you turn that playlist on per device. The info button on the same screen opens a help page that explains the watch app. While the sync runs, a live overlay shows progress; the Watch screen shows nothing during the transfer &mdash; that&rsquo;s normal.
             </p>
 
             <figure class="legal__figure">
@@ -85,7 +85,7 @@
 
             <h2>What gets transferred</h2>
             <p>
-                For every track in a BPM list or standard playlist Run2Beat sends:
+                For every track in a BPM list or standard playlist Run2Beat sends the items below. Favourites uses the same path, at the original tempo, as an ordinary playlist.
             </p>
             <ul>
                 <li>The <strong>audio file</strong>, always transcoded to HE-AAC for compactness on the watch. If the track is already HE-AAC in your Library it stays at that efficient profile (64&nbsp;kbps); if it&rsquo;s still MP3, AAC or WAV on the phone, the watch copy is encoded a step higher (80&nbsp;kbps) so you keep more of the original quality.</li>
@@ -95,7 +95,7 @@
                 <li>The <strong>play order</strong> and list metadata (including mosaic thumbnails when present).</li>
             </ul>
             <p>
-                Equalizer presets travel via the WatchConnectivity shared-settings channel alongside the list payload. On the Watch you pick an EQ preset directly from the Home view without your phone. Crossfade, Gapless and Beat matching do not ride that channel &mdash; you set them on the watch.
+                Equalizer presets travel via the WatchConnectivity shared-settings channel alongside the list payload. On the Watch you pick an EQ preset directly from the Home view without your phone. Crossfade, Gapless, Beat matching and appearance do not ride that channel &mdash; you set them on the watch. The skip-flag minimum time does ride it, so iPhone and Watch mark a swap after the same number of seconds.
             </p>
 
             <h2>Delta sync and signatures</h2>
@@ -200,6 +200,18 @@
                 Once a list is synced, the Watch can play it without the phone. Pair AirPods directly to the Watch, open Run2Beat on the wrist, pick a BPM list or playlist and press play.
             </p>
             <p>
+                Home can show a <strong>Continue last</strong> card that replays the last BPM list or playlist (on by default; turn it off in Watch Settings). Favourites is not a separate card: starred songs arrive as an ordinary playlist at the original tempo, sit first under Playlists, and keep the same order as on the iPhone. An optional <strong>Move goal</strong> column of ticks runs along the left edge of Home. Colour, not length, marks progress; the marks at top, middle and bottom are longer. The ticks read today&rsquo;s activity summary from Health (and today&rsquo;s samples when that summary is missing). Decline Health and playback still works; the ticks and the session figures simply stay empty.
+            </p>
+            <p>
+                Swipe left on Now Playing for the session page: today&rsquo;s Move and Exercise in two cards, then watch battery, audio output and songs started this visit in one platter. A missing activity reading shows <em>--</em>; a missing headphone battery shows the icon only. Swipe right to return. Volume stays on Now Playing. A short Bluetooth scan for the public Battery Service runs only while that page is open, against an already connected accessory whose name matches the current audio route. No pairing, and nothing leaves the watch.
+            </p>
+            <p>
+                Two complications sit on the watch face, in circular, corner, inline and rectangular slots. <strong>Last list</strong> shows the list and its BPM; a tap plays it again. <strong>Run2Beat</strong> only opens the app. Both draw with the music-note symbol and text. On a tinted face the words follow the face colour; on the rectangular slot the glyph stays the app green.
+            </p>
+            <p>
+                Appearance is cosmetic only: Sahara paints one sand colour over orange, purple and teal, with a second switch for sand-coloured text; Buttons is Filled or Outline. The Equalizer card on Home appears once a preset has been synced; you pick the active curve on the watch.
+            </p>
+            <p>
                 Listen counts, favourites and skip flags leave the watch as soon as the iPhone is reachable &mdash; even if Run2Beat was not running on the phone. The phone also pulls the batch when it becomes active.
             </p>
             <p>
@@ -223,7 +235,7 @@
 
             <h2>Privacy reminder</h2>
             <p>
-                Audio files are transferred directly from your iPhone to your paired Apple Watch using Apple&rsquo;s WatchConnectivity framework. No data passes through Run2Beat&rsquo;s servers because Run2Beat doesn&rsquo;t run any.
+                Audio files are transferred directly from your iPhone to your paired Apple Watch using Apple&rsquo;s WatchConnectivity framework. No data passes through Run2Beat&rsquo;s servers because Run2Beat doesn&rsquo;t run any. Health and headphone-battery readings stay on the watch; they are never sent to the iPhone or to iCloud.
             </p>
 
             <a href="index.html" class="learn-more">
