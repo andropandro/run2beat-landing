@@ -55,7 +55,7 @@
 
             <h2>The model: iPhone configures, Watch plays</h2>
             <p>
-                The iPhone is Run2Beat&rsquo;s configuration and processing hub: it stores your library, computes BPM, measures loudness, builds BPM lists and pre-renders any tempo-shifted variants. The Apple Watch is a playback runtime &mdash; it stores the synced files and plays them back. Settings on the watch are grouped into Home, Playback, While playing and Appearance: Continue last, Move goal, Crossfade, Beat matching, the favourite star, Swaps, Sahara and outline buttons. Those choices stay on the wrist and do not follow the iPhone. The one exception is how long a skip must wait before it marks a swap candidate: that time is set on the iPhone and used on both devices.
+                The iPhone is Run2Beat&rsquo;s configuration and processing hub: it stores your library, computes BPM, measures loudness, builds BPM lists and pre-renders any tempo-shifted variants. The Apple Watch is a playback runtime &mdash; it stores the synced files and plays them back. Settings on the watch are grouped into Home, Playback, While playing and Appearance: Continue last, Move goal, the favourite star, Swaps, theme (Standard, Sahara or AS Roma) and outline buttons. On Series 7 and later, including Ultra, Playback also has Crossfade and Beat matching. Earlier watches play one song after another and hide those switches. Watch choices stay on the wrist and do not follow the iPhone. The one exception is how long a skip must wait before it marks a swap candidate: that time is set on the iPhone and used on both devices.
             </p>
             <p>
                 Everything you see on the Watch is the result of an explicit sync from the iPhone&rsquo;s Sync screen. There is no hidden background sync.
@@ -95,7 +95,7 @@
                 <li>The <strong>play order</strong> and list metadata (including mosaic thumbnails when present).</li>
             </ul>
             <p>
-                Equalizer presets travel via the WatchConnectivity shared-settings channel alongside the list payload. On the Watch you pick an EQ preset directly from the Home view without your phone. Crossfade, Gapless, Beat matching and appearance do not ride that channel &mdash; you set them on the watch. The skip-flag minimum time does ride it, so iPhone and Watch mark a swap after the same number of seconds.
+                Equalizer presets travel via the WatchConnectivity shared-settings channel alongside the list payload. On the Watch you pick an EQ preset directly from the Home view without your phone. Appearance, and on Series 7 and later Crossfade, Gapless and Beat matching, do not ride that channel &mdash; you set them on the watch. The skip-flag minimum time does ride it, so iPhone and Watch mark a swap after the same number of seconds.
             </p>
 
             <h2>Delta sync and signatures</h2>
@@ -137,7 +137,7 @@
                 <li>the watch&rsquo;s verified track count (audio files physically present in the app&rsquo;s Music folder) also matches.</li>
             </ul>
             <p>
-                Only lists that clear all three checks are marked verified and get their signatures persisted. Lists still missing at the timeout are handled <strong>per list, not for the whole sync</strong>: the watch receives an explicit remove so orphan metadata and half-written files do not linger, and the iPhone clears that list&rsquo;s signature so the next sync retries it from scratch. You never keep a list that looks playable on the Watch but is missing some of its files.
+                Only lists that clear all three checks are marked verified and get their signatures persisted. As soon as a list has finished transferring, its metadata is sent to the watch. A later stall on a different list does not roll back lists that already landed. Lists still missing at the timeout are handled <strong>per list, not for the whole sync</strong>: the watch receives an explicit remove so orphan metadata and half-written files do not linger, and the iPhone clears that list&rsquo;s signature so the next sync retries it from scratch. You never keep a list that looks playable on the Watch but is missing some of its files.
             </p>
             <p>
                 If the watch stayed unreachable for the entire convergence window, the orchestrator has no evidence the list broke. Those <strong>unconfirmed</strong> lists are left untouched &mdash; still playable in their prior state on the wrist, still pending on the phone until a reachable sync finishes the change. That is what keeps renaming an already-installed list safe over a flaky Bluetooth link.
@@ -200,22 +200,22 @@
                 Once a list is synced, the Watch can play it without the phone. Pair AirPods directly to the Watch, open Run2Beat on the wrist, pick a BPM list or playlist and press play.
             </p>
             <p>
-                Home can show a <strong>Continue last</strong> card that replays the last BPM list or playlist (on by default; turn it off in Watch Settings). Favourites is not a separate card: starred songs arrive as an ordinary playlist at the original tempo, sit first under Playlists, and keep the same order as on the iPhone. An optional <strong>Move goal</strong> column of ticks runs along the left edge of Home. Colour, not length, marks progress; the marks at top, middle and bottom are longer. The ticks read today&rsquo;s activity summary from Health (and today&rsquo;s samples when that summary is missing). Decline Health and playback still works; the ticks and the session figures simply stay empty.
+                Home can show a <strong>Continue last</strong> card that replays the last BPM list or playlist (on by default; turn it off in Watch Settings). Favourites is not a separate card: starred songs arrive as an ordinary playlist at the original tempo, sit first under Playlists, and keep the same order as on the iPhone. An optional <strong>Move goal</strong> column of ticks runs along the left edge of Home. Colour, not length, marks progress; the marks at top, middle and bottom are longer, and the top tick turns a soft green when today&rsquo;s goal is met. The ticks read today&rsquo;s activity summary from Health (and today&rsquo;s samples when that summary is missing). Decline Health and playback still works; the ticks and the session figures simply stay empty. The title Run2Beat stays on one line; on a smaller watch it scales down beside the waveform or the AS Roma crest.
             </p>
             <p>
-                Swipe left on Now Playing for the session page: today&rsquo;s Move and Exercise in two cards, then watch battery, audio output and songs started this visit in one platter. A missing activity reading shows <em>--</em>; a missing headphone battery shows the icon only. Swipe right to return. Volume stays on Now Playing. A short Bluetooth scan for the public Battery Service runs only while that page is open, against an already connected accessory whose name matches the current audio route. No pairing, and nothing leaves the watch.
+                Swipe left on Now Playing for the session page: today&rsquo;s Move and Exercise in two cards, then watch battery, audio output and songs started this visit in one platter. A missing activity reading shows <em>--</em>; a missing headphone battery shows the icon only. Swipe right to return. Volume stays on Now Playing. Charge is read only while that page is open, against an already connected accessory whose name matches the current audio route. Headphones that publish the standard Bluetooth Battery Service are read from that service. AirPods and Beats are read from the battery field in their public advertisement. No pairing, and nothing leaves the watch.
             </p>
             <p>
                 Two complications sit on the watch face, in circular, corner, inline and rectangular slots. <strong>Last list</strong> shows the list and its BPM; a tap plays it again. <strong>Run2Beat</strong> only opens the app. Both draw with the music-note symbol and text. On a tinted face the words follow the face colour; on the rectangular slot the glyph stays the app green.
             </p>
             <p>
-                Appearance is cosmetic only: Sahara paints one sand colour over orange, purple and teal, with a second switch for sand-coloured text; Buttons is Filled or Outline. The Equalizer card on Home appears once a preset has been synced; you pick the active curve on the watch.
+                Appearance is cosmetic only. Settings &rarr; Appearance picks a theme: Standard keeps orange, purple, teal and blue; Sahara is one sand colour; AS Roma maps purple to maroon and orange to gold, and Home then shows the 1930 crest, the slogan FORZA ROMA and the she-wolf badge. A Text switch tints titles and labels; it turns on with AS Roma and off with Sahara. Buttons is Filled or Outline, with a thicker coloured edge in Outline. The Equalizer card on Home appears once a preset has been synced; you pick the active curve on the watch.
             </p>
             <p>
                 Listen counts, favourites and skip flags leave the watch as soon as the iPhone is reachable &mdash; even if Run2Beat was not running on the phone. The phone also pulls the batch when it becomes active.
             </p>
             <p>
-                The Watch player honours the same volume normalisation as the iPhone and the EQ preset you pick on the wrist. Crossfade or Gapless, and Beat matching, you choose in Watch Settings &mdash; they do not follow the phone. Audio files still travel as synced HE-AAC, so the music itself matches whichever device you listen from.
+                The Watch player honours the same volume normalisation as the iPhone and the EQ preset you pick on the wrist. On Series 7 and later, including Ultra, Crossfade or Gapless and Beat matching are chosen in Watch Settings &mdash; they do not follow the phone. Series 6 and earlier play one song after another. Audio files still travel as synced HE-AAC, so the music itself matches whichever device you listen from. A listen is the chosen share of what actually plays this time, not of the whole file; a skipped intro and an ending left for the next track do not count. The watch sends a listen event to the paired iPhone. The same rule is used on the phone.
             </p>
 
             <h2>If something doesn&rsquo;t arrive</h2>

@@ -175,7 +175,7 @@
 
             <h2>How presets travel to the Watch</h2>
             <p>
-                Preset payloads ride the same WatchConnectivity shared-settings channel as recipes, playlists and transition settings. Whenever you save, update, rename or delete a preset on the phone, Run2Beat pushes the <em>full current list</em> &mdash; there is no separate &ldquo;delete this ID&rdquo; message. An item missing from the incoming list is gone on the watch; an empty list clears the cache entirely, which hides the home card and forces flat playback.
+                Preset payloads ride the same WatchConnectivity shared-settings channel as recipes and playlists. Whenever you save, update, rename or delete a preset on the phone, Run2Beat pushes the <em>full current list</em> &mdash; there is no separate &ldquo;delete this ID&rdquo; message. An item missing from the incoming list is gone on the watch; an empty list clears the cache entirely, which hides the home card and forces flat playback.
             </p>
             <p>
                 The phone tries both a durable shared-settings write and a low-latency foreground message when the watch is reachable, and presets also piggy-back on every broader sync. The watch validates every entry on arrival (malformed records are dropped), diffs by ID and update time, and only notifies the player when something actually changed. Order is preserved end-to-end, so the chip row on the phone and the picker on the wrist stay in the same sequence.

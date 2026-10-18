@@ -79,7 +79,7 @@
             </p>
             <ul>
                 <li><strong>Health.</strong> Today&rsquo;s activity summary drives the Move-goal ticks on the watch home screen and the Move and Exercise cards on the session page. Run2Beat only reads; it never writes anything to Health.</li>
-                <li><strong>Bluetooth.</strong> The battery level of connected headphones, read from the accessory&rsquo;s public Battery Service while the session page is open, so the watch can show how much charge is left.</li>
+                <li><strong>Bluetooth.</strong> The battery level of connected headphones, read while the session page is open, so the watch can show how much charge is left. Headphones that publish the standard Bluetooth Battery Service are read from that service. AirPods and Beats do not publish it; their level is read from the battery field in the accessory&rsquo;s public Bluetooth advertisement.</li>
             </ul>
             <p>
                 Both are optional. watchOS asks before Run2Beat gets access, and you can decline it or withdraw it later in Settings &mdash; the music keeps playing either way and those rows simply stay empty. Neither kind of data is sent to Run2Beat, copied to iCloud, or passed on to your iPhone. It stays on the watch.
